@@ -4,4 +4,12 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Model\StorageProvider\" />
+    <Folder Include="Network\" />
+    <Folder Include="Model\Network\" />
+  </ItemGroup>
 </Project>

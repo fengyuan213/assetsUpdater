@@ -1,10 +1,14 @@
+using System.Reflection.Metadata;
+
+using assetsUpdater.Interfaces;
+using assetsUpdater.Model;
+
 namespace assetsUpdater
 {
-    public abstract class ADownloadUnit
+    public abstract class DownloadUnit
     {
-        public void Test()
-        {
-            
-        }
+        public IDownloadPackage DownloadPackage { get; set; }
+
+
     }
 }

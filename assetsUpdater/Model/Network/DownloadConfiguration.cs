@@ -1,10 +1,11 @@
 ﻿using System;
 namespace assetsUpdater.Model
 {
-    public class DownloadInfo
+    public class DownloadConfiguration
     {
-        public DownloadInfo()
-        {
-        }
+
+        public bool IsOverwrite { get; set; }
+
+
     }
 }

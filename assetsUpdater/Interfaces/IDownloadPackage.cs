@@ -1,7 +1,7 @@
 namespace assetsUpdater.Interfaces
 {
-    public class IDownloadPackage
+    public interface IDownloadPackage
     {
-        
+
     }
 }

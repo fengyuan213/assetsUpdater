@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace assetsUpdater.Model.StorageProvider
 {
-    public class FiledatabaseSchema
+    public class BuildInDbSchema
     {
-        public FiledatabaseSchema()
-        {
-        }
+        public IEnumerable<string> DirList { get; set; } = new List<string>();
     }
 }
