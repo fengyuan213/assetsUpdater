@@ -9,8 +9,8 @@ namespace assetsUpdater.Model
     /// </summary>
     public class AssertUpgradePackage
     {
-        public IEnumerable<BuildInDbFile> AddFile { get; set; }
-        public IEnumerable<BuildInDbFile> DifferFile { get; set; }
-        public IEnumerable<BuildInDbFile> DeleteFile { get; set; }
+        public IEnumerable<BuildInDbFile> AddFile { get; set; } = new List<BuildInDbFile>();
+        public IEnumerable<BuildInDbFile> DifferFile { get; set; } = new List<BuildInDbFile>();
+        public IEnumerable<BuildInDbFile> DeleteFile { get; set; } = new List<BuildInDbFile>();
     }
 }

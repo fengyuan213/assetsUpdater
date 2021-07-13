@@ -16,13 +16,13 @@ namespace assetsUpdater
         }*/
 
 
-        private AssertUpgradePackage DatabaseCompare(IEnumerable<BuildInDbFile> remoteFiles,
+        public AssertUpgradePackage  DatabaseCompare(IEnumerable<BuildInDbFile> remoteFiles,
             IEnumerable<BuildInDbFile> localFiles)
         {
 
             var assetUpgradePackage = new AssertUpgradePackage();
             foreach (var remoteFile in remoteFiles)
-                if (localFiles.Contains(remoteFile))
+                if (localFiles.Select((file => file.RelativePath)).Contains(remoteFile.RelativePath))
                 {
 
                     foreach (var localFile in localFiles)
@@ -70,11 +70,7 @@ namespace assetsUpdater
 
             return assetUpgradePackage;
         }
-        private static void ComparePatches()
-        {
-
-
-        }
+        
 
         public Verification()
         {

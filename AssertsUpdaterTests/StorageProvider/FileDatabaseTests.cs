@@ -107,11 +107,11 @@ namespace AssertsUpdaterTests.StorageProvider
 
                 DatabaseFiles = new List<BuildInDbFile>()
                 {
-                    new BuildInDbFile("Test\\data","abcdefg",123,"testFile.c","")
-
+                    new BuildInDbFile("Test\\data", "abcdefg", 123, "")
                 }
             };
         }
+
         private FileDatabase GetExceptedFileDatabase_ForDownload()
         {
             var exceptedFileDatafilesDatabase = CreateFileDatabase(GetExceptedDbData());

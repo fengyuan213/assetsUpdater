@@ -128,7 +128,9 @@ namespace assetsUpdater.StorageProvider
             foreach (var file in files)
             {
                 var absolutePath = Path.Combine(config.VersionControlFolder, file);
-                var vcf = new BuildInDbFile(file, Path.GetFileName(absolutePath), FileUtils.GetFileSize(absolutePath), FileUtils.Sha1File(absolutePath), null);
+                var vcf= new BuildInDbFile(file, FileUtils.Sha1File(absolutePath),
+                    FileUtils.GetFileSize(absolutePath), null);
+                //var vcf = new BuildInDbFile(file, Path.GetFileName(absolutePath), FileUtils.GetFileSize(absolutePath), FileUtils.Sha1File(absolutePath), null);
                 databseFiles.Add(vcf);
             }
 

@@ -23,7 +23,6 @@ namespace assetsUpdater.Model.StorageProvider
         /// </summary>
         /// <param name="versionControlFolder"></param>
         /// <param name="rootDownloadAddress"></param>
-
         public BuildInDbConfig([NotNull] string versionControlFolder, [NotNull] string rootDownloadAddress)
         {
             VersionControlFolder = versionControlFolder;

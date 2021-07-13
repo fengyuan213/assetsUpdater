@@ -13,7 +13,9 @@ namespace assetsUpdater
                 return LocalDataManager.localDataManager ?? new LocalDataManager();
             }
         }
-        private static LocalDataManager localDataManager = null;
+
+        
+        private static LocalDataManager localDataManager =new LocalDataManager();
         public Task<bool> IsLocalDataValid()
         {
             return Task.FromResult<bool>(false);
