@@ -1,4 +1,5 @@
 
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Reflection;
 using assetsUpdater.Interfaces;
@@ -32,11 +33,16 @@ namespace assetsUpdater.StorageProvider
         ///     Represents the data
         /// </summary>
 
-        public BuildInDbData Data { get; set; }
+        public DbData Data { get; set; }
 
         //public static NetworkCredential NutstoreDownloadCredential { get; } = new NetworkCredential("liufengyuan45@outlook.com", "ags7xjgzuhr2ig3d");
         #endregion
 
+        public FileDatabase(string path)
+        {
+            this.Read(path).RunSynchronously();
+
+        }
         public FileDatabase()
         {
         }
@@ -67,12 +73,13 @@ namespace assetsUpdater.StorageProvider
 
         }
 
-        private Task<BuildInDbData> DbDataReader(ZipArchive zipArchive)
+
+        private Task<DbData> DbDataReader(ZipArchive zipArchive)
         {
             var stream = zipArchive.GetEntry("data.json")?.Open();
             using var streamReader = new StreamReader(stream ?? new MemoryStream());
             var content = streamReader.ReadToEnd();
-            Data = JsonConvert.DeserializeObject<BuildInDbData>(content);
+            Data = JsonConvert.DeserializeObject<DbData>(content);
             return Task.FromResult(Data);
         }
         /// <summary>
@@ -118,23 +125,23 @@ namespace assetsUpdater.StorageProvider
         ///     Create FileDatabase and save the result to the current class
         /// </summary>
         /// <param name="config"></param>
-        public Task Create([NotNull] BuildInDbConfig config)
+        public Task Create([NotNull] DbConfig config)
         {
             var files = new List<string>();
             foreach (var directory in config.DatabaseSchema.DirList)
                 files.AddRange(FileUtils.GetAllFilesInADirectory(config.VersionControlFolder, directory ?? ""));
 
-            var databseFiles = new List<BuildInDbFile>();
+            var databseFiles = new List<DatabaseFile>();
             foreach (var file in files)
             {
                 var absolutePath = Path.Combine(config.VersionControlFolder, file);
-                var vcf= new BuildInDbFile(file, FileUtils.Sha1File(absolutePath),
+                var vcf= new DatabaseFile(file, FileUtils.Sha1File(absolutePath),
                     FileUtils.GetFileSize(absolutePath), null);
                 //var vcf = new BuildInDbFile(file, Path.GetFileName(absolutePath), FileUtils.GetFileSize(absolutePath), FileUtils.Sha1File(absolutePath), null);
                 databseFiles.Add(vcf);
             }
 
-            Data = new BuildInDbData(config)
+            Data = new DbData(config)
             {
                 DatabaseFiles = databseFiles,
 
@@ -179,15 +186,15 @@ namespace assetsUpdater.StorageProvider
         /// </summary>
         /// <returns>string:RelativePath, VersionControlFile: The file in the vc </returns>
 
-        public IDictionary<string, BuildInDbFile> ConvertToDictionary()
+        public IDictionary<string, DatabaseFile> ConvertToDictionary()
         {
 
             return Data?.DatabaseFiles?.ToDictionary(versionControlFile => versionControlFile.RelativePath);
         }
 
-        public BuildInDbData GetBuildInDbData()
+        public DbData GetBuildInDbData()
         {
-
+     
             return Data;
         }
 
@@ -200,5 +207,12 @@ namespace assetsUpdater.StorageProvider
 
             };
         }
+
+        public bool IsValidDb()
+        {
+            if (Data.DatabaseFiles == null || Data.Config is not {DatabaseSchema: { }}) return false;
+            return Data.DatabaseFiles.Any()&&!string.IsNullOrWhiteSpace(Data.Config.VersionControlFolder)&&string.IsNullOrWhiteSpace(Data.Config.DownloadAddressBuilder.RootDownloadAddress);
+        }
+  
     }
 }

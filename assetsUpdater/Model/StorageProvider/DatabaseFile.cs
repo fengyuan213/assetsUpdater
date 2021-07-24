@@ -1,11 +1,10 @@
 using System.IO;
-using assetsUpdater.Interfaces;
 
-namespace assetsUpdater.Model
+namespace assetsUpdater.Model.StorageProvider
 {
-    public class BuildInDbFile
+    public class DatabaseFile
     {
-        public BuildInDbFile(string relativePath, string hash, long fileSize, string downloadAddress)
+        public DatabaseFile(string relativePath, string hash, long fileSize, string downloadAddress)
         {
             RelativePath = relativePath;
             Hash = hash;

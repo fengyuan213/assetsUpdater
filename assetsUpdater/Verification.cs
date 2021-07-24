@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-
+using assetsUpdater.Interfaces;
 using assetsUpdater.Model;
+using assetsUpdater.Model.StorageProvider;
 
 namespace assetsUpdater
 {
@@ -14,10 +15,15 @@ namespace assetsUpdater
         {
             
         }*/
+        public AssertUpgradePackage DatabaseCompare(IStorageProvider remoteProvider,IStorageProvider localProvider)
+        {
+           var remoteData=  remoteProvider.GetBuildInDbData().DatabaseFiles;
+           var localData= localProvider.GetBuildInDbData().DatabaseFiles;
+           return DatabaseCompare(remoteData, localData);
+        }
 
-
-        public AssertUpgradePackage  DatabaseCompare(IEnumerable<BuildInDbFile> remoteFiles,
-            IEnumerable<BuildInDbFile> localFiles)
+        public AssertUpgradePackage  DatabaseCompare(IEnumerable<DatabaseFile> remoteFiles,
+            IEnumerable<DatabaseFile> localFiles)
         {
 
             var assetUpgradePackage = new AssertUpgradePackage();
@@ -65,9 +71,10 @@ namespace assetsUpdater
                 {
                     //本地数据文件在数据库中不存在
                     //代表删除文件（数据库新加的文件）
+                    
                     assetUpgradePackage.DeleteFile = assetUpgradePackage.DeleteFile.Append(localFile);
                 }
-
+            
             return assetUpgradePackage;
         }
         

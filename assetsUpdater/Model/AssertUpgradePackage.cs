@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using assetsUpdater.Model.StorageProvider;
 
 namespace assetsUpdater.Model
 {
@@ -9,8 +10,8 @@ namespace assetsUpdater.Model
     /// </summary>
     public class AssertUpgradePackage
     {
-        public IEnumerable<BuildInDbFile> AddFile { get; set; } = new List<BuildInDbFile>();
-        public IEnumerable<BuildInDbFile> DifferFile { get; set; } = new List<BuildInDbFile>();
-        public IEnumerable<BuildInDbFile> DeleteFile { get; set; } = new List<BuildInDbFile>();
+        public IEnumerable<DatabaseFile> AddFile { get; set; } = new List<DatabaseFile>();
+        public IEnumerable<DatabaseFile> DifferFile { get; set; } = new List<DatabaseFile>();
+        public IEnumerable<DatabaseFile> DeleteFile { get; set; } = new List<DatabaseFile>();
     }
 }

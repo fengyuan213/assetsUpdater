@@ -18,12 +18,13 @@ namespace assetsUpdater.Model
 
         public DownloadConfiguration DownloadConfiguration { get; set; }
         public Downloadtype TypeOfDownloadPackage { get; set; }
-        public IAddressBuilder AddressBuilder { get; private set; }
-        public DownloadPackage(IAddressBuilder addressBuilder, Downloadtype downloadtype, DownloadConfiguration downloadConfiguration = null)
+       // public IAddressBuilder AddressBuilder { get; private set; }
+        public DownloadPackage(Uri uri, string localPath, Downloadtype downloadtype, DownloadConfiguration downloadConfiguration = null)
         {
-            AddressBuilder = addressBuilder;
-            Uri = AddressBuilder.BuildUri();
-            LocalPath = AddressBuilder.BuildLocalPath();
+
+            Uri = uri;
+            LocalPath = localPath;
+            
             DownloadConfiguration = downloadConfiguration ?? new DownloadConfiguration()
             {
                 IsOverwrite = true

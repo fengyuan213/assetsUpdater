@@ -6,6 +6,7 @@ using System.Linq;
 using Telerik.JustMock;
 using assetsUpdater;
 using assetsUpdater.Model;
+using assetsUpdater.Model.StorageProvider;
 
 namespace AssertsUpdaterTests
 {
@@ -30,17 +31,17 @@ namespace AssertsUpdaterTests
         {
             // Arrange
             var verification = this.CreateVerification();
-            List<BuildInDbFile> remoteFiles = new List<BuildInDbFile>();
-            List<BuildInDbFile> localFiles = new List<BuildInDbFile>();
-            var buildInData1 = new BuildInDbFile("testfolder/ac/w.a","ad123456",1234567,"w.c");
+            List<DatabaseFile> remoteFiles = new List<DatabaseFile>();
+            List<DatabaseFile> localFiles = new List<DatabaseFile>();
+            var buildInData1 = new DatabaseFile("testfolder/ac/w.a","ad123456",1234567,"w.c");
 
-            var buildInData2 = new BuildInDbFile("testfolder/ac/w.b", "ba123456", 1234567, "w.c");
+            var buildInData2 = new DatabaseFile("testfolder/ac/w.b", "ba123456", 1234567, "w.c");
 
-            var buildInData3 = new BuildInDbFile("testfolder/ac/w.c", "cb123456", 1234567, "w.c");
+            var buildInData3 = new DatabaseFile("testfolder/ac/w.c", "cb123456", 1234567, "w.c");
 
-            var buildInData4 = new BuildInDbFile("testfolder/ac/w.d", "dc123456", 1234567, "w.c");
+            var buildInData4 = new DatabaseFile("testfolder/ac/w.d", "dc123456", 1234567, "w.c");
             
-            var buildInData5 = new BuildInDbFile("testfolder/ac/w.d", "da123456", 1234567, "w.c");
+            var buildInData5 = new DatabaseFile("testfolder/ac/w.d", "da123456", 1234567, "w.c");
 
             //deletedFile
             localFiles.Add(buildInData1);

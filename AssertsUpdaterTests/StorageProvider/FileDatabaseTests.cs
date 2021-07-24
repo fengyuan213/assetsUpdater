@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-
+using assetsUpdater.AddressBuilder;
 using assetsUpdater.Model;
 using assetsUpdater.Model.StorageProvider;
 using assetsUpdater.StorageProvider;
@@ -18,8 +18,8 @@ namespace AssertsUpdaterTests.StorageProvider
     [TestClass]
     public class FileDatabaseTests
     {
-        public BuildInDbData FileDatabaseData { get; set; }
-        public BuildInDbConfig FileDatabaseConfig { get; set; }
+        public static DbData FileDatabaseData { get; set; }
+        public static DbConfig FileDatabaseConfig { get; set; }
         public int FileCount { get; set; }
         public IEnumerable<string> FileNames { get; set; }
         public IEnumerable<string> FileHashes { get; set; }
@@ -33,19 +33,19 @@ namespace AssertsUpdaterTests.StorageProvider
             var vCFolder = Path.Combine(Utils.Utils.WorkingDir);
             if (isMac) vCFolder = "/Users/fengyuan/Data/1.16.5虚无3 现代整合（JAVA8版本虚无更新到beta3/ 1.16.5虚无3/";
 
-            FileDatabaseConfig = new BuildInDbConfig(vCFolder)
+            FileDatabaseConfig = new DbConfig(vCFolder)
             {
-                DatabaseSchema = new BuildInDbSchema
+                DatabaseSchema = new DbSchema
                 {
                     DirList = new List<string> { "testFiles" }
                 },
 
                 MajorVersion = 1,
                 MirrorVersion = 2,
-                RootDownloadAddress = null
+                DownloadAddressBuilder = new Cdn8N6NAddressBuilder(Directory.GetCurrentDirectory(),"apiroot","apikey","secret")
             };
 
-            FileDatabaseData = new BuildInDbData(FileDatabaseConfig);
+            FileDatabaseData = new DbData(FileDatabaseConfig);
             FileCount = Utils.Utils.GenTestFiles("testFiles", out var fileNames, out var fileHashes,
                 out var fileSizeInMbs);
 
@@ -72,7 +72,7 @@ namespace AssertsUpdaterTests.StorageProvider
         {
             return new() { Data = FileDatabaseData };
         }
-        private FileDatabase CreateFileDatabase(BuildInDbData dbData)
+        private FileDatabase CreateFileDatabase(DbData dbData)
         {
 
             return new() { Data = dbData };
@@ -87,11 +87,11 @@ namespace AssertsUpdaterTests.StorageProvider
             Assert.IsTrue(true);
         }
 
-        private BuildInDbData GetExceptedDbData()
+        private DbData GetExceptedDbData()
         {
-            var config = new BuildInDbConfig("vcs")
+            var config = new DbConfig("vcs")
             {
-                DatabaseSchema = new BuildInDbSchema()
+                DatabaseSchema = new DbSchema()
                 {
                     DirList = new List<string>()
                     {
@@ -100,14 +100,15 @@ namespace AssertsUpdaterTests.StorageProvider
                 },
                 MajorVersion = 1,
                 MirrorVersion = 1,
-                RootDownloadAddress = "rda"
+                DownloadAddressBuilder = new Cdn8N6NAddressBuilder(Directory.GetCurrentDirectory(),"apiRoot", "apiKey", "apiScret")
+
             };
-            return new BuildInDbData(config)
+            return new DbData(config)
             {
 
-                DatabaseFiles = new List<BuildInDbFile>()
+                DatabaseFiles = new List<DatabaseFile>()
                 {
-                    new BuildInDbFile("Test\\data", "abcdefg", 123, "")
+                    new DatabaseFile("Test\\data", "abcdefg", 123, "")
                 }
             };
         }

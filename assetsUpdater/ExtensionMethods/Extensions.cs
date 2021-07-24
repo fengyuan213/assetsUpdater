@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 
 using assetsUpdater.Model;
+using assetsUpdater.Model.StorageProvider;
 
 namespace assetsUpdater.ExtensionMethods
 {
@@ -11,7 +12,7 @@ namespace assetsUpdater.ExtensionMethods
     {
 
 
-        public static T CastObject<T>(this BuildInDbFile myobj)
+        public static T CastObject<T>(this DatabaseFile myobj)
         {
             Type objectType = myobj.GetType();
             Type target = typeof(T);
