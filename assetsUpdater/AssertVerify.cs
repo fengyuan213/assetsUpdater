@@ -8,7 +8,7 @@ using assetsUpdater.Model.StorageProvider;
 
 namespace assetsUpdater
 {
-    public class Verification
+    public class AssertVerify
     {
 
         /*public static void Compare(IEnumerable<AssertUpgradePackage> assertUpgradesA,IEnumerable<AssertUpgradePackage> assertUpgradesB)
@@ -79,7 +79,7 @@ namespace assetsUpdater
         }
         
 
-        public Verification()
+        public AssertVerify()
         {
 
         }

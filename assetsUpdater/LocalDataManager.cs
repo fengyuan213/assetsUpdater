@@ -6,37 +6,22 @@ using assetsUpdater.StorageProvider;
 
 namespace assetsUpdater
 {
-    public class LocalDataManager
+    public class LocalDataManager :DataManager
     {
-        private static LocalDataManager localDataManager = null;
-        public static LocalDataManager GetInstance
+    
+        public LocalDataManager(string dbPath) : base(dbPath)
         {
-            get
-            {
-                return LocalDataManager.localDataManager?? throw new  NullReferenceException(nameof(localDataManager)+":can't be null");
-            }
-        }
-
-        public IStorageProvider StorageProvider { get; set; }
-        public void SetLocalDataManager(string dbPath)
-        {
-            localDataManager = new LocalDataManager(dbPath);
-        }
-
-        public LocalDataManager(string dbPath)
-        {
-            DatabasePath = dbPath;
+            /*DatabasePath = dbPath;
             if (!string.IsNullOrWhiteSpace(dbPath))
             {
                 StorageProvider = new FileDatabase(dbPath);
-            }
-           
-            
+            }*/
+
+
         }
         
-        public string DatabasePath = null;
-        
-        public Task<bool> IsLocalDataValid()
+
+        public override Task<bool> IsDataValid()
         {
             if (string.IsNullOrWhiteSpace(DatabasePath))
             {

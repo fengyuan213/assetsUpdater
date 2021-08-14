@@ -2,7 +2,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace assetsUpdater.Utils
 {
@@ -28,6 +30,16 @@ namespace assetsUpdater.Utils
             var fileInfo = new FileInfo(path);
             if (fileInfo.Exists) return fileInfo.Length;
             return 0;
+        }
+
+        public static async Task<long> GetFileSizeRemote(string url)
+        {
+            var request = WebRequest.CreateHttp(url);
+            request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1";
+            request.Method = "HEAD";
+            using var response = await request.GetResponseAsync().ConfigureAwait(true);
+            var length = response.ContentLength;
+            return length;
         }
 
         public static string[] GetAllFilesInADirectory(string rootFolder, string directory)

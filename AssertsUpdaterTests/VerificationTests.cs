@@ -21,9 +21,9 @@ namespace AssertsUpdaterTests
 
         }
 
-        private Verification CreateVerification()
+        private AssertVerify CreateVerification()
         {
-            return new Verification();
+            return new AssertVerify();
         }
 
         [TestMethod]

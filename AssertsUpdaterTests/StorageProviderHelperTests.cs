@@ -25,9 +25,9 @@ namespace AssertsUpdaterTests
             this.mockStorageProvider = Mock.Create<FileDatabase>();
         }
 
-        private StorageProviderHelper CreateStorageProviderHelper()
+        private DatabaseBuilder CreateStorageProviderHelper()
         {
-            return new StorageProviderHelper(
+            return new DatabaseBuilder(
                 this.mockStorageProvider);
         }
 
@@ -52,7 +52,7 @@ namespace AssertsUpdaterTests
                 MirrorVersion = 2,
                 DownloadAddressBuilder = new Cdn8N6NAddressBuilder(Directory.GetCurrentDirectory(),"apiRoot","apiKey","apiScret")
             };
-            var isMac = false;
+
             
           
 
@@ -67,8 +67,7 @@ namespace AssertsUpdaterTests
             string exportPath = Path.GetTempFileName();
      
             // Act
-            await storageProviderHelper.BuildRemoteDatabase(
-                downloadAddressBuilder,
+            await storageProviderHelper.BuildDatabaseWithUrl(
                 config,
                 exportPath);
 

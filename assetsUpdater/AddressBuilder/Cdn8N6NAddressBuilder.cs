@@ -27,7 +27,7 @@ namespace assetsUpdater.AddressBuilder
             ApiSecret = apiSecret;
             LocalRootPath = downloadLocalRoot;
         }
-
+        
         public string RootDownloadAddress { get; set; }
         public string LocalRootPath { get; set; }
 

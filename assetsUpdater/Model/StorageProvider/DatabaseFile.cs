@@ -4,6 +4,14 @@ namespace assetsUpdater.Model.StorageProvider
 {
     public class DatabaseFile
     {
+
+        public DatabaseFile(DatabaseFile databaseFile)
+        {
+            databaseFile.DownloadAddress = DownloadAddress;
+            databaseFile.FileSize = FileSize;
+            databaseFile.Hash = Hash;
+            databaseFile.RelativePath = RelativePath;
+        }
         public DatabaseFile(string relativePath, string hash, long fileSize, string downloadAddress)
         {
             RelativePath = relativePath;
