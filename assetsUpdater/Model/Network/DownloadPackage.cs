@@ -5,7 +5,7 @@ using assetsUpdater.Interfaces;
 
 namespace assetsUpdater.Model.Network
 {
-    public abstract class DownloadPackage
+    public class DownloadPackage
     {
         public long SizeTotal { get; private set; }
         public Uri Uri { get; set; }

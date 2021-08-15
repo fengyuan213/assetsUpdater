@@ -46,31 +46,31 @@ namespace assetsUpdater.StorageProvider
         public FileDatabase()
         {
         }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="obj">IEnumerable<object>,obj[0] download address obj[1] NetworkCredential}</param>
+        /// <exception cref="ArgumentNullException"></exception>
         /// <returns></returns>
         public async Task Download(object obj)
         {
             //  [NotNull] string url, NetworkCredential networkCredential = null;
-            var enumrObj = obj as IEnumerable<object>;
-            var url = enumrObj.ToList()[0] as string;
-            var networkCredential = enumrObj.ToList()[1] as NetworkCredential;
-            using (var webclient = new WebClient())
+            var arrObj = obj as object[];
+            var url = arrObj?[0] as string;
+            var networkCredential = arrObj?[1] as NetworkCredential;
+            if (string.IsNullOrWhiteSpace(url))
             {
-                //Nutstore services creditionals
-                webclient.Credentials = networkCredential ?? CredentialCache.DefaultNetworkCredentials;
-                var data = webclient.DownloadData(url);
-                var stream = new MemoryStream(data);
-
-                using (var zipArchive = new ZipArchive(stream, ZipArchiveMode.Read))
-                {
-                    Data = await DbDataReader(zipArchive).ConfigureAwait(true);
-                }
-
+                throw new ArgumentNullException(nameof(url));
             }
 
+            using var webClient = new WebClient
+            {
+                Credentials = networkCredential ?? CredentialCache.DefaultNetworkCredentials
+            };
+            await using var stream = new MemoryStream(await webClient.DownloadDataTaskAsync(url).ConfigureAwait(true));
+            using var zipArchive = new ZipArchive(stream, ZipArchiveMode.Read);
+            Data = await DbDataReader(zipArchive).ConfigureAwait(true);
         }
 
 
@@ -95,6 +95,7 @@ namespace assetsUpdater.StorageProvider
             if (!File.Exists(path)) throw new IOException("Database can't be found");
             try
             {
+                
                 using (var zipArchive = ZipFile.OpenRead(path))
                 {
                     await DbDataReader(zipArchive).ConfigureAwait(true);

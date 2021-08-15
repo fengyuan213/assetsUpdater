@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using assetsUpdater.Interfaces;
 using assetsUpdater.StorageProvider;
@@ -8,7 +9,11 @@ namespace assetsUpdater
 {
     public class LocalDataManager :DataManager
     {
-    
+
+        public LocalDataManager(IStorageProvider storageProvider):base(storageProvider)
+        {
+            
+        }
         public LocalDataManager(string dbPath) : base(dbPath)
         {
             /*DatabasePath = dbPath;
@@ -19,31 +24,27 @@ namespace assetsUpdater
 
 
         }
-        
 
-        public override Task<bool> IsDataValid()
+  
+        public override async Task<bool> IsDataValid()
         {
-            if (string.IsNullOrWhiteSpace(DatabasePath))
+             
+            if (!string.IsNullOrWhiteSpace(DatabasePath))
             {
-                return Task.FromResult(false);
+                if (!File.Exists(DatabasePath)) return false;
+                try
+                {
+                    FileDatabase database = new FileDatabase(DatabasePath);
+                    return database.IsValidDb();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return false;
+                }
+            }
+            return await base.IsDataValid(); ;
 
-            }
-            if (!File.Exists(DatabasePath))
-            {
-                return Task.FromResult(false);
-            }
-
-            try
-            {
-
-                FileDatabase database = new FileDatabase(DatabasePath);
-                return Task.FromResult(database.IsValidDb());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return Task.FromResult(false);
-            }
         }
     }
 }

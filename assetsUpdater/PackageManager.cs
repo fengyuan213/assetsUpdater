@@ -1,94 +1,138 @@
-﻿using System;
+﻿#region Using
+
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using assetsUpdater.EventArgs;
 using assetsUpdater.Exceptions;
+using assetsUpdater.Interfaces;
 using assetsUpdater.Model;
+using assetsUpdater.Model.Network;
+using assetsUpdater.Model.StorageProvider;
+using assetsUpdater.Network;
+using assetsUpdater.Utils;
+
+#endregion
 
 namespace assetsUpdater
 {
-  
     public class PackageManager
     {
-      
-        public event EventHandler<MessageNotifyEventArgs> MessageNotify;
-        public AssertUpgradePackage AssertUpgradePackage { get; set; }
-        public string LocalRootPath { get; set; }
-        public PackageManager(string localRootPath,AssertUpgradePackage assertUpgradePackage)
+        public PackageManager(string localRootPath, AssertUpgradePackage assertUpgradePackage)
         {
             AssertUpgradePackage = assertUpgradePackage;
             LocalRootPath = localRootPath;
-            MessageNotify += PackageManager_MessageNotify;
+        }
+        public AssertUpgradePackage AssertUpgradePackage { get; set; }
+        public string LocalRootPath { get; set; }
+        public event EventHandler<MessageNotifyEventArgs> MessageNotify;
+
+
+        /// <summary>
+        /// This will apply both Local and Remote (Means start download queue)
+        /// </summary>
+        /// <returns></returns>
+        public async Task<DownloadQueue> Apply()
+        {
+            await Apply_Local();
+            var downloadQueue = await Apply_Remote();
+            return downloadQueue;
         }
 
-        private void PackageManager_MessageNotify(object sender, MessageNotifyEventArgs e)
+        protected virtual IEnumerable<IDownloadUnit> BuildDownloadUnits(int asyncThresholdSizeMb = 5)
         {
-       
+            var downloadUnits = new List<IDownloadUnit>();
+            downloadUnits.AddRange(AssertUpgradePackage.AddFile.Select(databaseFile =>
+                BuildDownloadUnit(databaseFile, LocalRootPath, asyncThresholdSizeMb)).ToList());
+            downloadUnits.AddRange(AssertUpgradePackage.DifferFile.Select(databaseFile =>
+                BuildDownloadUnit(databaseFile, LocalRootPath, asyncThresholdSizeMb)));
+            return downloadUnits;
         }
 
-        protected virtual void OnDeletionFailed(string msg,string filepath,Exception e =null)
+        protected virtual IDownloadUnit BuildDownloadUnit(DatabaseFile databaseFile, string localRootPath,
+            int asyncThresholdSize)
         {
-            MessageNotify?.Invoke(this,new MessageNotifyEventArgs(MsgL.Error,msg,true,e??new FileDeletionException("未能删除:"+filepath,e)));
+            var downloadPackage = BuildDownloadPackage(databaseFile, localRootPath);
+            if (FileSizeParser.ParseMb(databaseFile.FileSize) > asyncThresholdSize)
+            {
+                downloadPackage.DownloadMode = DownloadMode.MultiPart;
+                var mPartUnit = new MPartDownload(downloadPackage);
+                return mPartUnit;
+            }
+
+            downloadPackage.DownloadMode = DownloadMode.Async;
+            var asyncUnit = new AsyncDownload(downloadPackage);
+            return asyncUnit;
+        }
+
+        protected virtual DownloadPackage BuildDownloadPackage(DatabaseFile databaseFile, string localRootPath)
+        {
+            var uri = new Uri(databaseFile.DownloadAddress);
+            var localPath = Path.Combine(localRootPath, databaseFile.RelativePath);
+            var fileSize = databaseFile.FileSize;
+            var exceptedHash = databaseFile.Hash;
+            var downloadMode = DownloadMode.Async;
+            var downloadPackage = new DownloadPackage(uri, localPath, fileSize, exceptedHash, downloadMode);
+
+            return downloadPackage;
+        }
+
+        protected virtual DownloadQueue BuildDownloadConfig()
+        {
+            var total = AssertUpgradePackage.DifferFile.Count() + AssertUpgradePackage.AddFile.Count();
+            var parallelCount = 5;
+            if (total > 100)
+                parallelCount = 80;
+            else if (total > 50)
+                parallelCount = 20;
+            else if (total > 20)
+                parallelCount = 10;
+            else if (total > 10) parallelCount = 9;
+
+            var downloadQueue = new DownloadQueue(parallelCount);
+            downloadQueue.MaxParallelMPartDownloadCount = 1;
+            return downloadQueue;
+        }
+
+        public virtual async Task<DownloadQueue> Apply_Remote()
+        {
+            var downloadQueue = BuildDownloadConfig();
+            var downloadUnits = BuildDownloadUnits();
+            await downloadQueue.QueueDownload(downloadUnits).ConfigureAwait(true);
+            return downloadQueue;
+        }
+
+        public Task Apply_Local()
+        {
+            foreach (var deleteFile in AssertUpgradePackage.DeleteFile)
+                RemoveFile(Path.Combine(LocalRootPath, deleteFile.RelativePath));
+
+            foreach (var databaseFile in AssertUpgradePackage.DifferFile)
+                RemoveFile(Path.Combine(LocalRootPath, databaseFile.RelativePath));
+            return Task.CompletedTask;
+        }
+
+
+        private void OnDeletionFailed(string msg, string filepath, Exception e = null)
+        {
+            MessageNotify?.Invoke(this,
+                new MessageNotifyEventArgs(MsgL.Error, msg, true, new FileDeletionException("未能删除:" + filepath, e)));
         }
 
         private void RemoveFile(string path)
         {
-            if (string.IsNullOrWhiteSpace(path))
+            if (string.IsNullOrWhiteSpace(path)) return;
+
+            try
             {
-                return;
+                if (File.Exists(path)) File.Delete(path);
             }
-
-            if (File.Exists(path))
+            catch (Exception e)
             {
-                File.Delete(path);
-
+                OnDeletionFailed("删除文件失败", path, e);
             }
-
-            if (File.Exists(path))
-            {
-                OnDeletionFailed("删除文件失败",path);
-            }
-        }
-
-        public async Task Apply()
-        {
-            await Apply_Non_Download();
-        }
-
-        public async Task ApplyDownload()
-        {
-
-        }
-        public  Task Apply_Non_Download()
-        {
-            foreach (var deleteFile in AssertUpgradePackage.DeleteFile)       
-            {
-                RemoveFile(Path.Combine(LocalRootPath,deleteFile.RelativePath));
-            }
-
-            foreach (var databaseFile in AssertUpgradePackage.DifferFile)
-            {
-                RemoveFile(Path.Combine(LocalRootPath, databaseFile.RelativePath));
-            }
-            return Task.CompletedTask;
-        }
-        public static async Task RequestServer()
-        {
-            await RequestInternal();
-            await GatherLocalData();
-
-        }
-        public static async Task<AssertUpgradePostProcess> UpgradeAsync(AssertUpgradePackage assertUpgradePackage)
-        {
-            return null;
-        }
-        private static Task RequestInternal()
-        {
-            return null;
-        }
-        private static Task GatherLocalData()
-        {
-            return null;
         }
     }
 }
