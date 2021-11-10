@@ -13,37 +13,42 @@ using assetsUpdater.Model.StorageProvider;
 
 namespace assetsUpdater
 {
-    public class AssertVerify
+    public static class AssertVerify
     {
-        public event EventHandler<MessageNotifyEventArgs> MessageNotify;
+        public static event EventHandler<MessageNotifyEventArgs> MessageNotify;
 
-        private static async Task<RemoteDataManager> Check_UpdateInternal(DataManager dm,string url)
+        private static async Task<(RemoteDataManager remoteDataManager,bool isUpdateRequired)> Check_UpdateInternal(DataManager dm,string url)
         {
             if (!await dm.IsDataValid())
             {
                 //Data invalid return
-                return null;
+                return (null,false);
             }
-
+            
+          
             var remoteDb = await RemoteDataManager.GetStorageProvider(url);
+            
             if (await IsUpdateRequired(dm.StorageProvider, remoteDb))
             {
-                return new RemoteDataManager(remoteDb);
+
+               
+                return (new RemoteDataManager(remoteDb), true);
             }
-            //No updates return null    
-            return null;
+            //No updates return default    
+            
+            return (new RemoteDataManager(remoteDb), false);
         }
   
     
  
 
-        public static async Task<RemoteDataManager> Check_Update(IStorageProvider localProvider,string remoteUrl)
+        public static async Task<(RemoteDataManager remoteDataManager, bool isUpdateRequired)> Check_Update(IStorageProvider localProvider,string remoteUrl)
         {
             LocalDataManager localDataManager = new LocalDataManager(localProvider);
             return  await Check_UpdateInternal(localDataManager,remoteUrl);
         }
 
-        public static async Task<RemoteDataManager> Check_Update(string localDbPath,string remoteUrl)
+        public static async Task<(RemoteDataManager remoteDataManager, bool isUpdateRequired)> Check_Update(string localDbPath,string remoteUrl)
         {
             LocalDataManager localDataManager = new LocalDataManager(localDbPath);
             return await Check_UpdateInternal(localDataManager,remoteUrl);
@@ -55,7 +60,7 @@ namespace assetsUpdater
             var localData = local.GetBuildInDbData();
             var remoteData = remote.GetBuildInDbData();
 
-            if (localData.Config.MajorVersion != remoteData.Config.MajorVersion)
+            if (localData.Config.MajorVersion != remoteData.Config.MajorVersion||localData.Config.MirrorVersion!=remoteData.Config.MirrorVersion)
             {
                 return Task.FromResult(false);
             }
@@ -67,14 +72,14 @@ namespace assetsUpdater
     {
         
     }*/
-        public AssertUpgradePackage DatabaseCompare(IStorageProvider remoteProvider,IStorageProvider localProvider)
+        public static AssertUpgradePackage DatabaseCompare(IStorageProvider remoteProvider,IStorageProvider localProvider)
         {
            var remoteData=  remoteProvider.GetBuildInDbData().DatabaseFiles;
            var localData= localProvider.GetBuildInDbData().DatabaseFiles;
            return DatabaseCompare(remoteData, localData);
         }
 
-        public AssertUpgradePackage  DatabaseCompare(IEnumerable<DatabaseFile> remoteFiles,
+        public static AssertUpgradePackage  DatabaseCompare(IEnumerable<DatabaseFile> remoteFiles,
             IEnumerable<DatabaseFile> localFiles)
         {
 

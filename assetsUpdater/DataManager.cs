@@ -12,7 +12,7 @@ namespace assetsUpdater
     public abstract class DataManager
     {
         
-        public IStorageProvider StorageProvider { get; set; }
+        public IStorageProvider StorageProvider { get; private set; }
 
         protected DataManager(IStorageProvider storageProvider)
         {

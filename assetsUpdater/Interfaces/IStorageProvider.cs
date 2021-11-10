@@ -11,7 +11,7 @@ namespace assetsUpdater.Interfaces
     public interface IStorageProvider : IEquatable<Object>
     {
         DbData GetBuildInDbData();
-        Task Create(DbConfig config);
+        Task Create(DbConfig config); 
         IDictionary<string, DatabaseFile> ConvertToDictionary();
         Task Export(string path);
         Task Read(Object obj);

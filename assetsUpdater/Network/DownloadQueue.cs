@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using assetsUpdater.Interfaces;
@@ -108,6 +109,7 @@ namespace assetsUpdater.Network
             }
             else if (downloadUnit.DownloadMode==DownloadMode.MultiPart)
             {
+                
                  var  mPartDownload = (MPartDownload) downloadUnit;
                  
                  //mPartDownload.DownloadService.ChunkDownloadProgressChanged += OnChunkDownloadProgressChanged;
