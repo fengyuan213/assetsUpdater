@@ -1,18 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Timers;
 using assetsUpdater;
+using assetsUpdater.AddressBuilder;
 using assetsUpdater.Interfaces;
+using assetsUpdater.Model.StorageProvider;
 using assetsUpdater.StorageProvider;
 
 namespace assertsUpdaterExample
 {
     class Program
     {
-        static async void AssertVerifyMain()
+        static async void AssertVerifyPokecityMain()
         {
 
             var url = "";
             var dbPath = "";
             LocalDataManager ldm = new LocalDataManager(dbPath);
+            
             IStorageProvider localStorageProvider = ldm.StorageProvider;
             var result = await AssertVerify.Check_Update(localStorageProvider,url);
 
@@ -57,11 +64,43 @@ namespace assertsUpdaterExample
             Console.WriteLine("Level:{0}|Message:{1},|Exception:{2}",e.MessageLevel,e.Message,e.Exception);
         }
 
+        static DbConfig GetDbConfig()
+        {
+            var vcsFolder= @"C:\Users\fengy\Desktop\[低配]PoKeCitY客户端-公测 v1.2.6.3";
+            var dbSchemas = new List<string>();
+            dbSchemas.Add(".minecraft/versions");
+            dbSchemas.Add("HMCL.exe");
+    
+            var config = new DbConfig( vcsFolder)
+            {
+                MajorVersion = 1,
+                MirrorVersion = 1,
+                DatabaseSchema = new DbSchema()
+                {
+                    DirList = dbSchemas.ToArray()
+                },
+                DownloadAddressBuilder =  new Cdn8N6NAddressBuilder("downloadLocalRoot","apiRoot","apiKey","apiSecret")
+            };
+         
+            return config;
+        }
+        static async void BuildLocalDb()
+        {
+            var exportPath = @"C:\Users\fengy\Desktop\ldb.zip";
+            DatabaseBuilder db = new DatabaseBuilder(new FileDatabase());
+            await  db.BuildDatabase(GetDbConfig(),exportPath);
+        }
         static void Main(string[] args)
         {
             try
             {
-                AssertVerifyMain();
+                Console.WriteLine("Building Local DB");
+                var sw = new Stopwatch();
+                sw.Start();
+                BuildLocalDb();
+                sw.Stop();
+                Console.WriteLine("Local Db Build Finished,Time:{0}",sw.Elapsed.Milliseconds);
+                //AssertVerifyPokecityMain();
             }
             catch (Exception e)
             {

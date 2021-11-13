@@ -70,7 +70,7 @@ namespace assetsUpdater
         protected virtual DownloadPackage BuildDownloadPackage(DatabaseFile databaseFile, string localRootPath)
         {
             var uri = new Uri(databaseFile.DownloadAddress);
-            var localPath = Path.Combine(localRootPath, databaseFile.RelativePath);
+            var localPath = Path.Join(localRootPath, databaseFile.RelativePath);
             var fileSize = databaseFile.FileSize;
             var exceptedHash = databaseFile.Hash;
             var downloadMode = DownloadMode.Async;
@@ -107,10 +107,10 @@ namespace assetsUpdater
         public Task Apply_Local()
         {
             foreach (var deleteFile in AssertUpgradePackage.DeleteFile)
-                RemoveFile(Path.Combine(LocalRootPath, deleteFile.RelativePath));
+                RemoveFile(Path.Join(LocalRootPath, deleteFile.RelativePath));
 
             foreach (var databaseFile in AssertUpgradePackage.DifferFile)
-                RemoveFile(Path.Combine(LocalRootPath, databaseFile.RelativePath));
+                RemoveFile(Path.Join(LocalRootPath, databaseFile.RelativePath));
             return Task.CompletedTask;
         }
 

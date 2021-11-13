@@ -11,7 +11,7 @@ namespace AssertsUpdaterTests
     public class PackageManagerTests
     {
         private AssertUpgradePackage mockAssertUpgradePackage;
-        private string _localRootPath = Path.Combine(Path.GetTempPath(),"PackageManagerTests");
+        private string _localRootPath = Path.Join(Path.GetTempPath(),"PackageManagerTests");
         [TestInitialize]
         public void TestInitialize()
         {

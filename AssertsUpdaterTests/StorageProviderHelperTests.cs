@@ -40,7 +40,7 @@ namespace AssertsUpdaterTests
             var secretKey = "secretKey";
             var storageProviderHelper = this.CreateStorageProviderHelper();
             IAddressBuilder downloadAddressBuilder =new Cdn8N6NAddressBuilder(Directory.GetCurrentDirectory(),apiRoot,accessKey,secretKey);
-            var vCFolder = Path.Combine(Utils.Utils.WorkingDir);
+            var vCFolder = Path.Join(Utils.Utils.WorkingDir);
             DbConfig config = new DbConfig(vCFolder)
             {
                 DatabaseSchema = new DbSchema

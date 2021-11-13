@@ -46,7 +46,7 @@ namespace assetsUpdater.Utils
         {
             if (string.IsNullOrWhiteSpace(rootFolder)) rootFolder = AppDomain.CurrentDomain.BaseDirectory;
             if (string.IsNullOrWhiteSpace(directory)) return Array.Empty<string>();
-            var directoryPath = Path.Combine(rootFolder, directory);
+            var directoryPath = Path.Join(rootFolder, directory);
 
             //rootFolder.TrimEnd('/', '\\');
             /*if (rootFolder.Last() == '/' || rootFolder.Last() == '\\')

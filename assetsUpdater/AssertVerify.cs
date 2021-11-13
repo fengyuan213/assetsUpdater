@@ -44,12 +44,16 @@ namespace assetsUpdater
 
         public static async Task<(RemoteDataManager remoteDataManager, bool isUpdateRequired)> Check_Update(IStorageProvider localProvider,string remoteUrl)
         {
+           
+            if (string.IsNullOrWhiteSpace(remoteUrl)) return (null, false);
             LocalDataManager localDataManager = new LocalDataManager(localProvider);
             return  await Check_UpdateInternal(localDataManager,remoteUrl);
         }
 
         public static async Task<(RemoteDataManager remoteDataManager, bool isUpdateRequired)> Check_Update(string localDbPath,string remoteUrl)
         {
+            
+            if (string.IsNullOrWhiteSpace(localDbPath)|| string.IsNullOrWhiteSpace(remoteUrl)) return (null, false);
             LocalDataManager localDataManager = new LocalDataManager(localDbPath);
             return await Check_UpdateInternal(localDataManager,remoteUrl);
         }
@@ -136,9 +140,6 @@ namespace assetsUpdater
         }
         
 
-        public AssertVerify()
-        {
-
-        }
+  
     }
 }

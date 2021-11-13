@@ -44,7 +44,7 @@ namespace assetsUpdater.AddressBuilder
        
         public  string BuildDownloadLocalPath(string relativePath)
         {
-            return Path.Combine(LocalRootPath, relativePath);
+            return Path.Join(LocalRootPath, relativePath);
         }
     }
 }

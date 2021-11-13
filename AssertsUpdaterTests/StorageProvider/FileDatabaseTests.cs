@@ -30,7 +30,7 @@ namespace AssertsUpdaterTests.StorageProvider
         public void TestInitialize()
         {
             var isMac = false;
-            var vCFolder = Path.Combine(Utils.Utils.WorkingDir);
+            var vCFolder = Path.Join(Utils.Utils.WorkingDir);
             if (isMac) vCFolder = "/Users/fengyuan/Data/1.16.5虚无3 现代整合（JAVA8版本虚无更新到beta3/ 1.16.5虚无3/";
 
             FileDatabaseConfig = new DbConfig(vCFolder)
@@ -83,7 +83,7 @@ namespace AssertsUpdaterTests.StorageProvider
         {
             var exceptedFileDatafilesDatabase = GetExceptedFileDatabase_ForDownload();
 
-            await exceptedFileDatafilesDatabase.Export(Path.Combine(Directory.GetCurrentDirectory(), "expectedFileDatabase.zip")).ConfigureAwait(true);
+            await exceptedFileDatafilesDatabase.Export(Path.Join(Directory.GetCurrentDirectory(), "expectedFileDatabase.zip")).ConfigureAwait(true);
             Assert.IsTrue(true);
         }
 
@@ -152,7 +152,7 @@ namespace AssertsUpdaterTests.StorageProvider
             // Arrange
             var fileDatabase = CreateFileDatabase();
             var exceptedFileDatabase = GetExceptedFileDatabase_ForDownload();
-            var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            var path = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
 
             await exceptedFileDatabase.Export(path).ConfigureAwait(true);
 

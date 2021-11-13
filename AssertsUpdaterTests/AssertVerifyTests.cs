@@ -22,16 +22,13 @@ namespace AssertsUpdaterTests
 
         }
 
-        private AssertVerify CreateVerification()
-        {
-            return new AssertVerify();
-        }
+     
 
         [TestMethod]
         public void DatabaseCompare_FileConstructor_ExpectedBehavior()
         {
             // Arrange
-            var verification = this.CreateVerification();
+            
             List<DatabaseFile> remoteFiles = new List<DatabaseFile>();
             List<DatabaseFile> localFiles = new List<DatabaseFile>();
             var buildInData1 = new DatabaseFile("testfolder/ac/w.a","ad123456",1234567,"w.c");
@@ -50,7 +47,7 @@ namespace AssertsUpdaterTests
             remoteFiles.Add(buildInData3);
             
             // Act
-            var result = verification.DatabaseCompare(
+            var result = AssertVerify.DatabaseCompare(
                 remoteFiles,
                 localFiles);
 
@@ -71,7 +68,7 @@ namespace AssertsUpdaterTests
         public void DatabaseCompare_IStorageProviderConstructor()
         {
             // Arrange
-            var verification = this.CreateVerification();
+   
             List<DatabaseFile> remoteFiles = new List<DatabaseFile>();
             List<DatabaseFile> localFiles = new List<DatabaseFile>();
             var buildInData1 = new DatabaseFile("testfolder/ac/w.a", "ad123456", 1234567, "w.c");
@@ -99,7 +96,7 @@ namespace AssertsUpdaterTests
 
 
             // Act
-            var result = verification.DatabaseCompare(remoteStorageProvider, localStorageProvider);
+            var result = AssertVerify.DatabaseCompare(remoteStorageProvider, localStorageProvider);
 
 
             // Assert
@@ -139,7 +136,7 @@ namespace AssertsUpdaterTests
 
             var dbManager = await AssertVerify.Check_Update(provider, Check_UpdateUrl);
           
-            if (dbManager!=null)
+            if (dbManager.remoteDataManager!=null)
             {
                 Assert.Fail("DBManager Should return null   ");
             }
@@ -150,7 +147,7 @@ namespace AssertsUpdaterTests
         {
             var dbManager = await AssertVerify.Check_Update("ad", Check_UpdateUrl);
 
-            if (dbManager != null)
+            if (dbManager.remoteDataManager != null)
             {
                 Assert.Fail("DBManager Should return null   ");
             }
@@ -162,9 +159,9 @@ namespace AssertsUpdaterTests
             var provider = GetStorageProvider_Check_Update();
             var remoteDbManager = await AssertVerify.Check_Update(provider, Check_UpdateUrl);
             
-            Assert.IsTrue(await remoteDbManager.IsDataValid());
+            Assert.IsTrue(await remoteDbManager.remoteDataManager.IsDataValid());
 
-            Assert.IsFalse(remoteDbManager.StorageProvider.GetBuildInDbData().Config.MajorVersion==provider.GetBuildInDbData().Config.MajorVersion);
+            Assert.IsFalse(remoteDbManager.remoteDataManager.StorageProvider.GetBuildInDbData().Config.MajorVersion==provider.GetBuildInDbData().Config.MajorVersion);
 
         }
     }

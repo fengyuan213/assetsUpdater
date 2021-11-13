@@ -89,7 +89,7 @@ namespace AssertsUpdaterTests
 
         private IAddressBuilder GetAddressBuilder()
         {
-            var downloadLocalRoot = Path.Combine(Path.GetTempPath(), "LocalDownloadRoot");
+            var downloadLocalRoot = Path.Join(Path.GetTempPath(), "LocalDownloadRoot");
             const string apiRoot = "http://downloads.pokecity.club";
             const string apiKey = "apiKey";
             const string apiSecret = "apiSecret";

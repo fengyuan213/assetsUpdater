@@ -8,6 +8,7 @@ namespace assetsUpdater.Model.StorageProvider
 {
     public class DbConfig
     {
+        private string _versionControlFolder = null;
         /// <summary>
         /// This constructor is used for creating local database
         /// </summary>
@@ -19,7 +20,24 @@ namespace assetsUpdater.Model.StorageProvider
             VersionControlFolder = versionControlFolder;
         }
 
-        [NotNull] public string VersionControlFolder { get; set; }
+        [NotNull]
+        public string VersionControlFolder
+        {
+            get => _versionControlFolder ;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value) || !Directory.Exists(value))
+                {
+                    _versionControlFolder = null;
+                    throw new ArgumentException("Invalid Version Control Folder", nameof(VersionControlFolder));
+                }
+                else
+                {
+                    _versionControlFolder = value;
+                }
+            }
+        }
+
         [NotNull] public DbSchema DatabaseSchema { get; set; }
         /// <summary>
         ///     The major version of the database

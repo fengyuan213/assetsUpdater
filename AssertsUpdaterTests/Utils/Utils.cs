@@ -18,7 +18,7 @@ namespace AssertsUpdaterTests.Utils
             fileNames = new List<string>();
             fileHashes = new List<string>();
             fileSizeInMbs = new List<int>();
-            var fileDir = Path.Combine(WorkingDir, subDir);
+            var fileDir = Path.Join(WorkingDir, subDir);
 
             for (int i = 0; i < upper; i++)
             {
@@ -39,7 +39,7 @@ namespace AssertsUpdaterTests.Utils
             Directory.CreateDirectory(fileDir);
 
             var sizeInKb = random.Next(1 * 1000, 5 * 1000); // Up to many Gb
-            var fileRoot = Path.Combine(fileDir, fileName);
+            var fileRoot = Path.Join(fileDir, fileName);
             using FileStream stream = new FileStream(fileRoot, FileMode.Create);
             using BinaryWriter writer = new BinaryWriter(stream);
             while (writer.BaseStream.Length <= sizeInKb * 1000)
