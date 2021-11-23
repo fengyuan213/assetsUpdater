@@ -1,18 +1,18 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using assetsUpdater.Interfaces;
+﻿using assetsUpdater.Interfaces;
 using assetsUpdater.StorageProvider;
+
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace assetsUpdater
 {
-    public class LocalDataManager :DataManager
+    public class LocalDataManager : DataManager
     {
 
-        public LocalDataManager(IStorageProvider storageProvider):base(storageProvider)
+        public LocalDataManager(IStorageProvider storageProvider) : base(storageProvider)
         {
-            
+
         }
         public LocalDataManager(string dbPath) : base(dbPath)
         {
@@ -25,10 +25,10 @@ namespace assetsUpdater
 
         }
 
-  
+
         public override async Task<bool> IsDataValid()
         {
-             
+
             if (!string.IsNullOrWhiteSpace(DatabasePath))
             {
                 if (!File.Exists(DatabasePath)) return false;

@@ -1,7 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using assetsUpdater.Model.StorageProvider;
+
+using System.Collections.Generic;
 
 namespace assetsUpdater.Model
 {

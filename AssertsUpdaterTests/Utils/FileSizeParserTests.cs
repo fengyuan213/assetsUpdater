@@ -1,8 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
-using Telerik.JustMock;
-using assetsUpdater.Utils;
+﻿using assetsUpdater.Utils;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AssertsUpdaterTests.Utils
 {
@@ -17,13 +15,13 @@ namespace AssertsUpdaterTests.Utils
 
         }
 
-      
+
 
         [TestMethod]
         public void ParseAuto_StateUnderTest_ExpectedBehavior()
         {
             // Arrange
-        
+
             double bytes = 0;
 
             // Act
@@ -38,7 +36,7 @@ namespace AssertsUpdaterTests.Utils
         public void ParseMb_StateUnderTest_ExpectedBehavior()
         {
             // Arrange
-       
+
             long bytes = 0;
 
             // Act
@@ -68,7 +66,7 @@ namespace AssertsUpdaterTests.Utils
         public void ParseKb_StateUnderTest_ExpectedBehavior()
         {
             // Arrange
-            
+
             long bytes = 0;
 
             // Act

@@ -1,13 +1,13 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using assetsUpdater;
+using assetsUpdater.AddressBuilder;
+using assetsUpdater.Model.StorageProvider;
+using assetsUpdater.StorageProvider;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-
-using assetsUpdater;
-using assetsUpdater.AddressBuilder;
-using assetsUpdater.Model.StorageProvider;
-using assetsUpdater.StorageProvider;
 
 namespace AssertsUpdaterTests
 {
@@ -22,7 +22,7 @@ namespace AssertsUpdaterTests
         public async void TestInitialize()
         {
             // Create & Export database
-            var db = new FileDatabase {Data = GetExceptedDbData()};
+            var db = new FileDatabase { Data = GetExceptedDbData() };
             var path = Path.GetTempFileName();
             await db.Export(path);
             _dbPath = path;
@@ -55,7 +55,7 @@ namespace AssertsUpdaterTests
         private RemoteDataManager CreateManager()
         {
             var dbm = new RemoteDataManager(_dbPath);
-            
+
 
             return dbm;
         }
@@ -70,7 +70,7 @@ namespace AssertsUpdaterTests
             var result = await manager.IsDataValid();
 
             // Assert
-            Assert.IsTrue(result,"Data Invalid");
+            Assert.IsTrue(result, "Data Invalid");
         }
 
         [TestMethod]
@@ -78,8 +78,8 @@ namespace AssertsUpdaterTests
         {
             // Arrange
             var manager = this.CreateManager();
-           
-            
+
+
             // Act
             var result = await RemoteDataManager.GetStorageProvider(
                 _dbRemoteUrl);
@@ -87,7 +87,7 @@ namespace AssertsUpdaterTests
 
 
             // Assert
-            Assert.IsTrue(await rdm.IsDataValid(),"DataInvalid");
+            Assert.IsTrue(await rdm.IsDataValid(), "DataInvalid");
         }
     }
 }

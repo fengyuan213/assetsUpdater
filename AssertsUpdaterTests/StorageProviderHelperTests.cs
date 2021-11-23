@@ -1,16 +1,19 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿#region Using
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using AssertsUpdaterTests.StorageProvider;
-using Telerik.JustMock;
 using assetsUpdater;
 using assetsUpdater.AddressBuilder;
 using assetsUpdater.Interfaces;
 using assetsUpdater.Model.StorageProvider;
 using assetsUpdater.StorageProvider;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Telerik.JustMock;
+
+#endregion
 
 namespace AssertsUpdaterTests
 {
@@ -22,13 +25,13 @@ namespace AssertsUpdaterTests
         [TestInitialize]
         public void TestInitialize()
         {
-            this.mockStorageProvider = Mock.Create<FileDatabase>();
+            mockStorageProvider = Mock.Create<FileDatabase>();
         }
 
         private DatabaseBuilder CreateStorageProviderHelper()
         {
             return new DatabaseBuilder(
-                this.mockStorageProvider);
+                mockStorageProvider);
         }
 
         [TestMethod]
@@ -38,10 +41,11 @@ namespace AssertsUpdaterTests
             var apiRoot = "api_Root";
             var accessKey = "accessKey";
             var secretKey = "secretKey";
-            var storageProviderHelper = this.CreateStorageProviderHelper();
-            IAddressBuilder downloadAddressBuilder =new Cdn8N6NAddressBuilder(Directory.GetCurrentDirectory(),apiRoot,accessKey,secretKey);
+            var storageProviderHelper = CreateStorageProviderHelper();
+            IAddressBuilder downloadAddressBuilder =
+                new Cdn8N6NAddressBuilder(Directory.GetCurrentDirectory(), apiRoot, accessKey, secretKey);
             var vCFolder = Path.Join(Utils.Utils.WorkingDir);
-            DbConfig config = new DbConfig(vCFolder)
+            var config = new DbConfig(vCFolder)
             {
                 DatabaseSchema = new DbSchema
                 {
@@ -50,11 +54,10 @@ namespace AssertsUpdaterTests
 
                 MajorVersion = 1,
                 MirrorVersion = 2,
-                DownloadAddressBuilder = new Cdn8N6NAddressBuilder(Directory.GetCurrentDirectory(),"apiRoot","apiKey","apiScret")
+                DownloadAddressBuilder =
+                    new Cdn8N6NAddressBuilder(Directory.GetCurrentDirectory(), "apiRoot", "apiKey", "apiScret")
             };
 
-            
-          
 
             var data = new DbData(config);
             var fileCounts = Utils.Utils.GenTestFiles("testFiles", out var fileNames, out var fileHashes,
@@ -64,8 +67,8 @@ namespace AssertsUpdaterTests
             fileHashes = fileHashes.ToList();
             fileSizeInMbs = fileSizeInMbs.ToList();
 
-            string exportPath = Path.GetTempFileName();
-     
+            var exportPath = Path.GetTempFileName();
+
             // Act
             await storageProviderHelper.BuildDatabaseWithUrl(
                 config,

@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#region Using
+
+using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Net.Security;
-using System.Text;
 using System.Threading.Tasks;
 using assetsUpdater.Interfaces;
-using assetsUpdater.Model;
 using assetsUpdater.Model.Network;
+
+#endregion
 
 namespace assetsUpdater.Network
 {
-    public class AsyncDownload :IDownloadUnit
+    public class AsyncDownload : IDownloadUnit
     {
-        public AsyncDownload(DownloadPackage downloadPackage,DownloadSetting downloadSetting=null, WebClient webClient=null)
+        public AsyncDownload(DownloadPackage downloadPackage, DownloadSetting downloadSetting = null,
+            WebClient webClient = null)
         {
             DownloadPackage = downloadPackage;
 
@@ -26,34 +26,20 @@ namespace assetsUpdater.Network
                 if (development) return true;
                 return errors == SslPolicyErrors.None;
             };
-            DownloadSetting = downloadSetting ?? new DownloadSetting()
+            DownloadSetting = downloadSetting ?? new DownloadSetting
             {
                 IsDownloadTempEnabled = true
-
             };
             WebClient = webClient ?? new WebClient();
             WebClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
             WebClient.DownloadFileCompleted += WebClient_DownloadFileCompleted;
         }
 
-       
-        private void WebClient_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
-        {
-            Debugger.Break();
-            if (!(e.Error != null || e.Cancelled == true))
-            {
-                if (DownloadSetting.IsDownloadTempEnabled)
-                {
-                    DownloadPackage.CleanDownloadCache();
-                }
-            }
-        }
 
-  
         public WebClient WebClient { get; set; }
         public Task CurrentDownloadingTask { get; set; }
-        public DownloadPackage DownloadPackage { get; set; }
         public string DisplaySpeed => null;
+        public DownloadPackage DownloadPackage { get; set; }
 
 
         public DownloadMode DownloadMode { get; set; }
@@ -71,14 +57,22 @@ namespace assetsUpdater.Network
         {
             CurrentDownloadingTask = WebClient.DownloadFileTaskAsync(DownloadPackage.Uri.OriginalString,
                 DownloadPackage.LocalPath);
-           
-            
+
+
             return Task.CompletedTask;
         }
 
-        
 
         public DownloadSetting DownloadSetting { get; set; }
+
+
+        private void WebClient_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            Debugger.Break();
+            if (!(e.Error != null || e.Cancelled))
+                if (DownloadSetting.IsDownloadTempEnabled)
+                    DownloadPackage.CleanDownloadCache();
+        }
 
         private void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {

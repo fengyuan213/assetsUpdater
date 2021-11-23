@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace assetsUpdater.Utils
 {
-   public  static class TimeUtil
+    public static class TimeUtil
     {
         public static long GetCurrentUtc1()
         {

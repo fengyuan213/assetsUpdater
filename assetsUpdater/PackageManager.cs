@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using assetsUpdater.EventArgs;
-using assetsUpdater.Exceptions;
 using assetsUpdater.Interfaces;
 using assetsUpdater.Model;
 using assetsUpdater.Model.Network;
@@ -20,19 +19,21 @@ namespace assetsUpdater
 {
     public class PackageManager
     {
-        public PackageManager( AssertUpgradePackage assertUpgradePackage,IAddressBuilder addressBuilder)
+        private readonly IAddressBuilder _addressBuilder;
+
+        public PackageManager(AssertUpgradePackage assertUpgradePackage, IAddressBuilder addressBuilder)
         {
             AssertUpgradePackage = assertUpgradePackage;
 
             _addressBuilder = addressBuilder;
         }
+
         public AssertUpgradePackage AssertUpgradePackage { get; set; }
-       
+
         public event EventHandler<MessageNotifyEventArgs> MessageNotify;
-        private readonly IAddressBuilder _addressBuilder = null;
 
         /// <summary>
-        /// This will apply both Local and Remote (Means start download queue)
+        ///     This will apply both Local and Remote (Means start download queue)
         /// </summary>
         /// <returns></returns>
         public async Task<DownloadQueue> Apply()
@@ -70,17 +71,13 @@ namespace assetsUpdater
 
         protected virtual DownloadPackage BuildDownloadPackage(DatabaseFile databaseFile)
         {
-            Uri uri=null;
+            Uri uri = null;
 
             if (string.IsNullOrWhiteSpace(databaseFile.DownloadAddress))
-            {
-                 uri = _addressBuilder.BuildUri(databaseFile.RelativePath);
-            }
+                uri = _addressBuilder.BuildUri(databaseFile.RelativePath);
             else
-            {
                 uri = new Uri(databaseFile.DownloadAddress);
-            }
-            
+
             var localPath = _addressBuilder.BuildDownloadLocalPath(databaseFile.RelativePath);
             var fileSize = databaseFile.FileSize;
             var exceptedHash = databaseFile.Hash;
@@ -119,7 +116,7 @@ namespace assetsUpdater
         {
             foreach (var deleteFile in AssertUpgradePackage.DeleteFile)
                 RemoveFile(Path.Join(_addressBuilder.LocalRootPath, deleteFile.RelativePath));
-            
+
             foreach (var databaseFile in AssertUpgradePackage.DifferFile)
                 RemoveFile(Path.Join(_addressBuilder.LocalRootPath, databaseFile.RelativePath));
             return Task.CompletedTask;
@@ -129,7 +126,7 @@ namespace assetsUpdater
         private void OnDeletionFailed(string msg, string filepath, Exception e = null)
         {
             MessageNotify?.Invoke(this,
-                new MessageNotifyEventArgs(MsgL.Error, msg, true, new FileDeletionException("未能删除:" + filepath, e)));
+                new MessageNotifyEventArgs(MsgL.Error, msg, true, new IOException("未能删除:" + filepath, e)));
         }
 
         private void RemoveFile(string path)

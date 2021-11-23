@@ -1,6 +1,7 @@
+using Newtonsoft.Json;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
 
 namespace assetsUpdater.Interfaces
 {
@@ -11,12 +12,13 @@ namespace assetsUpdater.Interfaces
         ///     Usage format: RealDownloadUrl= &"{RootDownloadUrl}/version control filename"
         /// </summary>
         /// 
-        [NotNull][JsonProperty("RootDownloadAddress")]
-        public  string RootDownloadAddress { get; set; }
+        [NotNull]
+        [JsonProperty("RootDownloadAddress")]
+        public string RootDownloadAddress { get; set; }
 
-        public  string LocalRootPath { get; set; }
+        public string LocalRootPath { get; set; }
         public Uri BuildUri(string relativePath);
-        
+
         public string BuildDownloadLocalPath(string relativePath);
     }
 }

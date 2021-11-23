@@ -1,10 +1,13 @@
-﻿using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Threading.Tasks;
-using Telerik.JustMock;
-using assetsUpdater;
+﻿using assetsUpdater;
 using assetsUpdater.AddressBuilder;
 using assetsUpdater.Model;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using System.IO;
+using System.Threading.Tasks;
+
+using Telerik.JustMock;
 
 namespace AssertsUpdaterTests
 {
@@ -12,7 +15,7 @@ namespace AssertsUpdaterTests
     public class PackageManagerTests
     {
         private AssertUpgradePackage mockAssertUpgradePackage;
-        private string _localRootPath = Path.Join(Path.GetTempPath(),"PackageManagerTests");
+        private string _localRootPath = Path.Join(Path.GetTempPath(), "PackageManagerTests");
         [TestInitialize]
         public void TestInitialize()
         {
@@ -31,7 +34,7 @@ namespace AssertsUpdaterTests
         {
             // Arrange
             var manager = this.CreateManager();
-            
+
             // Act
             var result = await manager.Apply();
 

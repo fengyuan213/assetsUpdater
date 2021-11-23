@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿#region Using
+
 using System.Net;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
 using assetsUpdater.Interfaces;
-using assetsUpdater.Model.Network;
-using assetsUpdater.Network;
 using assetsUpdater.StorageProvider;
+
+#endregion
 
 namespace assetsUpdater
 {
@@ -21,34 +17,29 @@ namespace assetsUpdater
 
         public RemoteDataManager(IStorageProvider storageProvider) : base(storageProvider)
         {
-
         }
+
         public override async Task<bool> IsDataValid()
         {
             var data = StorageProvider?.GetBuildInDbData();
 
             if (data == null) return await base.IsDataValid();
-            if (data.Config.DownloadAddressBuilder == null)
-            {
-                return false;
-            }
+            if (data.Config.DownloadAddressBuilder == null) return false;
 
             foreach (var df in data.DatabaseFiles)
-            {
-                if (string.IsNullOrWhiteSpace(df.DownloadAddress)) return false;
-            }
+                if (string.IsNullOrWhiteSpace(df.DownloadAddress))
+                    return false;
 
             return await base.IsDataValid();
         }
+
         public static async Task<IStorageProvider> GetStorageProvider(string dbUrl)
         {
-            FileDatabase fileDatabase = new FileDatabase();
+            var fileDatabase = new FileDatabase();
 
-            var p = new object[2] {dbUrl, CredentialCache.DefaultNetworkCredentials};
+            var p = new object[2] { dbUrl, CredentialCache.DefaultNetworkCredentials };
             await fileDatabase.Download(p);
             return fileDatabase;
         }
     }
 }
-
-

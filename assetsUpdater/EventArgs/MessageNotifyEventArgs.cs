@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace assetsUpdater.EventArgs
 {
@@ -21,9 +17,9 @@ namespace assetsUpdater.EventArgs
         public bool HasError = false;
         public MsgL MessageLevel;
         public object Obj = null;//Extra object pass through
-        
 
-        public MessageNotifyEventArgs( MsgL level,string message,bool hasError=false,Exception exception=null, object obj=null)
+
+        public MessageNotifyEventArgs(MsgL level, string message, bool hasError = false, Exception exception = null, object obj = null)
         {
             Exception = exception;
             Message = message;

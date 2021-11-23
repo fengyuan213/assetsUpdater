@@ -1,11 +1,13 @@
-﻿using System.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Net;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using Telerik.JustMock;
-using assetsUpdater.Model.Network;
+﻿using assetsUpdater.Model.Network;
 using assetsUpdater.Network;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using System.Diagnostics;
+using System.Net;
+using System.Threading.Tasks;
+
+using Telerik.JustMock;
 
 namespace AssertsUpdaterTests.Network
 {
@@ -19,7 +21,7 @@ namespace AssertsUpdaterTests.Network
         public void TestInitialize()
 
         {
-  
+
             this.mockDownloadPackage = Mock.Create<DownloadPackage>();
             this.mockWebClient = Mock.Create<WebClient>();
         }
@@ -27,7 +29,7 @@ namespace AssertsUpdaterTests.Network
         private AsyncDownload CreateAsyncDownload()
         {
             return new AsyncDownload(
-                this.mockDownloadPackage,null,
+                this.mockDownloadPackage, null,
                 this.mockWebClient);
         }
 
@@ -42,7 +44,7 @@ namespace AssertsUpdaterTests.Network
 
             Debugger.Break();
             // Assert
-        
+
         }
 
         [TestMethod]

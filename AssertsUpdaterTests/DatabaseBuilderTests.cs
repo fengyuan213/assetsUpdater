@@ -1,15 +1,17 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Telerik.JustMock;
-using assetsUpdater;
+﻿using assetsUpdater;
 using assetsUpdater.AddressBuilder;
 using assetsUpdater.Interfaces;
 using assetsUpdater.Model.StorageProvider;
 using assetsUpdater.StorageProvider;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+
+using Telerik.JustMock;
 
 namespace AssertsUpdaterTests
 {
@@ -56,7 +58,7 @@ namespace AssertsUpdaterTests
             var databaseBuilder = this.CreateDatabaseBuilder();
             DbConfig config = GetDbConfig();
             string exportPath = Path.GetTempFileName();
-            
+
             // Act
             await databaseBuilder.BuildDatabaseWithUrl(
                 config,
@@ -77,7 +79,7 @@ namespace AssertsUpdaterTests
                 MirrorVersion = 0,
                 MajorVersion = 1,
                 VersionControlFolder = tmpPath,
-                DatabaseSchema = new DbSchema() {DirList = new List<string>()},
+                DatabaseSchema = new DbSchema() { DirList = new List<string>() },
                 DownloadAddressBuilder = GetAddressBuilder()
             };
 

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using assetsUpdater.Utils;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
-using assetsUpdater.Utils;
 
 namespace AssertsUpdaterTests.Utils
 {

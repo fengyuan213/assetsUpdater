@@ -1,8 +1,10 @@
-﻿using System;
+﻿using assetsUpdater.Interfaces;
+
+using Newtonsoft.Json;
+
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using assetsUpdater.Interfaces;
-using Newtonsoft.Json;
 
 namespace assetsUpdater.Model.StorageProvider
 {
@@ -23,7 +25,7 @@ namespace assetsUpdater.Model.StorageProvider
         [NotNull]
         public string VersionControlFolder
         {
-            get => _versionControlFolder ;
+            get => _versionControlFolder;
             set
             {
                 if (string.IsNullOrWhiteSpace(value) || !Directory.Exists(value))

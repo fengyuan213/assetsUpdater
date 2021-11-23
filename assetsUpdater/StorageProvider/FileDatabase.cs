@@ -1,12 +1,5 @@
+#region Using
 
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.Reflection;
-using assetsUpdater.Interfaces;
-using assetsUpdater.Model;
-using assetsUpdater.Model.StorageProvider;
-using assetsUpdater.Utils;
-using Newtonsoft.Json;
 #region 引用
 
 using System;
@@ -16,8 +9,14 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
+using assetsUpdater.Interfaces;
+using assetsUpdater.Model.StorageProvider;
+using assetsUpdater.Utils;
+using Newtonsoft.Json;
+
+#endregion
+
 #endregion
 
 namespace assetsUpdater.StorageProvider
@@ -27,6 +26,15 @@ namespace assetsUpdater.StorageProvider
     /// </summary>
     public class FileDatabase : IEquatable<FileDatabase>, IStorageProvider, ICloneable
     {
+        public FileDatabase(string path)
+        {
+            Read(path).RunSynchronously();
+        }
+
+        public FileDatabase()
+        {
+        }
+
         #region Prop
 
         /// <summary>
@@ -36,19 +44,32 @@ namespace assetsUpdater.StorageProvider
         public DbData Data { get; set; }
 
         //public static NetworkCredential NutstoreDownloadCredential { get; } = new NetworkCredential("liufengyuan45@outlook.com", "ags7xjgzuhr2ig3d");
+
         #endregion
 
-        public FileDatabase(string path)
-        {
-            this.Read(path).RunSynchronously();
 
-        }
-        public FileDatabase()
+        public object Clone()
         {
+            return new FileDatabase
+            {
+                Data = Data
+            };
+        }
+
+
+        /// <summary>
+        ///     Check if the content of the two database are equal
+        /// </summary>
+        /// s
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool Equals(FileDatabase other)
+        {
+            return ObjectComparerUtility.ObjectsAreEqual(Data, other?.Data);
         }
 
         /// <summary>
-        /// Download a remote database
+        ///     Download a remote database
         /// </summary>
         /// <param name="obj">IEnumerable<object>,obj[0] download address obj[1] NetworkCredential}</param>
         /// <exception cref="ArgumentNullException"></exception>
@@ -59,10 +80,7 @@ namespace assetsUpdater.StorageProvider
             var arrObj = obj as object[];
             var url = arrObj?[0] as string;
             var networkCredential = arrObj?[1] as NetworkCredential;
-            if (string.IsNullOrWhiteSpace(url))
-            {
-                throw new ArgumentNullException(nameof(url));
-            }
+            if (string.IsNullOrWhiteSpace(url)) throw new ArgumentNullException(nameof(url));
 
             using var webClient = new WebClient
             {
@@ -73,21 +91,11 @@ namespace assetsUpdater.StorageProvider
             Data = await DbDataReader(zipArchive).ConfigureAwait(true);
         }
 
-
-        private Task<DbData> DbDataReader(ZipArchive zipArchive)
-        {
-            var stream = zipArchive.GetEntry("data.json")?.Open();
-            using var streamReader = new StreamReader(stream ?? new MemoryStream());
-            var content = streamReader.ReadToEnd();
-            Data = JsonConvert.DeserializeObject<DbData>(content);
-            return Task.FromResult(Data);
-        }
         /// <summary>
         ///     Open and read the database data to the current class.
         /// </summary>
         /// <param name="path">Database Path, Could be relative(reference to current directory) or absolute </param>
         /// <exception cref="IOException"> When Database path not valid</exception>
-
         public async Task Read([NotNull] object obj)
         {
             var path = obj as string;
@@ -95,11 +103,9 @@ namespace assetsUpdater.StorageProvider
             if (!File.Exists(path)) throw new IOException("Database can't be found");
             try
             {
-                
                 using (var zipArchive = ZipFile.OpenRead(path))
                 {
                     await DbDataReader(zipArchive).ConfigureAwait(true);
-
                 }
             }
             catch (InvalidDataException e)
@@ -107,7 +113,6 @@ namespace assetsUpdater.StorageProvider
                 Console.WriteLine(e);
                 throw new IOException("数据库不合法", e);
             }
-
         }
 
 
@@ -135,7 +140,6 @@ namespace assetsUpdater.StorageProvider
             var databseFiles = new List<DatabaseFile>();
             foreach (var file in files)
             {
-                
                 var absolutePath = Path.Join(config.VersionControlFolder, file);
                 //Console.WriteLine("Absolute Path:{0}",absolutePath);
                 //eg file before: /.minecraft/data.json
@@ -149,8 +153,7 @@ namespace assetsUpdater.StorageProvider
 
             Data = new DbData(config)
             {
-                DatabaseFiles = databseFiles,
-
+                DatabaseFiles = databseFiles
             };
             return Task.CompletedTask;
         }
@@ -173,52 +176,39 @@ namespace assetsUpdater.StorageProvider
                     streamWriter.Flush();
                 }
             }
+
             return Task.CompletedTask;
         }
 
-
-        /// <summary>
-        ///     Check if the content of the two database are equal
-        /// </summary>s
-        /// <param name="other"></param>
-        /// <returns></returns>
-        public bool Equals(FileDatabase other)
-        {
-            return ObjectComparerUtility.ObjectsAreEqual(Data, other?.Data);
-
-        }
         /// <summary>
         ///     Convert Database files into Dictionary style
         /// </summary>
         /// <returns>string:RelativePath, VersionControlFile: The file in the vc </returns>
-
         public IDictionary<string, DatabaseFile> ConvertToDictionary()
         {
-
             return Data?.DatabaseFiles?.ToDictionary(versionControlFile => versionControlFile.RelativePath);
         }
 
         public DbData GetBuildInDbData()
         {
-     
             return Data;
         }
 
 
-        public object Clone()
+        private Task<DbData> DbDataReader(ZipArchive zipArchive)
         {
-            return new FileDatabase()
-            {
-                Data = Data
-
-            };
+            var stream = zipArchive.GetEntry("data.json")?.Open();
+            using var streamReader = new StreamReader(stream ?? new MemoryStream());
+            var content = streamReader.ReadToEnd();
+            Data = JsonConvert.DeserializeObject<DbData>(content);
+            return Task.FromResult(Data);
         }
 
         public bool IsValidDb()
         {
-            if (Data.DatabaseFiles == null || Data.Config is not {DatabaseSchema: { }}) return false;
-            return Data.DatabaseFiles.Any()&&!string.IsNullOrWhiteSpace(Data.Config.VersionControlFolder)&&string.IsNullOrWhiteSpace(Data.Config.DownloadAddressBuilder.RootDownloadAddress);
+            if (Data.DatabaseFiles == null || Data.Config is not { DatabaseSchema: { } }) return false;
+            return Data.DatabaseFiles.Any() && !string.IsNullOrWhiteSpace(Data.Config.VersionControlFolder) &&
+                   string.IsNullOrWhiteSpace(Data.Config.DownloadAddressBuilder.RootDownloadAddress);
         }
-  
     }
 }

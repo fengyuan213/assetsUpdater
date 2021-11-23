@@ -1,48 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#region Using
+
+using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using assetsUpdater.Interfaces;
 using Newtonsoft.Json;
 
+#endregion
+
 namespace assetsUpdater.AddressBuilder
 {
-    
-    public class Cdn8N6NAddressBuilder:IAddressBuilder
+    public class Cdn8N6NAddressBuilder : IAddressBuilder
     {
-
-
-        [JsonIgnore]
-        public string ApiKey { get; set; }
-        [JsonIgnore]
-        public string ApiSecret { get; set; }
-       
-
-        public Cdn8N6NAddressBuilder(string downloadLocalRoot,string apiRoot, string apiKey, string apiSecret)
+        public Cdn8N6NAddressBuilder(string downloadLocalRoot, string apiRoot, string apiKey, string apiSecret)
         {
             RootDownloadAddress = apiRoot;
             ApiKey = apiKey;
             ApiSecret = apiSecret;
             LocalRootPath = downloadLocalRoot;
         }
-        
+
+
+        [JsonIgnore] public string ApiKey { get; set; }
+
+        [JsonIgnore] public string ApiSecret { get; set; }
+
         public string RootDownloadAddress { get; set; }
         public string LocalRootPath { get; set; }
 
-        public  Uri BuildUri(string relativePath)
+        public Uri BuildUri(string relativePath)
         {
             var uri = new UriBuilder
             {
-                Host = RootDownloadAddress, Scheme = "https://",
-                Port = 443, 
+                Host = RootDownloadAddress,
+                Scheme = "https://",
+                Port = 443,
                 Path = relativePath
             };
             return uri.Uri;
         }
-       
-        public  string BuildDownloadLocalPath(string relativePath)
+
+        public string BuildDownloadLocalPath(string relativePath)
         {
             return Path.Join(LocalRootPath, relativePath);
         }

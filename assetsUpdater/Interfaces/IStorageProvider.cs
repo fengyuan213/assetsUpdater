@@ -1,20 +1,21 @@
+#region Using
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
-using assetsUpdater.Model;
 using assetsUpdater.Model.StorageProvider;
-using assetsUpdater.StorageProvider;
+
+#endregion
 
 namespace assetsUpdater.Interfaces
 {
-    public interface IStorageProvider : IEquatable<Object>
+    public interface IStorageProvider : IEquatable<object>
     {
         DbData GetBuildInDbData();
-        Task Create(DbConfig config); 
+        Task Create(DbConfig config);
         IDictionary<string, DatabaseFile> ConvertToDictionary();
         Task Export(string path);
-        Task Read(Object obj);
+        Task Read(object obj);
         Task Download(object obj);
     }
 }

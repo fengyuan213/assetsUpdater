@@ -1,8 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Threading.Tasks;
-using Telerik.JustMock;
-using assetsUpdater;
+﻿using assetsUpdater;
 using assetsUpdater.Interfaces;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using System.Threading.Tasks;
+
+using Telerik.JustMock;
 
 namespace AssertsUpdaterTests
 {

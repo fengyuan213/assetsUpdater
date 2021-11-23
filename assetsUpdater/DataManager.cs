@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using assetsUpdater.Interfaces;
+﻿using assetsUpdater.Interfaces;
 using assetsUpdater.StorageProvider;
+
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace assetsUpdater
 {
     public abstract class DataManager
     {
-        
+
         public IStorageProvider StorageProvider { get; private set; }
 
         protected DataManager(IStorageProvider storageProvider)
@@ -29,7 +26,7 @@ namespace assetsUpdater
         }
 
         public string DatabasePath = null;
-            
+
         public virtual Task<bool> IsDataValid()
         {
             var data = StorageProvider?.GetBuildInDbData();
@@ -41,8 +38,8 @@ namespace assetsUpdater
                     data.Config.MirrorVersion == 0 ||
                     data.Config.MajorVersion == 0 ||
                     string.IsNullOrWhiteSpace(data.Config.VersionControlFolder) ||
-                    data.Config.DatabaseSchema == null 
-                    
+                    data.Config.DatabaseSchema == null
+
                 )
                 {
                     return Task.FromResult(false);

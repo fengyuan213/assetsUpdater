@@ -1,17 +1,18 @@
-﻿using System;
+﻿#region Using
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.SymbolStore;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using assetsUpdater.AddressBuilder;
-using assetsUpdater.Model;
 using assetsUpdater.Model.StorageProvider;
 using assetsUpdater.StorageProvider;
-
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+#endregion
 
 namespace AssertsUpdaterTests.StorageProvider
 {
@@ -42,7 +43,8 @@ namespace AssertsUpdaterTests.StorageProvider
 
                 MajorVersion = 1,
                 MirrorVersion = 2,
-                DownloadAddressBuilder = new Cdn8N6NAddressBuilder(Directory.GetCurrentDirectory(),"apiroot","apikey","secret")
+                DownloadAddressBuilder =
+                    new Cdn8N6NAddressBuilder(Directory.GetCurrentDirectory(), "apiroot", "apikey", "secret")
             };
 
             FileDatabaseData = new DbData(FileDatabaseConfig);
@@ -52,7 +54,6 @@ namespace AssertsUpdaterTests.StorageProvider
             FileNames = fileNames.ToList();
             FileHashes = fileHashes.ToList();
             FileSizeInKbs = fileSizeInMbs.ToList();
-
         }
 
         [TestCleanup]
@@ -70,12 +71,12 @@ namespace AssertsUpdaterTests.StorageProvider
 
         private FileDatabase CreateFileDatabase()
         {
-            return new() { Data = FileDatabaseData };
+            return new FileDatabase { Data = FileDatabaseData };
         }
+
         private FileDatabase CreateFileDatabase(DbData dbData)
         {
-
-            return new() { Data = dbData };
+            return new FileDatabase { Data = dbData };
         }
 
         [TestMethod]
@@ -83,7 +84,8 @@ namespace AssertsUpdaterTests.StorageProvider
         {
             var exceptedFileDatafilesDatabase = GetExceptedFileDatabase_ForDownload();
 
-            await exceptedFileDatafilesDatabase.Export(Path.Join(Directory.GetCurrentDirectory(), "expectedFileDatabase.zip")).ConfigureAwait(true);
+            await exceptedFileDatafilesDatabase
+                .Export(Path.Join(Directory.GetCurrentDirectory(), "expectedFileDatabase.zip")).ConfigureAwait(true);
             Assert.IsTrue(true);
         }
 
@@ -91,24 +93,23 @@ namespace AssertsUpdaterTests.StorageProvider
         {
             var config = new DbConfig("vcs")
             {
-                DatabaseSchema = new DbSchema()
+                DatabaseSchema = new DbSchema
                 {
-                    DirList = new List<string>()
+                    DirList = new List<string>
                     {
                         "dirlist"
                     }
                 },
                 MajorVersion = 1,
                 MirrorVersion = 1,
-                DownloadAddressBuilder = new Cdn8N6NAddressBuilder(Directory.GetCurrentDirectory(),"apiRoot", "apiKey", "apiScret")
-
+                DownloadAddressBuilder =
+                    new Cdn8N6NAddressBuilder(Directory.GetCurrentDirectory(), "apiRoot", "apiKey", "apiScret")
             };
             return new DbData(config)
             {
-
-                DatabaseFiles = new List<DatabaseFile>()
+                DatabaseFiles = new List<DatabaseFile>
                 {
-                    new DatabaseFile("Test\\data", "abcdefg", 123, "")
+                    new("Test\\data", "abcdefg", 123, "")
                 }
             };
         }
@@ -117,12 +118,11 @@ namespace AssertsUpdaterTests.StorageProvider
         {
             var exceptedFileDatafilesDatabase = CreateFileDatabase(GetExceptedDbData());
             return exceptedFileDatafilesDatabase;
-
         }
+
         [TestMethod]
         public async Task Download_StateUnderTest_DatabaseAreSame()
         {
-
             // Arrange
             var fileDatabase = CreateFileDatabase();
 
@@ -141,9 +141,7 @@ namespace AssertsUpdaterTests.StorageProvider
             // Assert
 
             Assert.IsTrue(fileDatabase.Equals(exceptedFileDatafilesDatabase));
-
         }
-
 
 
         [TestMethod]
@@ -161,12 +159,8 @@ namespace AssertsUpdaterTests.StorageProvider
             await fileDatabase.Read(path).ConfigureAwait(true);
 
 
-
-
             // Assert
             Assert.IsTrue(fileDatabase.Equals(exceptedFileDatabase));
-
-
         }
 
         [TestMethod]
@@ -186,15 +180,16 @@ namespace AssertsUpdaterTests.StorageProvider
                 if (fileDatabase.Data.DatabaseFiles.ToList()[0].Hash == FileHashes.ToList()[i]) return;
                 else if (i == FileHashes.Count()) Assert.Fail("没有找到匹配的database hash");*/
 
-            if (!Match(fileDatabase.Data.DatabaseFiles.ToList()[0].Hash, FileHashes)) Assert.Fail("没有找到匹配的database hash");
-            if (!Match(fileDatabase.Data.DatabaseFiles.ToList()[0].FileName, FileNames)) Assert.Fail("没有找到匹配的database FileNames");
-            if (!Match(fileDatabase.Data.DatabaseFiles.ToList()[0].FileSize, FileSizeInKbs)) Assert.Fail("没有找到匹配的database FileSize");
+            if (!Match(fileDatabase.Data.DatabaseFiles.ToList()[0].Hash, FileHashes))
+                Assert.Fail("没有找到匹配的database hash");
+            if (!Match(fileDatabase.Data.DatabaseFiles.ToList()[0].FileName, FileNames))
+                Assert.Fail("没有找到匹配的database FileNames");
+            if (!Match(fileDatabase.Data.DatabaseFiles.ToList()[0].FileSize, FileSizeInKbs))
+                Assert.Fail("没有找到匹配的database FileSize");
 
             static bool Match<T>(object source, T data)
             {
-
-
-                var o2 = (((IEnumerable)data).OfType<object>()).ToList();
+                var o2 = ((IEnumerable)data).OfType<object>().ToList();
                 //var o2 = ((IEnumerable<object>) data).ToList();
 
                 for (var i = 0; i < o2.Count; i++)
@@ -206,7 +201,6 @@ namespace AssertsUpdaterTests.StorageProvider
             //Assert.AreEqual(fileDatabase.Data.DatabaseFiles.ToList()[0].FileSize, FileSizeInKbs.ToList()[0]);
             //Assert.AreEqual(fileDatabase.Data.DatabaseFiles.ToList()[0].FileName, FileNames.ToList()[0]);
         }
-
 
 
         [TestMethod]
@@ -251,7 +245,5 @@ namespace AssertsUpdaterTests.StorageProvider
             // Assert
             Assert.AreEqual(result.Config, FileDatabaseConfig);
         }
-
-
     }
 }

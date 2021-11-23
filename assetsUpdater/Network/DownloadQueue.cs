@@ -1,14 +1,14 @@
-﻿using System;
+﻿#region Using
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using assetsUpdater.Interfaces;
-using assetsUpdater.Model;
-using Downloader;
+
+#endregion
 
 namespace assetsUpdater.Network
 {
@@ -17,44 +17,42 @@ namespace assetsUpdater.Network
         public bool AutoRestartFailedDownload { get; set; } = true;
         public int MaxParallelAsyncDownloadCount { get; set; } = 50;
         public int MaxParallelMPartDownloadCount { get; set; } = 1;
-        public virtual ObservableCollection<IDownloadUnit> CurrentDownloadingObj { get; private set; } =
-            new ObservableCollection<IDownloadUnit>();
 
-        public ObservableCollection<IDownloadUnit> ErrorList { get; private set; } = new ObservableCollection<IDownloadUnit>();
+        public virtual ObservableCollection<IDownloadUnit> CurrentDownloadingObj { get; } = new();
 
-        public ObservableCollection<IDownloadUnit> WaitingList { get; private set; } =
-            new ObservableCollection<IDownloadUnit>();
+        public ObservableCollection<IDownloadUnit> ErrorList { get; } = new();
 
-        public ObservableCollection<IDownloadUnit> AllDownloadObj { get; private set; } =
-            new ObservableCollection<IDownloadUnit>();
+        public ObservableCollection<IDownloadUnit> WaitingList { get; } = new();
+
+        public ObservableCollection<IDownloadUnit> AllDownloadObj { get; } = new();
 
         public double Progress
         {
             get
             {
-                double progressTotal = AllDownloadObj.Sum(downloadUnit => downloadUnit.Progress);
+                var progressTotal = AllDownloadObj.Sum(downloadUnit => downloadUnit.Progress);
 
                 return progressTotal / AllDownloadObj.Count;
             }
         }
 
-        public long BytesReceived { 
+        public long BytesReceived
+        {
             get
-        
-            {
 
-                Int64 receivedTotal = 0;
+            {
+                long receivedTotal = 0;
                 foreach (var downloadUnit in AllDownloadObj)
                     receivedTotal += downloadUnit.BytesReceived;
 
                 return receivedTotal;
             }
-
         }
+
         public long FileSizeTotal
         {
             get
-            {   
+            {
                 long fileSizeTotal = 0;
                 foreach (var downloadUnit in AllDownloadObj)
                     fileSizeTotal += downloadUnit.BytesToReceive;
@@ -70,18 +68,12 @@ namespace assetsUpdater.Network
             {
                 //Downlading finsihed
                 if (ErrorList.Count >= 1)
-                { //Error occured
+                    //Error occured
                     if (AutoRestartFailedDownload)
                     {
-                        foreach (var downloadUnit in ErrorList)
-                        {
-                            WaitingList.Add(downloadUnit);
-
-                        }
+                        foreach (var downloadUnit in ErrorList) WaitingList.Add(downloadUnit);
                         goto Start;
                     }
-                }
-
             }
             else
             {
@@ -90,47 +82,42 @@ namespace assetsUpdater.Network
                     var tasks = CurrentDownloadingObj.Select(downloadUnit => downloadUnit.Wait()).ToArray();
                     await Task.WhenAll(tasks).ConfigureAwait(true);
                 }
+
                 goto Start;
             }
-
         }
+
         public async Task QueueDownload(IEnumerable<IDownloadUnit> resultes)
         {
-            foreach (var asyncDownload in resultes)
-            {
-                await QueueDownload(asyncDownload).ConfigureAwait(false);
-            }
+            foreach (var asyncDownload in resultes) await QueueDownload(asyncDownload).ConfigureAwait(false);
             await Task.CompletedTask.ConfigureAwait(false);
         }
-        
+
         public async Task QueueDownload(IDownloadUnit downloadUnit)
         {
-       
             var maxDownloadCount = downloadUnit.DownloadMode == DownloadMode.Async
                 ? MaxParallelAsyncDownloadCount
                 : MaxParallelMPartDownloadCount;
 
-            if (downloadUnit.DownloadMode==DownloadMode.Async)
+            if (downloadUnit.DownloadMode == DownloadMode.Async)
             {
-                var asyncDownload =(AsyncDownload) downloadUnit;
+                var asyncDownload = (AsyncDownload)downloadUnit;
                 asyncDownload.WebClient.DownloadFileCompleted += Async_WebClient_DownloadFileCompleted;
             }
-            else if (downloadUnit.DownloadMode==DownloadMode.MultiPart)
+            else if (downloadUnit.DownloadMode == DownloadMode.MultiPart)
             {
-                
-                 var  mPartDownload = (MPartDownload) downloadUnit;
-                 
-                 //mPartDownload.DownloadService.ChunkDownloadProgressChanged += OnChunkDownloadProgressChanged;
-                 //mPartDownload.DownloadService.DownloadProgressChanged += OnDownloadProgressChanged;
-                 mPartDownload.DownloadService.DownloadFileCompleted += MPartDownload_DownloadCompleted;
+                var mPartDownload = (MPartDownload)downloadUnit;
+
+                //mPartDownload.DownloadService.ChunkDownloadProgressChanged += OnChunkDownloadProgressChanged;
+                //mPartDownload.DownloadService.DownloadProgressChanged += OnDownloadProgressChanged;
+                mPartDownload.DownloadService.DownloadFileCompleted += MPartDownload_DownloadCompleted;
                 // mPartDownload.DownloadService.DownloadStarted += OnDownloadStarted;
-                ;
             }
             else
             {
                 throw new ArgumentException("DownloadMode不合法", nameof(DownloadMode));
             }
-           
+
             AllDownloadObj.Add(downloadUnit);
             if (CurrentDownloadingObj.Count < maxDownloadCount)
             {
@@ -144,7 +131,6 @@ namespace assetsUpdater.Network
             }
         }
 
-   
 
         public Task RestartFailedDownload(IDownloadUnit downloadUnit)
         {
@@ -162,7 +148,7 @@ namespace assetsUpdater.Network
 
             return Task.CompletedTask;
         }
-       
+
         private async void StartDownload(IDownloadUnit downloadUnit)
         {
             WaitingList.Remove(downloadUnit);
@@ -171,21 +157,18 @@ namespace assetsUpdater.Network
 
             CurrentDownloadingObj.Add(downloadUnit);
         }
- 
+
 
         private void MPartDownload_DownloadCompleted(object sender, AsyncCompletedEventArgs e)
         {
             lock (CurrentDownloadingObj)
             {
-                for (int i = 0; i < CurrentDownloadingObj.Count; i++)
+                for (var i = 0; i < CurrentDownloadingObj.Count; i++)
                 {
-                    var mPartDownload = (MPartDownload) CurrentDownloadingObj[i];
-                    if (mPartDownload.DownloadService!= sender) continue;
-                    if (e.Cancelled||e.Error!=null)
-                    {
-                        ErrorList.Add(CurrentDownloadingObj[i]);
-                    }
-                   
+                    var mPartDownload = (MPartDownload)CurrentDownloadingObj[i];
+                    if (mPartDownload.DownloadService != sender) continue;
+                    if (e.Cancelled || e.Error != null) ErrorList.Add(CurrentDownloadingObj[i]);
+
 
                     CurrentDownloadingObj.Remove(CurrentDownloadingObj[i]);
                 }
@@ -196,44 +179,37 @@ namespace assetsUpdater.Network
                 if (WaitingList.Count >= 1)
                     StartDownload(WaitingList[0]);
                 else if (AutoRestartFailedDownload)
-                {
                     if (ErrorList.Count >= 1)
                         StartDownload(ErrorList[0]);
-                }
-
-
             }
         }
-        
+
         private void Async_WebClient_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
             lock (CurrentDownloadingObj)
             {
-                for (int i = 0; i < CurrentDownloadingObj.Count; i++)
+                for (var i = 0; i < CurrentDownloadingObj.Count; i++)
                 {
-                    if (CurrentDownloadingObj[i].DownloadMode==DownloadMode.Async)
+                    if (CurrentDownloadingObj[i].DownloadMode == DownloadMode.Async)
                     {
-                        var asyncDownload = (AsyncDownload) CurrentDownloadingObj[i];
+                        var asyncDownload = (AsyncDownload)CurrentDownloadingObj[i];
 
                         if (!asyncDownload.WebClient.Equals(sender)) continue;
                     }
-                    
+
 
                     if (!(e.Cancelled == false || e.Error == null)) ErrorList.Add(CurrentDownloadingObj[i]);
                     CurrentDownloadingObj.Remove(CurrentDownloadingObj[i]);
                 }
             }
+
             if (CurrentDownloadingObj.Count < MaxParallelAsyncDownloadCount)
             {
                 if (WaitingList.Count >= 1)
                     StartDownload(WaitingList[0]);
                 else if (AutoRestartFailedDownload)
-                {
                     if (ErrorList.Count >= 1)
                         StartDownload(ErrorList[0]);
-                }
-
-
             }
         }
 

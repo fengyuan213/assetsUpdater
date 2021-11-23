@@ -1,7 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using Telerik.JustMock;
-using assetsUpdater.AddressBuilder;
+﻿using assetsUpdater.AddressBuilder;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AssertsUpdaterTests.AddressBuilder
 {

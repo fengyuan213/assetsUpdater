@@ -1,10 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Threading.Tasks;
-using Telerik.JustMock;
+﻿using assetsUpdater.Interfaces;
 using assetsUpdater.Network;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using System.Collections.Generic;
-using assetsUpdater.Interfaces;
+using System.Threading.Tasks;
 
 namespace AssertsUpdaterTests.Network
 {
@@ -45,7 +45,7 @@ namespace AssertsUpdaterTests.Network
             IEnumerable<IDownloadUnit> resultes = null;
 
             // Act
-       
+
             await downloadQueue.QueueDownload(
                 resultes);
 

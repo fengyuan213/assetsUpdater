@@ -1,13 +1,16 @@
 ﻿#region Using
 
+using assetsUpdater.Interfaces;
+
+using Downloader;
+
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
-using assetsUpdater.Interfaces;
-using Downloader;
+
 using DownloadPackage = assetsUpdater.Model.Network.DownloadPackage;
 using DownloadProgressChangedEventArgs = Downloader.DownloadProgressChangedEventArgs;
 
@@ -23,7 +26,7 @@ namespace assetsUpdater.Network
         public MPartDownload(DownloadPackage downloadPackage, DownloadSetting downloadSetting = null)
         {
             DownloadPackage = downloadPackage;
-            DownloadSetting = downloadSetting ?? new DownloadSetting {IsDownloadTempEnabled = true};
+            DownloadSetting = downloadSetting ?? new DownloadSetting { IsDownloadTempEnabled = true };
 
 
             InitDownload();
@@ -60,7 +63,7 @@ namespace assetsUpdater.Network
         {
             var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1";
             var cookies = new CookieContainer();
-            cookies.Add(new Cookie("download-type", "test") {Domain = "domain.com"});
+            cookies.Add(new Cookie("download-type", "test") { Domain = "domain.com" });
 
             return new DownloadConfiguration
             {
@@ -131,7 +134,7 @@ namespace assetsUpdater.Network
         private static void UpdateTitleInfo(DownloadProgressChangedEventArgs e)
         {
             var nonZeroSpeed = e.BytesPerSecondSpeed + 0.0001;
-            var estimateTime = (int) ((e.TotalBytesToReceive - e.ReceivedBytesSize) / nonZeroSpeed);
+            var estimateTime = (int)((e.TotalBytesToReceive - e.ReceivedBytesSize) / nonZeroSpeed);
             var isMinutes = estimateTime >= 60;
             var timeLeftUnit = "seconds";
 

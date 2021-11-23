@@ -1,8 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Threading.Tasks;
-using Telerik.JustMock;
-using assetsUpdater.Model.Network;
+﻿using assetsUpdater.Model.Network;
 using assetsUpdater.Network;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using System.Threading.Tasks;
+
+using Telerik.JustMock;
 
 namespace AssertsUpdaterTests.Network
 {

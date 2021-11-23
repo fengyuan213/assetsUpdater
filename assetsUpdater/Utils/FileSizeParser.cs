@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace assetsUpdater.Utils
+﻿namespace assetsUpdater.Utils
 {
     public static class FileSizeParser
     {
@@ -34,7 +28,7 @@ namespace assetsUpdater.Utils
         {
             double kb = bytes / 1024; // · 1024 Bytes = 1 Kilobyte 
             double mb = kb / 1024; // · 1024 Kilobytes = 1 Megabyte 
-            return (int) mb;
+            return (int)mb;
         }
 
         public static int ParseGb(long bytes)
@@ -42,12 +36,12 @@ namespace assetsUpdater.Utils
             double kb = bytes / 1024; // · 1024 Bytes = 1 Kilobyte 
             double mb = kb / 1024; // · 1024 Kilobytes = 1 Megabyte 
             double gb = mb / 1024; // · 1024 Megabytes = 1 Gigabyte 
-            return (int) gb;
+            return (int)gb;
         }
         public static int ParseKb(long bytes)
         {
             double kb = bytes / 1024; // · 1024 Bytes = 1 Kilobyte 
-            return (int) kb;
+            return (int)kb;
         }
     }
 }

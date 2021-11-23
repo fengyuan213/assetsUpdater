@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#region Using
+
+using System;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using assetsUpdater.Interfaces;
 using assetsUpdater.Network;
@@ -12,8 +10,9 @@ using assetsUpdater.Utils;
 using Downloader;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Telerik.JustMock;
-using Telerik.JustMock.Helpers;
 using DownloadPackage = assetsUpdater.Model.Network.DownloadPackage;
+
+#endregion
 
 namespace AssertsUpdaterTests
 {
@@ -21,72 +20,61 @@ namespace AssertsUpdaterTests
     public class DownloadTests
     {
         private DownloadPackage mockdownloadPackageExternal;
-        private WebClient mockWebClient;
         private DownloadService mockDownloadService;
         private DownloadSetting mockDownloadSetting;
+        private WebClient mockWebClient;
+
         [TestInitialize]
         public async Task TestInitialize()
 
         {
-
-            this.mockdownloadPackageExternal = Mock.Create<DownloadPackage>();
+            mockdownloadPackageExternal = Mock.Create<DownloadPackage>();
             mockdownloadPackageExternal.DownloadMode = DownloadMode.Async;
-            mockdownloadPackageExternal.Uri=new Uri("https://ipv4.download.thinkbroadband.com:8080/5MB.zip");
-            mockdownloadPackageExternal.LocalPath=Path.GetTempFileName();
+            mockdownloadPackageExternal.Uri = new Uri("https://ipv4.download.thinkbroadband.com:8080/5MB.zip");
+            mockdownloadPackageExternal.LocalPath = Path.GetTempFileName();
             var fileSize = await FileUtils.GetFileSizeRemote(mockdownloadPackageExternal.Uri.ToString());
-            
+
             Mock.Arrange(() => mockdownloadPackageExternal.SizeTotal).Returns(fileSize);
 
             mockdownloadPackageExternal.ExceptedHash = "";
 
-           //this.mockWebClient = Mock.Create<WebClient>();
-           this.mockWebClient = new WebClient();
+            //this.mockWebClient = Mock.Create<WebClient>();
+            mockWebClient = new WebClient();
 
-            this.mockDownloadService = Mock.Create<DownloadService>();
-            this.mockDownloadSetting = Mock.Create<DownloadSetting>();
-
-
+            mockDownloadService = Mock.Create<DownloadService>();
+            mockDownloadSetting = Mock.Create<DownloadSetting>();
         }
 
         private async Task<bool> AsyncDownload_Act(AsyncDownload asyncDownload)
         {
-
             await asyncDownload.Start().ConfigureAwait(true);
 
 
-
-            await asyncDownload.Wait().ContinueWith((task =>
+            await asyncDownload.Wait().ContinueWith(task =>
             {
-                if (!task.IsCompletedSuccessfully)
-                {
-                    Assert.Fail("Download UNCOMPLECTED");
-                }
-            })).ConfigureAwait(true);
+                if (!task.IsCompletedSuccessfully) Assert.Fail("Download UNCOMPLECTED");
+            }).ConfigureAwait(true);
             return true;
         }
+
         [TestMethod]
         public async Task AsyncDownload_DownloadTest_ExternalProvider()
-        { 
+        {
             mockdownloadPackageExternal.DownloadMode = DownloadMode.Async;
-            var asyncDownload =new AsyncDownload(mockdownloadPackageExternal, mockDownloadSetting, mockWebClient);
+            var asyncDownload = new AsyncDownload(mockdownloadPackageExternal, mockDownloadSetting, mockWebClient);
             Mock.Arrange(() => asyncDownload.DownloadPackage).Returns(mockdownloadPackageExternal);
-           
+
 
             await asyncDownload.Start().ConfigureAwait(true);
 
 
-            await asyncDownload.Wait().ContinueWith((task =>
+            await asyncDownload.Wait().ContinueWith(task =>
             {
-                if (!task.IsCompletedSuccessfully)
-                {
-                    Assert.Fail("Download UNCOMPLECTED");
-                }
-            })).ConfigureAwait(true);
+                if (!task.IsCompletedSuccessfully) Assert.Fail("Download UNCOMPLECTED");
+            }).ConfigureAwait(true);
             //await AsyncDownload_Act(asyncDownload).ConfigureAwait(true);
             Console.WriteLine(asyncDownload.DownloadPackage.LocalPath);
-           // Assert.AreEqual(100.00, asyncDownload.Progress);
- 
-
+            // Assert.AreEqual(100.00, asyncDownload.Progress);
         }
 
         [TestMethod]
@@ -104,17 +92,11 @@ namespace AssertsUpdaterTests
         [TestMethod]
         public void AsyncDownload_DownloadTest_QiniuProvider()
         {
-
         }
 
         [TestMethod]
         public void MPartDownload_DownloadTest_QiniuProvider()
         {
-
         }
-  
-
- 
-        
     }
 }

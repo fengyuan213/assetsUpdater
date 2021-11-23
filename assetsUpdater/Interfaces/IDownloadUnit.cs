@@ -1,13 +1,13 @@
-using System.Threading.Tasks;
-using assetsUpdater.Model;
 using assetsUpdater.Model.Network;
 using assetsUpdater.Network;
+
+using System.Threading.Tasks;
 
 namespace assetsUpdater.Interfaces
 {
     public enum DownloadMode
     {
-        Async,MultiPart
+        Async, MultiPart
     }
     public interface IDownloadUnit
     {
@@ -19,8 +19,8 @@ namespace assetsUpdater.Interfaces
         public double Progress { get; }
 
         public long BytesReceived { get; }
-     
-        public long BytesToReceive {get; }
+
+        public long BytesToReceive { get; }
         public Task Wait();
 
         public Task Start();
