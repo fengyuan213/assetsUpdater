@@ -76,15 +76,16 @@ namespace assetsUpdater.Network
              }
              else
              {
-                 while (WaitingUnits.Count >= 1)
+                 do
                  {
-                     var tasks = CurrentUploadingUnits.Select(uploadUnit => uploadUnit.Wait()).ToArray();
-                     await Task.WhenAll(tasks).ConfigureAwait(true);
-                 }
+                    var tasks = CurrentUploadingUnits.Select(uploadUnit => uploadUnit.Wait()).ToArray();
+                    await Task.WhenAll(tasks).ConfigureAwait(true);
+                } while (WaitingUnits.Count >= 1); 
                  goto Start;
 
              }
 
+            
          }
 
          public async Task QueueUpload(IEnumerable<IUploadUnit> uploadUnits)
@@ -176,6 +177,15 @@ namespace assetsUpdater.Network
                         await StartDownload(ErrorUnits[0]).ConfigureAwait(true); 
                 }
 
+
+            }
+        }
+
+        ~UploadQueue()
+        {
+            foreach (var uploadUnit in AllUnits)
+            {
+                uploadUnit.UploadCompletedEventHandler-=UploadCompletedEventHandler;
 
             }
         }

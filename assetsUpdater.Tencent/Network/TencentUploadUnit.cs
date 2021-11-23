@@ -16,6 +16,7 @@ namespace assetsUpdater.Tencent.Network
             CosXml = cosXml;
             UploadPackage = uploadPackage;
             TencentBucketAppId = tencentBucketAppId;
+            TotalBytes = Utils.FileUtils.GetFileSize(UploadPackage.FileLocalPath);
 
         }
 
@@ -35,6 +36,7 @@ namespace assetsUpdater.Tencent.Network
 
         public long TotalBytes { get; private set; }
         public UploadPackage UploadPackage { get; }
+        private bool _isOnCompleteHandlerCalled = false;
         /// <summary>
         /// May throw exception
         /// </summary>
@@ -67,13 +69,7 @@ namespace assetsUpdater.Tencent.Network
             return Task.CompletedTask;
         }
 
-        private void FailCallback(CosClientException clientexception, CosServerException serverexception)
-        {
-            Console.WriteLine(clientexception);
-            Console.WriteLine(serverexception);
-            OnUploadCompleted(false);
-
-        }
+ 
 
         /// <summary>
         /// May throw exception
@@ -85,13 +81,14 @@ namespace assetsUpdater.Tencent.Network
             {
                 return Task.CompletedTask;
             }
-         
+
+            
             var result =  CurrentUploadingTask.Result;
 
-            Debug.WriteLine("Upload Result Info{0}", result.GetResultInfo());
+            //Debug.WriteLine("Upload Result Info{0}", result.GetResultInfo());
             
             string eTag = result.eTag;
-            Debug.WriteLine("Upload Etag:{0}", eTag);
+           // Debug.WriteLine("Upload Etag:{0}", eTag);
             return Task.CompletedTask;
         }
 
@@ -102,6 +99,7 @@ namespace assetsUpdater.Tencent.Network
         }
         protected virtual void OnUploadCompleted(bool isSucceed)
         {
+          
             UploadCompletedEventHandler?.Invoke(this, isSucceed);
         }
 
@@ -109,17 +107,44 @@ namespace assetsUpdater.Tencent.Network
         {
             TotalBytes = total;
             BytesSent = completed;
-            Progress = (double)completed/(double)total/1d;
-       
+           
+            Progress = (double)completed/(double)TotalBytes/1d;
+            
+            if (Progress==1)
+            {
+                
+                if (!_isOnCompleteHandlerCalled)
+                {
+                    OnUploadCompleted(true);
+                    _isOnCompleteHandlerCalled=true;
+                }
+            }
+           
             //Console.WriteLine(String.Format("progress = {0:##.##}%", completed * 100.0 / total));
         }
 
         private void UploadSucceedCallBack(CosResult result)
         {
             Console.WriteLine("Upload Succeed CallBack:{0}", result.Key);
-            OnUploadCompleted(result.IsSuccessful());
-            
+            if (!_isOnCompleteHandlerCalled)
+            {
+                OnUploadCompleted(result.IsSuccessful());
+                _isOnCompleteHandlerCalled = true;
+            }
+
             Debug.WriteLine("Upload Succeed CallBack:{0}",result.Key);
+        }
+        private void FailCallback(CosClientException clientexception, CosServerException serverexception)
+        {
+            Console.WriteLine(clientexception);
+            Console.WriteLine(serverexception);
+            if (!_isOnCompleteHandlerCalled)
+            {
+                OnUploadCompleted(false);
+                _isOnCompleteHandlerCalled = true;
+
+            }
+
         }
     }
 }

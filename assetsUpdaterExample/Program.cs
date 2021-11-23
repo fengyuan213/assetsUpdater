@@ -209,7 +209,7 @@ namespace assetsUpdaterExample
             //TencentUploadQueueTest();
             Console.WriteLine("Hello World!");
             Console.ReadLine();
-            TencentUploadUnitUploadTest();
+            TencentUploadQueueTest();
             Console.WriteLine("Hello World!");
             GC.Collect(50,GCCollectionMode.Forced);
             GC.Collect();
@@ -281,7 +281,7 @@ namespace assetsUpdaterExample
             
            
             
-            var queue = new UploadQueue(2);
+            var queue = new UploadQueue(1);
       
             await using  var timer = new Timer(UploadQueueTimerCallback,queue, 0, 500);
             
