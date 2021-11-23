@@ -20,15 +20,16 @@ namespace assetsUpdater
 {
     public class PackageManager
     {
-        public PackageManager(string localRootPath, AssertUpgradePackage assertUpgradePackage)
+        public PackageManager( AssertUpgradePackage assertUpgradePackage,IAddressBuilder addressBuilder)
         {
             AssertUpgradePackage = assertUpgradePackage;
-            LocalRootPath = localRootPath;
+
+            _addressBuilder = addressBuilder;
         }
         public AssertUpgradePackage AssertUpgradePackage { get; set; }
-        public string LocalRootPath { get; set; }
+       
         public event EventHandler<MessageNotifyEventArgs> MessageNotify;
-
+        private readonly IAddressBuilder _addressBuilder = null;
 
         /// <summary>
         /// This will apply both Local and Remote (Means start download queue)
@@ -45,16 +46,16 @@ namespace assetsUpdater
         {
             var downloadUnits = new List<IDownloadUnit>();
             downloadUnits.AddRange(AssertUpgradePackage.AddFile.Select(databaseFile =>
-                BuildDownloadUnit(databaseFile, LocalRootPath, asyncThresholdSizeMb)).ToList());
+                BuildDownloadUnit(databaseFile, asyncThresholdSizeMb)).ToList());
             downloadUnits.AddRange(AssertUpgradePackage.DifferFile.Select(databaseFile =>
-                BuildDownloadUnit(databaseFile, LocalRootPath, asyncThresholdSizeMb)));
+                BuildDownloadUnit(databaseFile, asyncThresholdSizeMb)));
             return downloadUnits;
         }
 
-        protected virtual IDownloadUnit BuildDownloadUnit(DatabaseFile databaseFile, string localRootPath,
+        protected virtual IDownloadUnit BuildDownloadUnit(DatabaseFile databaseFile,
             int asyncThresholdSize)
         {
-            var downloadPackage = BuildDownloadPackage(databaseFile, localRootPath);
+            var downloadPackage = BuildDownloadPackage(databaseFile);
             if (FileSizeParser.ParseMb(databaseFile.FileSize) > asyncThresholdSize)
             {
                 downloadPackage.DownloadMode = DownloadMode.MultiPart;
@@ -67,10 +68,20 @@ namespace assetsUpdater
             return asyncUnit;
         }
 
-        protected virtual DownloadPackage BuildDownloadPackage(DatabaseFile databaseFile, string localRootPath)
+        protected virtual DownloadPackage BuildDownloadPackage(DatabaseFile databaseFile)
         {
-            var uri = new Uri(databaseFile.DownloadAddress);
-            var localPath = Path.Join(localRootPath, databaseFile.RelativePath);
+            Uri uri=null;
+
+            if (string.IsNullOrWhiteSpace(databaseFile.DownloadAddress))
+            {
+                 uri = _addressBuilder.BuildUri(databaseFile.RelativePath);
+            }
+            else
+            {
+                uri = new Uri(databaseFile.DownloadAddress);
+            }
+            
+            var localPath = _addressBuilder.BuildDownloadLocalPath(databaseFile.RelativePath);
             var fileSize = databaseFile.FileSize;
             var exceptedHash = databaseFile.Hash;
             var downloadMode = DownloadMode.Async;
@@ -107,10 +118,10 @@ namespace assetsUpdater
         public Task Apply_Local()
         {
             foreach (var deleteFile in AssertUpgradePackage.DeleteFile)
-                RemoveFile(Path.Join(LocalRootPath, deleteFile.RelativePath));
-
+                RemoveFile(Path.Join(_addressBuilder.LocalRootPath, deleteFile.RelativePath));
+            
             foreach (var databaseFile in AssertUpgradePackage.DifferFile)
-                RemoveFile(Path.Join(LocalRootPath, databaseFile.RelativePath));
+                RemoveFile(Path.Join(_addressBuilder.LocalRootPath, databaseFile.RelativePath));
             return Task.CompletedTask;
         }
 

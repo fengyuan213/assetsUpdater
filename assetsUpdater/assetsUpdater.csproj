@@ -5,10 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Downloader" Version="2.2.9" />
+    <PackageReference Include="Downloader" Version="2.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Abstractions\" />
   </ItemGroup>
 </Project>

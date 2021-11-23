@@ -48,7 +48,7 @@ namespace assetsUpdater.Model.StorageProvider
         /// </summary>
         [AllowNull] public int MirrorVersion { get; set; }
 
-
+        public string UpdateUrl { get; set; }
         [AllowNull] public IAddressBuilder DownloadAddressBuilder { get; set; }
     }
 }

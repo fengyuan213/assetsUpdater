@@ -42,9 +42,10 @@ namespace AssertsUpdaterTests.Network
         {
             // Arrange
             var downloadQueue = this.CreateDownloadQueue();
-            System.Collections.IEnumerable resultes = null;
+            IEnumerable<IDownloadUnit> resultes = null;
 
             // Act
+       
             await downloadQueue.QueueDownload(
                 resultes);
 
@@ -71,7 +72,7 @@ namespace AssertsUpdaterTests.Network
         public async Task RestartFailedDownload_StateUnderTest_ExpectedBehavior()
         {
             // Arrange
-            var downloadQuueue = this.CreateDownloadQueue();
+            var downloadQueue = this.CreateDownloadQueue();
             IDownloadUnit downloadUnit = null;
 
             // Act

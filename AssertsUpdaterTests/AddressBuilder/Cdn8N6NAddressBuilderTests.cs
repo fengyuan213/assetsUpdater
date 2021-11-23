@@ -19,10 +19,10 @@ namespace AssertsUpdaterTests.AddressBuilder
         private Cdn8N6NAddressBuilder CreateCdn8N6NAddressBuilder()
         {
             return new Cdn8N6NAddressBuilder(
-                TODO,
-                TODO,
-                TODO,
-                TODO);
+                "LocalDownloadRoot",
+                "ApiRoot",
+                "ApiKey",
+                "ApiSecret");
         }
 
         [TestMethod]

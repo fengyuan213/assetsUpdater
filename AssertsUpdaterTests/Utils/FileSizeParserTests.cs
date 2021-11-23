@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.IO;
 using Telerik.JustMock;
 using assetsUpdater.Utils;
 
@@ -16,20 +17,17 @@ namespace AssertsUpdaterTests.Utils
 
         }
 
-        private FileSizeParser CreateFileSizeParser()
-        {
-            return new FileSizeParser();
-        }
+      
 
         [TestMethod]
         public void ParseAuto_StateUnderTest_ExpectedBehavior()
         {
             // Arrange
-            var fileSizeParser = this.CreateFileSizeParser();
+        
             double bytes = 0;
 
             // Act
-            var result = fileSizeParser.ParseAuto(
+            var result = FileSizeParser.ParseAuto(
                 bytes);
 
             // Assert
@@ -40,11 +38,11 @@ namespace AssertsUpdaterTests.Utils
         public void ParseMb_StateUnderTest_ExpectedBehavior()
         {
             // Arrange
-            var fileSizeParser = this.CreateFileSizeParser();
+       
             long bytes = 0;
 
             // Act
-            var result = fileSizeParser.ParseMb(
+            var result = FileSizeParser.ParseMb(
                 bytes);
 
             // Assert
@@ -55,11 +53,11 @@ namespace AssertsUpdaterTests.Utils
         public void ParseGb_StateUnderTest_ExpectedBehavior()
         {
             // Arrange
-            var fileSizeParser = this.CreateFileSizeParser();
+
             long bytes = 0;
 
             // Act
-            var result = fileSizeParser.ParseGb(
+            var result = FileSizeParser.ParseGb(
                 bytes);
 
             // Assert
@@ -70,11 +68,11 @@ namespace AssertsUpdaterTests.Utils
         public void ParseKb_StateUnderTest_ExpectedBehavior()
         {
             // Arrange
-            var fileSizeParser = this.CreateFileSizeParser();
+            
             long bytes = 0;
 
             // Act
-            var result = fileSizeParser.ParseKb(
+            var result = FileSizeParser.ParseKb(
                 bytes);
 
             // Assert

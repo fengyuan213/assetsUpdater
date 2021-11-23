@@ -48,7 +48,7 @@ namespace assetsUpdater.StorageProvider
         }
 
         /// <summary>
-        /// 
+        /// Download a remote database
         /// </summary>
         /// <param name="obj">IEnumerable<object>,obj[0] download address obj[1] NetworkCredential}</param>
         /// <exception cref="ArgumentNullException"></exception>
@@ -138,7 +138,10 @@ namespace assetsUpdater.StorageProvider
                 
                 var absolutePath = Path.Join(config.VersionControlFolder, file);
                 //Console.WriteLine("Absolute Path:{0}",absolutePath);
-                var vcf= new DatabaseFile(file, FileUtils.Sha1File(absolutePath),
+                //eg file before: /.minecraft/data.json
+                //eg file after: /.minecraft/data.json
+                var path = file.Substring(1);
+                var vcf = new DatabaseFile(path, FileUtils.Sha1File(absolutePath),
                     FileUtils.GetFileSize(absolutePath), null);
                 //var vcf = new BuildInDbFile(file, Path.GetFileName(absolutePath), FileUtils.GetFileSize(absolutePath), FileUtils.Sha1File(absolutePath), null);
                 databseFiles.Add(vcf);

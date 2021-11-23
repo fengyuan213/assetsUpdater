@@ -14,26 +14,25 @@ namespace assetsUpdater.Network
 {
     public class DownloadQueue
     {
+        public bool AutoRestartFailedDownload { get; set; } = true;
         public int MaxParallelAsyncDownloadCount { get; set; } = 50;
         public int MaxParallelMPartDownloadCount { get; set; } = 1;
-        public ObservableCollection<IDownloadUnit> CurrentDownloadingObj { get; set; } =
+        public virtual ObservableCollection<IDownloadUnit> CurrentDownloadingObj { get; private set; } =
             new ObservableCollection<IDownloadUnit>();
 
-        public ObservableCollection<IDownloadUnit> ErrorList { get; set; } = new ObservableCollection<IDownloadUnit>();
+        public ObservableCollection<IDownloadUnit> ErrorList { get; private set; } = new ObservableCollection<IDownloadUnit>();
 
-        public ObservableCollection<IDownloadUnit> WaitingList { get; set; } =
+        public ObservableCollection<IDownloadUnit> WaitingList { get; private set; } =
             new ObservableCollection<IDownloadUnit>();
 
-        public ObservableCollection<IDownloadUnit> AllDownloadObj { get; set; } =
+        public ObservableCollection<IDownloadUnit> AllDownloadObj { get; private set; } =
             new ObservableCollection<IDownloadUnit>();
 
         public double Progress
         {
             get
             {
-                double progressTotal = 0;
-                foreach (var downloadUnit in AllDownloadObj)
-                    progressTotal += downloadUnit.Progress;
+                double progressTotal = AllDownloadObj.Sum(downloadUnit => downloadUnit.Progress);
 
                 return progressTotal / AllDownloadObj.Count;
             }
@@ -66,12 +65,21 @@ namespace assetsUpdater.Network
 
         public async Task WaitAll()
         {
+            Start:
             if (CurrentDownloadingObj.Count < 1 && WaitingList.Count < 1)
             {
                 //Downlading finsihed
                 if (ErrorList.Count >= 1)
                 { //Error occured
+                    if (AutoRestartFailedDownload)
+                    {
+                        foreach (var downloadUnit in ErrorList)
+                        {
+                            WaitingList.Add(downloadUnit);
 
+                        }
+                        goto Start;
+                    }
                 }
 
             }
@@ -82,7 +90,7 @@ namespace assetsUpdater.Network
                     var tasks = CurrentDownloadingObj.Select(downloadUnit => downloadUnit.Wait()).ToArray();
                     await Task.WhenAll(tasks).ConfigureAwait(true);
                 }
-
+                goto Start;
             }
 
         }
@@ -184,8 +192,17 @@ namespace assetsUpdater.Network
             }
 
             if (CurrentDownloadingObj.Count < MaxParallelMPartDownloadCount)
+            {
                 if (WaitingList.Count >= 1)
                     StartDownload(WaitingList[0]);
+                else if (AutoRestartFailedDownload)
+                {
+                    if (ErrorList.Count >= 1)
+                        StartDownload(ErrorList[0]);
+                }
+
+
+            }
         }
         
         private void Async_WebClient_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
@@ -207,8 +224,17 @@ namespace assetsUpdater.Network
                 }
             }
             if (CurrentDownloadingObj.Count < MaxParallelAsyncDownloadCount)
+            {
                 if (WaitingList.Count >= 1)
                     StartDownload(WaitingList[0]);
+                else if (AutoRestartFailedDownload)
+                {
+                    if (ErrorList.Count >= 1)
+                        StartDownload(ErrorList[0]);
+                }
+
+
+            }
         }
 
         #region Ctor

@@ -13,7 +13,7 @@ namespace assetsUpdater.Interfaces
         /// 
         [NotNull][JsonProperty("RootDownloadAddress")]
         public  string RootDownloadAddress { get; set; }
-        [JsonIgnore]
+
         public  string LocalRootPath { get; set; }
         public Uri BuildUri(string relativePath);
         

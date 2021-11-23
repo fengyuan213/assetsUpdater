@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.808.4
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "assetsUpdater", "assetsUpdater\assetsUpdater.csproj", "{1EDB2DD7-5CBA-44BF-9FE1-ED41B962B6E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "assetsUpdater", "assetsUpdater\assetsUpdater.csproj", "{1EDB2DD7-5CBA-44BF-9FE1-ED41B962B6E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssertsUpdaterTests", "AssertsUpdaterTests\AssertsUpdaterTests.csproj", "{96A36D10-24B8-46BF-A9F5-656E6CA7D604}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssertsUpdaterTests", "AssertsUpdaterTests\AssertsUpdaterTests.csproj", "{96A36D10-24B8-46BF-A9F5-656E6CA7D604}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "assertsUpdaterExample", "assertsUpdaterExample\assertsUpdaterExample.csproj", "{7FD05F7D-7819-42E7-89AF-8159777DF674}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "assetsUpdater.Tencent", "assetsUpdater.Tencent\assetsUpdater.Tencent.csproj", "{D83FD6E0-B2DD-495B-A3E1-84ABC8C714AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "assetsUpdaterExample", "assetsUpdaterExample\assetsUpdaterExample.csproj", "{FC0D7108-00F9-4D29-A5FA-CC0A4A73990E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +25,14 @@ Global
 		{96A36D10-24B8-46BF-A9F5-656E6CA7D604}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96A36D10-24B8-46BF-A9F5-656E6CA7D604}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96A36D10-24B8-46BF-A9F5-656E6CA7D604}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7FD05F7D-7819-42E7-89AF-8159777DF674}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7FD05F7D-7819-42E7-89AF-8159777DF674}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7FD05F7D-7819-42E7-89AF-8159777DF674}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7FD05F7D-7819-42E7-89AF-8159777DF674}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D83FD6E0-B2DD-495B-A3E1-84ABC8C714AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D83FD6E0-B2DD-495B-A3E1-84ABC8C714AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D83FD6E0-B2DD-495B-A3E1-84ABC8C714AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D83FD6E0-B2DD-495B-A3E1-84ABC8C714AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC0D7108-00F9-4D29-A5FA-CC0A4A73990E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC0D7108-00F9-4D29-A5FA-CC0A4A73990E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC0D7108-00F9-4D29-A5FA-CC0A4A73990E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC0D7108-00F9-4D29-A5FA-CC0A4A73990E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

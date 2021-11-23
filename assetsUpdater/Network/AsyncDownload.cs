@@ -69,7 +69,7 @@ namespace assetsUpdater.Network
 
         public Task Start()
         {
-            CurrentDownloadingTask = WebClient.DownloadFileTaskAsync(DownloadPackage.Uri,
+            CurrentDownloadingTask = WebClient.DownloadFileTaskAsync(DownloadPackage.Uri.OriginalString,
                 DownloadPackage.LocalPath);
            
             

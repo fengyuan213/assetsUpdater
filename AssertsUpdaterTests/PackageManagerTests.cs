@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 using Telerik.JustMock;
 using assetsUpdater;
+using assetsUpdater.AddressBuilder;
 using assetsUpdater.Model;
 
 namespace AssertsUpdaterTests
@@ -20,7 +21,9 @@ namespace AssertsUpdaterTests
 
         private PackageManager CreateManager()
         {
-            return new PackageManager(_localRootPath,this.mockAssertUpgradePackage);
+            return new PackageManager(this.mockAssertUpgradePackage,
+                new DefaultAddressBuilder("defautRootAddress", _localRootPath));
+
         }
 
         [TestMethod]

@@ -49,7 +49,7 @@ namespace assetsUpdater.Network
 
         public async Task Start()
         {
-            await DownloadService.DownloadFileTaskAsync(DownloadPackage.Uri.ToString(), DownloadPackage.LocalPath)
+            await DownloadService.DownloadFileTaskAsync(DownloadPackage.Uri.OriginalString, DownloadPackage.LocalPath)
                 .ConfigureAwait(false);
 
             //return Task.CompletedTask;
