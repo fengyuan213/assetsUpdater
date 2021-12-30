@@ -10,10 +10,14 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using assetsUpdater.AddressBuilder;
+using assetsUpdater.EventArgs;
+using assetsUpdater.Exceptions;
 using assetsUpdater.Interfaces;
 using assetsUpdater.Model.StorageProvider;
 using assetsUpdater.Utils;
 using Newtonsoft.Json;
+using Object = System.Object;
 
 #endregion
 
@@ -26,15 +30,38 @@ namespace assetsUpdater.StorageProvider
     /// </summary>
     public class FileDatabase : IEquatable<FileDatabase>, IStorageProvider, ICloneable
     {
-        public FileDatabase(string path)
+        /// <summary>
+        /// May throw exception
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="isAsync"></param>
+        public FileDatabase(string path, bool isAsync = false)
         {
-            Read(path).RunSynchronously();
+            if (isAsync)
+            {
+                Task.Run((async delegate { await Read(path).ConfigureAwait(false); }));
+            }
+            else
+            {
+                Read(path).Wait();
+            }
+            
         }
 
         public FileDatabase()
         {
         }
 
+        public FileDatabase(Stream stream)
+        {
+            Task.Run((async delegate { await Read(stream).ConfigureAwait(false); }));
+        }
+
+        public FileDatabase(IStorageProvider storageProvider)
+        {
+            Data = storageProvider.GetBuildInDbData();
+            
+        }
         #region Prop
 
         /// <summary>
@@ -46,14 +73,28 @@ namespace assetsUpdater.StorageProvider
         //public static NetworkCredential NutstoreDownloadCredential { get; } = new NetworkCredential("liufengyuan45@outlook.com", "ags7xjgzuhr2ig3d");
 
         #endregion
-
-
+        
+        /// <summary>
+        /// Clones this object
+        /// </summary>
+        /// <returns></returns>
         public object Clone()
         {
-            return new FileDatabase
+            //settings.Converters.Add(new ConcreteTypeConverter<DefaultAddressBuilder, IAddressBuilder>());
+            //settings.
+            return new FileDatabase()
             {
-                Data = Data
+                Data = CopyData(Data)
             };
+
+            DbData CopyData(DbData data)
+            {
+              
+                List<DatabaseFile> files=new List<DatabaseFile>();
+                files = Data.DatabaseFiles.ToList().CloneJson();
+
+                return new DbData((DbConfig)Data.Config.Clone()){DatabaseFiles = files};
+            }
         }
 
 
@@ -67,6 +108,8 @@ namespace assetsUpdater.StorageProvider
         {
             return ObjectComparerUtility.ObjectsAreEqual(Data, other?.Data);
         }
+
+      
 
         /// <summary>
         ///     Download a remote database
@@ -88,30 +131,58 @@ namespace assetsUpdater.StorageProvider
             };
             await using var stream = new MemoryStream(await webClient.DownloadDataTaskAsync(url).ConfigureAwait(true));
             using var zipArchive = new ZipArchive(stream, ZipArchiveMode.Read);
-            Data = await DbDataReader(zipArchive).ConfigureAwait(true);
+            Data = await DbDataReader(zipArchive).ConfigureAwait(false);
         }
-
         /// <summary>
-        ///     Open and read the database data to the current class.
+        /// Open and Read the database in in to Memory
         /// </summary>
-        /// <param name="path">Database Path, Could be relative(reference to current directory) or absolute </param>
-        /// <exception cref="IOException"> When Database path not valid</exception>
-        public async Task Read([NotNull] object obj)
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task Read(Stream stream)
         {
-            var path = obj as string;
-            if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException(path, "数据库路径不能为空");
-            if (!File.Exists(path)) throw new IOException("Database can't be found");
+            throw new NotImplementedException();
             try
             {
-                using (var zipArchive = ZipFile.OpenRead(path))
-                {
-                    await DbDataReader(zipArchive).ConfigureAwait(true);
-                }
+                //var ms = new MemoryStream();
+             
+
+                //await stream.CopyToAsync(ms);
+
+                 var zipArchive = new ZipArchive(stream);
+                
+                await DbDataReader(zipArchive);
+                
             }
             catch (InvalidDataException e)
             {
                 Console.WriteLine(e);
                 throw new IOException("数据库不合法", e);
+            }
+
+            await stream.DisposeAsync();
+        }
+        /// <summary>
+        ///     Open and read the database data to the current class.
+        /// </summary>
+        /// <param name="dbPath">Database Path, Could be relative(reference to current directory) or absolute </param>
+        /// <exception cref="IOException"> When Database path not valid</exception>
+        public async Task Read([NotNull] string dbPath)
+        {
+          
+            if (string.IsNullOrWhiteSpace(dbPath)) throw new ArgumentNullException(dbPath, "数据库路径不能为空");
+            if (!File.Exists(dbPath)) throw new IOException("Database can't be found");
+            try
+            {
+                using (var zipArchive = ZipFile.OpenRead(dbPath))
+                {
+                    await DbDataReader(zipArchive);
+                }
+            }
+            catch (InvalidDataException e)
+            {
+                AssertVerify.OnMessageNotify(this, "数据库不合法",e);
+                throw;
             }
         }
 
@@ -133,29 +204,90 @@ namespace assetsUpdater.StorageProvider
         /// <param name="config"></param>
         public Task Create([NotNull] DbConfig config)
         {
+            config = (DbConfig)config.Clone();
             var files = new List<string>();
-            foreach (var directory in config.DatabaseSchema.DirList)
-                files.AddRange(FileUtils.GetAllFilesInADirectory(config.VersionControlFolder, directory ?? ""));
+           
+           
+            //TODO: Build database Testing with FileList and DirList
+            foreach (var file in config.DatabaseSchema.FileList)
+            {
+                try
+                {
+                    //ForSafetyReasons to a String.Replace
+                    var fileValidated = FileUtils.MakeStandardRelativePath(file);
 
-            var databseFiles = new List<DatabaseFile>();
+
+                    var path = Path.Join(config.VersionControlFolder, fileValidated);
+                    
+                    if (!File.Exists(path))
+                    {
+                        //throw new FileNotFoundException("FileList配置的文件未找到:"+path, file);
+                    }
+                    else
+                    {
+                        files.Add(fileValidated);
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    AssertVerify.OnMessageNotify(this, e.Message, e);
+
+
+                }
+            }
+            foreach (var directory in config.DatabaseSchema.DirList)
+            {
+                if (Directory.Exists(Path.Join(config.VersionControlFolder,directory)))
+                {
+                    try
+                    {
+                        var paths = FileUtils.GetAllFilesInADirectory(config.VersionControlFolder, directory ?? "");
+                       
+                        files.AddRange(paths);
+                        
+
+                    }
+                    catch (Exception e)
+                    {
+                        AssertVerify.OnMessageNotify(this, "DirList寻找失败", e);
+
+                    }
+
+                }
+                
+
+            }
+            var databaseFiles = new List<DatabaseFile>();
             foreach (var file in files)
             {
                 var absolutePath = Path.Join(config.VersionControlFolder, file);
+                AssertVerify.OnMessageNotify(this,"Absolute Path:"+absolutePath,MsgL.Debug);
                 //Console.WriteLine("Absolute Path:{0}",absolutePath);
                 //eg file before: /.minecraft/data.json
                 //eg file after: /.minecraft/data.json
-                var path = file.Substring(1);
-                var vcf = new DatabaseFile(path, FileUtils.Sha1File(absolutePath),
+                //var path = file.Substring(1);
+                var vcf = new DatabaseFile(file, FileUtils.Sha1File(absolutePath),
                     FileUtils.GetFileSize(absolutePath), null);
                 //var vcf = new BuildInDbFile(file, Path.GetFileName(absolutePath), FileUtils.GetFileSize(absolutePath), FileUtils.Sha1File(absolutePath), null);
-                databseFiles.Add(vcf);
+                databaseFiles.Add(vcf);
             }
+            
+            //! Important, given default localRoot to vcs folder
+            //! Prevent argument null when manager uploading database
+            config.DownloadAddressBuilder.LocalRootPath = config.VersionControlFolder;
 
             Data = new DbData(config)
             {
-                DatabaseFiles = databseFiles
+                DatabaseFiles = databaseFiles
             };
+
+
+
+
             return Task.CompletedTask;
+
+            
         }
 
 
@@ -166,19 +298,27 @@ namespace assetsUpdater.StorageProvider
         public Task Export([NotNull] string path)
         {
             var json = JsonConvert.SerializeObject(Data);
-            var stream = new FileStream(path, FileMode.Create);
-            using (var zipArchive = new ZipArchive(stream, ZipArchiveMode.Create))
+            using (var stream = new FileStream(path, FileMode.Create))
             {
-                var entry = zipArchive.CreateEntry("data.json");
-                using (var streamWriter = new StreamWriter(entry.Open()))
+
+                using (var zipArchive = new ZipArchive(stream, ZipArchiveMode.Create))
                 {
-                    streamWriter.Write(json);
-                    streamWriter.Flush();
+                    var entry = zipArchive.CreateEntry("data.json");
+
+                    using (var streamWriter = new StreamWriter(entry.Open()))
+                    {
+                        streamWriter.Write(json);
+                        streamWriter.Flush();
+                    }
                 }
+
             }
+
 
             return Task.CompletedTask;
         }
+
+       
 
         /// <summary>
         ///     Convert Database files into Dictionary style
@@ -191,24 +331,53 @@ namespace assetsUpdater.StorageProvider
 
         public DbData GetBuildInDbData()
         {
+       
             return Data;
         }
 
 
         private Task<DbData> DbDataReader(ZipArchive zipArchive)
         {
-            var stream = zipArchive.GetEntry("data.json")?.Open();
-            using var streamReader = new StreamReader(stream ?? new MemoryStream());
-            var content = streamReader.ReadToEnd();
-            Data = JsonConvert.DeserializeObject<DbData>(content);
-            return Task.FromResult(Data);
+
+            try
+            {
+                using  var stream = zipArchive.GetEntry("data.json")?.Open() ??
+                             throw new FileDatabaseInvalidException("can't open db data.json");
+                 using var streamReader = new StreamReader(stream);
+                 
+                var content = streamReader.ReadToEnd();
+                var settings = new JsonSerializerSettings()
+                {
+                    TypeNameHandling = TypeNameHandling.Auto
+                    
+                };
+                settings.Converters.Add(new ConcreteTypeConverter<DefaultAddressBuilder,IAddressBuilder>());
+                //settings.
+                //Data = JsonConvert.DeserializeObject<DbData>(content);
+                Data =(DbData) JsonConvert.DeserializeObject<DbData>(content,settings)  ;
+                if (Data==null)
+                {
+                    AssertVerify.OnMessageNotify(this, "Unable to Deserialize db json to Object", MsgL.Error);
+                }
+                return Task.FromResult(Data);
+            }
+            catch (Exception e)
+            {
+
+                AssertVerify.OnMessageNotify(this, "Unable to read database", MsgL.Error, e);
+
+            }
+           
+            return Task.FromResult(new DbData(null));
         }
 
-        public bool IsValidDb()
+        public bool IsValidDb(bool allowEmptyValidDb=false)
         {
-            if (Data.DatabaseFiles == null || Data.Config is not { DatabaseSchema: { } }) return false;
-            return Data.DatabaseFiles.Any() && !string.IsNullOrWhiteSpace(Data.Config.VersionControlFolder) &&
-                   string.IsNullOrWhiteSpace(Data.Config.DownloadAddressBuilder.RootDownloadAddress);
+            if (Data?.DatabaseFiles == null || Data.Config is not { DatabaseSchema: { } }) return false;
+            var allowEmptyDb = allowEmptyValidDb || Data.DatabaseFiles.Any();
+            var result= (allowEmptyDb)&& !string.IsNullOrWhiteSpace(Data.Config.DownloadAddressBuilder.RootDownloadAddress);
+            return result;
         }
+
     }
 }

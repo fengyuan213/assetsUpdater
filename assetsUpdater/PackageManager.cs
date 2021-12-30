@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using assetsUpdater.EventArgs;
+using assetsUpdater.Exceptions;
 using assetsUpdater.Interfaces;
 using assetsUpdater.Model;
 using assetsUpdater.Model.Network;
@@ -20,6 +21,7 @@ namespace assetsUpdater
     public class PackageManager
     {
         private readonly IAddressBuilder _addressBuilder;
+        private bool _isInitialized;
 
         public PackageManager(AssertUpgradePackage assertUpgradePackage, IAddressBuilder addressBuilder)
         {
@@ -30,7 +32,10 @@ namespace assetsUpdater
 
         public AssertUpgradePackage AssertUpgradePackage { get; set; }
 
-        public event EventHandler<MessageNotifyEventArgs> MessageNotify;
+        public void Init()
+        {
+            _isInitialized = true;
+        }
 
         /// <summary>
         ///     This will apply both Local and Remote (Means start download queue)
@@ -106,6 +111,8 @@ namespace assetsUpdater
 
         public virtual async Task<DownloadQueue> Apply_Remote()
         {
+            if (!_isInitialized) throw new PackageManagerNotInitializedException("Package Manager not initialized");
+
             var downloadQueue = BuildDownloadConfig();
             var downloadUnits = BuildDownloadUnits();
             await downloadQueue.QueueDownload(downloadUnits).ConfigureAwait(true);
@@ -114,19 +121,24 @@ namespace assetsUpdater
 
         public Task Apply_Local()
         {
+            if (!_isInitialized) throw new PackageManagerNotInitializedException("Package Manager not initialized");
+
             foreach (var deleteFile in AssertUpgradePackage.DeleteFile)
-                RemoveFile(Path.Join(_addressBuilder.LocalRootPath, deleteFile.RelativePath));
+                RemoveFile(_addressBuilder.BuildDownloadLocalPath(deleteFile.RelativePath));
 
             foreach (var databaseFile in AssertUpgradePackage.DifferFile)
-                RemoveFile(Path.Join(_addressBuilder.LocalRootPath, databaseFile.RelativePath));
+
+                RemoveFile(_addressBuilder.BuildDownloadLocalPath(databaseFile.RelativePath));
             return Task.CompletedTask;
         }
 
 
         private void OnDeletionFailed(string msg, string filepath, Exception e = null)
         {
-            MessageNotify?.Invoke(this,
-                new MessageNotifyEventArgs(MsgL.Error, msg, true, new IOException("未能删除:" + filepath, e)));
+            var ex = new FailedDeletionException($"Failed to remove {filepath}, Please delete it manually", filepath);
+            AssertVerify.OnMessageNotify(this,
+                new MessageNotifyEventArgs(MsgL.Critical, msg, true, ex));
+            throw ex;
         }
 
         private void RemoveFile(string path)
@@ -139,7 +151,7 @@ namespace assetsUpdater
             }
             catch (Exception e)
             {
-                OnDeletionFailed("删除文件失败", path, e);
+                OnDeletionFailed($"删除文件失败,请手动删除:{path}", path, e);
             }
         }
     }

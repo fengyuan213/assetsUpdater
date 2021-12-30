@@ -38,7 +38,8 @@ namespace AssertsUpdaterTests.StorageProvider
             {
                 DatabaseSchema = new DbSchema
                 {
-                    DirList = new List<string> { "testFiles" }
+                    DirList = new List<string> { "testFiles" },
+                    FileList = new List<string>(){"FileItem1"}
                 },
 
                 MajorVersion = 1,
@@ -86,6 +87,7 @@ namespace AssertsUpdaterTests.StorageProvider
 
             await exceptedFileDatafilesDatabase
                 .Export(Path.Join(Directory.GetCurrentDirectory(), "expectedFileDatabase.zip")).ConfigureAwait(true);
+            
             Assert.IsTrue(true);
         }
 
@@ -95,10 +97,8 @@ namespace AssertsUpdaterTests.StorageProvider
             {
                 DatabaseSchema = new DbSchema
                 {
-                    DirList = new List<string>
-                    {
-                        "dirlist"
-                    }
+                    DirList = new List<string> { "testFiles" },
+                    FileList = new List<string>() { "FileItem1" }
                 },
                 MajorVersion = 1,
                 MirrorVersion = 1,

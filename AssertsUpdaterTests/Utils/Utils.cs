@@ -14,7 +14,7 @@ namespace AssertsUpdaterTests.Utils
         public static int GenTestFiles(string subDir, out IEnumerable<string> fileNames, out IEnumerable<string> fileHashes, out IEnumerable<int> fileSizeInMbs)
         {
             Random r = new Random();
-            var upper = r.Next(30, 40);
+            var upper = r.Next(10, 20);
             fileNames = new List<string>();
             fileHashes = new List<string>();
             fileSizeInMbs = new List<int>();

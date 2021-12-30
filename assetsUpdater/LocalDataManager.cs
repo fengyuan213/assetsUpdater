@@ -14,7 +14,7 @@ namespace assetsUpdater
         {
 
         }
-        public LocalDataManager(string dbPath) : base(dbPath)
+        public LocalDataManager(string dbPath,bool isAsync=false) : base(dbPath,isAsync)
         {
             /*DatabasePath = dbPath;
             if (!string.IsNullOrWhiteSpace(dbPath))
@@ -25,26 +25,41 @@ namespace assetsUpdater
 
         }
 
+        public LocalDataManager(Stream stream):base(stream)
+        {
+            
+        }
+
 
         public override async Task<bool> IsDataValid()
         {
+            if (!await base.IsDataValid().ConfigureAwait(false))
 
+            {
+                return false;
+            }
+          
             if (!string.IsNullOrWhiteSpace(DatabasePath))
             {
                 if (!File.Exists(DatabasePath)) return false;
                 try
                 {
-                    FileDatabase database = new FileDatabase(DatabasePath);
+                    FileDatabase database = new FileDatabase(StorageProvider);
+                    if (string.IsNullOrWhiteSpace(database.Data.Config.VersionControlFolder))
+                    {
+                        return false;
+                    }
                     return database.IsValidDb();
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    AssertVerify.OnMessageNotify(this, "Error on Validating database", e);
+
                     return false;
                 }
             }
-            return await base.IsDataValid(); ;
 
+            return true;
         }
     }
 }

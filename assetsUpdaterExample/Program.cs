@@ -11,6 +11,7 @@ using assetsUpdater.Network;
 using assetsUpdater.StorageProvider;
 using assetsUpdater.Tencent.AddressBuilders;
 using assetsUpdater.Tencent.Network;
+using assetsUpdater.Utils;
 using COSXML;
 using COSXML.Auth;
 using COSXML.CosException;
@@ -35,7 +36,7 @@ internal static class Program
 
         if (!result.isUpdateRequired) return;
         var assertUpgradePackage =
-            AssertVerify.DatabaseCompare(result.remoteDataManager.StorageProvider, localStorageProvider);
+           await  AssertVerify.DatabaseCompare(result.remoteDataManager.StorageProvider, localStorageProvider);
 
         foreach (var databaseFile in assertUpgradePackage.AddFile)
             Console.WriteLine("File to Add:{0}", databaseFile.FileName);
@@ -48,7 +49,7 @@ internal static class Program
         IAddressBuilder addressBuilder = null;
 
         var pm = new PackageManager(assertUpgradePackage, addressBuilder);
-        pm.MessageNotify += Pm_MessageNotify;
+   
         Console.WriteLine("PackageManager Channel Subscribed");
         var downloadQueue = await pm.Apply();
 
@@ -65,9 +66,10 @@ internal static class Program
     private static DbConfig GetDbConfig()
     {
         var vcsFolder = @"C:\Users\fengy\Desktop\[低配]PoKeCitY客户端-公测 v1.2.6.3";
-        var dbSchemas = new List<string>();
-        dbSchemas.Add(".minecraft/versions");
-        dbSchemas.Add("HMCL.exe");
+        var dbSchemasDir = new List<string>();
+        var dbSchemasFile = new List<string>();
+        dbSchemasDir.Add(".minecraft/versions");
+        dbSchemasFile.Add("HMCL.exe");
 
         var config = new DbConfig(vcsFolder)
         {
@@ -75,7 +77,8 @@ internal static class Program
             MirrorVersion = 1,
             DatabaseSchema = new DbSchema
             {
-                DirList = dbSchemas.ToArray()
+                DirList = dbSchemasDir.ToArray(),
+                FileList = dbSchemasFile.ToArray()
             },
             DownloadAddressBuilder = new Cdn8N6NAddressBuilder("downloadLocalRoot", "apiRoot", "apiKey", "apiSecret")
         };
@@ -118,6 +121,9 @@ internal static class Program
                 .SetRegion(region) //设置一个默认的存储桶地域
                 .SetDebugLog(true) //显示日志
                 .Build(); //创建 CosXmlConfig 对象+
+
+
+
             var secretId = "AKIDXwCMPLte1CC2i9tbfXFxUpzylPRLDI0W"; //"云 API 密钥 SecretId";
             var secretKey = "Z2JOG1cO4d0a0FKH4iBTZUEm8KNI4e6O"; //"云 API 密钥 SecretKey";
             long durationSecond = 600; //每次请求签名有效时长，单位为秒
@@ -183,6 +189,8 @@ internal static class Program
 
     private static void Main(string[] args)
     {
+        TencentCosHelper.Init(TencentCosHelper.DefaultCosConfiguration());
+
         /*var sw = new Stopwatch();
         sw.Start();
        
@@ -204,8 +212,44 @@ internal static class Program
     private static void UploadQueueTimerCallback(object? queue)
     {
         var uploadQueue = queue as UploadQueue;
+        
+            //alias
+            var progress = uploadQueue.Progress;
+            var uploadedB = uploadQueue.BytesSent;
+            var totalB = uploadQueue.TotalBytesToUpload;
+            var allUnits = uploadQueue.AllUnits;
+            var waitingUnits = uploadQueue.WaitingUnits;
+            var errorUnits = uploadQueue.ErrorUnits;
+            var currentUnits = uploadQueue.CurrentUploadingUnits;
+            Console.WriteLine("--- Upload Trace Data Start ---");
+            Console.WriteLine($"Progress:{progress},Uploaded:{FileSizeParser.ParseAuto(uploadedB)}, Total:{FileSizeParser.ParseAuto(totalB)}");
+            Console.WriteLine($"Uploaded Bytes:{uploadedB}, Total Bytes:{totalB}");
+            Console.WriteLine($"Units Count- Waiting:{waitingUnits.Count} All:{allUnits.Count} Current:{currentUnits.Count} Error:{errorUnits.Count}");
+            Console.WriteLine("Lists of waiting, error and current");
+            LogUnits("Waiting", waitingUnits);
+            LogUnits("Error", errorUnits);
+            LogUnits("Current", waitingUnits);
 
+            Console.WriteLine("--- Upload Trace Data End ---");
+            void LogUnits(in string unitName, in IEnumerable<IUploadUnit> units)
+            {
+                foreach (var unit in units)
+                {
 
+                    //alias
+                    var key = unit.UploadPackage.ResourceKey;
+                    var localPath = unit.UploadPackage.FileLocalPath;
+                    var p = unit.Progress;
+                    var byteSent = unit.BytesSent;
+                    var totalByte = unit.TotalBytes;
+
+                    Console.WriteLine($"Status:{unitName}->Key:{key} localPath:{localPath}\n Byte Sent:{byteSent}, Byte Total:{totalByte}, Progress:{p}");
+                }
+            }
+
+          
+
+        /*
         Console.WriteLine("Upload Progress:{0}", uploadQueue?.Progress);
         Console.WriteLine("TotalBytes To Upload:{0}", uploadQueue?.TotalBytesToUpload);
         Console.WriteLine("Bytes Sent:{0}", uploadQueue?.BytesSent);
@@ -213,7 +257,7 @@ internal static class Program
             uploadQueue?.AllUnits.Count,
             uploadQueue?.CurrentUploadingUnits.Count,
             uploadQueue?.WaitingUnits.Count,
-            uploadQueue?.ErrorUnits.Count);
+            uploadQueue?.ErrorUnits.Count);*/
     }
 
 
@@ -250,9 +294,10 @@ internal static class Program
 
     private static async void TencentUploadQueueTest()
     {
-        var cosXml = GetCosServer();
+        /*var cosXml = GetCosServer();
         var tencentBucketId = "pokecity-1251938563";
-
+       
+        
         var fileNameA = "deepin-boot-maker.exe";
         var fileNameB = "openwrt-x86-64-squashfs-combined-201231-Mask.img.gz";
 
@@ -265,18 +310,31 @@ internal static class Program
         //Upload will override existing file if exist
         var unit = new TencentUploadUnit(cosXml, tencentBucketId, uploadPackageA);
         var unit2 = new TencentUploadUnit(cosXml, tencentBucketId, uploadPackageB);
+        */
 
 
-        var queue = new UploadQueue(1);
+        var queue = new UploadQueue(2);
 
         await using var timer = new Timer(UploadQueueTimerCallback, queue, 0, 500);
 
-        await queue.QueueUpload(unit);
-        await queue.QueueUpload(unit2);
+        var vcsRoot = @"C:\Users\fengy\Desktop\Pokecity";
+        var typeDSecret = "iua6dfbq85glwowm03gvnlpx7wctx7l";
+
+        var addressBuilder = new TencentAddressBuilder("https://pokecity-1251938563.file.myqcloud.com", vcsRoot, typeDSecret);
+
+        UploadUnitBuilder unitsBuilder = new UploadUnitBuilder(addressBuilder, "assertUpdaterExample");
+        var relativeKeys = FileUtils.GetAllFilesInADirectory(vcsRoot, "kcptun").ToList().Select((s => s.Replace('\\', '/')));
+        var units = await unitsBuilder.Build(relativeKeys).ConfigureAwait(false);
+
+        
+        await queue.QueueUpload(units);
+     
+        /*
         Console.WriteLine("Unit Progress:{0}", unit.Progress);
         Console.WriteLine("Unit TotalBytes:{0}", unit.TotalBytes);
-        Console.WriteLine("Unit BytesSent:{0}", unit.BytesSent);
+        Console.WriteLine("Unit BytesSent:{0}", unit.BytesSent);*/
         await queue.WaitAll();
+       
     }
 
     private static async void TencentUploadUnitUploadTest()
@@ -296,6 +354,7 @@ internal static class Program
 
         await unit.Start().ConfigureAwait(true);
         await unit.Wait().ConfigureAwait(true);
+        
         Console.WriteLine("Unit Progress:{0}", unit.Progress);
         Console.WriteLine("Unit TotalBytes:{0}", unit.TotalBytes);
         Console.WriteLine("Unit BytesSent:{0}", unit.BytesSent);

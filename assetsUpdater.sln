@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssertsUpdaterTests", "Asse
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "assetsUpdater.Tencent", "assetsUpdater.Tencent\assetsUpdater.Tencent.csproj", "{D83FD6E0-B2DD-495B-A3E1-84ABC8C714AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "assetsUpdaterExample", "assetsUpdaterExample\assetsUpdaterExample.csproj", "{FC0D7108-00F9-4D29-A5FA-CC0A4A73990E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "assetsUpdaterExample", "assetsUpdaterExample\assetsUpdaterExample.csproj", "{FC0D7108-00F9-4D29-A5FA-CC0A4A73990E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "assetsUpdater.UI.WinForms", "assetsUpdater.UI.WinForms\assetsUpdater.UI.WinForms.csproj", "{C13AB294-84D7-4981-898F-85CDA0D407D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{FC0D7108-00F9-4D29-A5FA-CC0A4A73990E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC0D7108-00F9-4D29-A5FA-CC0A4A73990E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC0D7108-00F9-4D29-A5FA-CC0A4A73990E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C13AB294-84D7-4981-898F-85CDA0D407D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C13AB294-84D7-4981-898F-85CDA0D407D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C13AB294-84D7-4981-898F-85CDA0D407D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C13AB294-84D7-4981-898F-85CDA0D407D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

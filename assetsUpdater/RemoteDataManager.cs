@@ -1,7 +1,9 @@
 ﻿#region Using
 
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using assetsUpdater.EventArgs;
 using assetsUpdater.Interfaces;
 using assetsUpdater.StorageProvider;
 
@@ -11,7 +13,7 @@ namespace assetsUpdater
 {
     public class RemoteDataManager : DataManager
     {
-        public RemoteDataManager(string dbPath) : base(dbPath)
+        public RemoteDataManager(string dbPath,bool isAsync=false) : base(dbPath,isAsync)
         {
         }
 
@@ -19,16 +21,33 @@ namespace assetsUpdater
         {
         }
 
+        public RemoteDataManager(Stream stream):base(stream)
+        {
+            
+        }
         public override async Task<bool> IsDataValid()
         {
             var data = StorageProvider?.GetBuildInDbData();
 
             if (data == null) return await base.IsDataValid();
             if (data.Config.DownloadAddressBuilder == null) return false;
+            if (string.IsNullOrWhiteSpace(data.Config.UpdateUrl))
+            {
+                AssertVerify.OnMessageNotify(this, "Empty update url", MsgL.Debug);
 
-            foreach (var df in data.DatabaseFiles)
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(data.Config.DownloadAddressBuilder.RootDownloadAddress))
+            {
+                AssertVerify.OnMessageNotify(this,"Invalid RDB AddressBuilder-> RootDownloadAddress null",MsgL.Debug);
+                return false;
+            }
+            ;
+            
+            /*foreach (var df in data.DatabaseFiles)
                 if (string.IsNullOrWhiteSpace(df.DownloadAddress))
-                    return false;
+                    return false;*/
 
             return await base.IsDataValid();
         }

@@ -5,11 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Model\StorageProvider\DbConfigBuilder.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Downloader" Version="2.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Exceptions\" />
+    <None Include="Model\StorageProvider\DbConfigBuilder.cs" />
   </ItemGroup>
 </Project>

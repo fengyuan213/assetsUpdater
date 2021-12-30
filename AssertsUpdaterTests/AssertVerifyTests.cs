@@ -95,7 +95,7 @@ namespace AssertsUpdaterTests
 
 
             // Act
-            var result = AssertVerify.DatabaseCompare(remoteStorageProvider, localStorageProvider);
+            var result =  AssertVerify.DatabaseCompare(remoteStorageProvider, localStorageProvider).Result;
 
 
             // Assert

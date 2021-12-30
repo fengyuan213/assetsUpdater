@@ -7,12 +7,9 @@ namespace AssertsUpdaterTests.AddressBuilder
     [TestClass]
     public class Cdn8N6NAddressBuilderTests
     {
-
-
         [TestInitialize]
         public void TestInitialize()
         {
-
         }
 
         private Cdn8N6NAddressBuilder CreateCdn8N6NAddressBuilder()

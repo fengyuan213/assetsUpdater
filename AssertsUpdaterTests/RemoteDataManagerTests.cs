@@ -36,6 +36,10 @@ namespace AssertsUpdaterTests
                     DirList = new List<string>()
                     {
                         "dirlist"
+                    },
+                    FileList = new List<string>()
+                    {
+                        "fileList"
                     }
                 },
                 MajorVersion = 1,

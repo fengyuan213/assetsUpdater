@@ -3,6 +3,7 @@
 using System;
 using System.IO;
 using assetsUpdater.Interfaces;
+using assetsUpdater.Utils;
 using Newtonsoft.Json;
 
 #endregion
@@ -29,6 +30,10 @@ namespace assetsUpdater.AddressBuilder
 
         public Uri BuildUri(string relativePath)
         {
+            relativePath = FileUtils.MakeStandardRelativePath(relativePath).Replace('\\', '/');
+
+            relativePath = AlgorithmHelper.UrlEncodeUTF8(relativePath);
+
             var uri = new UriBuilder
             {
                 Host = RootDownloadAddress,

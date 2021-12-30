@@ -56,17 +56,35 @@ namespace assetsUpdater.Network
                     //Error occured
                     if (AutoRestartFailedDownload)
                     {
-                        foreach (var uploadUnit in ErrorUnits) WaitingUnits.Add(uploadUnit);
+                        lock (WaitingUnits)
+                        {
+                            foreach (var uploadUnit in ErrorUnits) WaitingUnits.Add(uploadUnit);
+
+                        }
                         goto Start;
                     }
+                return;
             }
             else
             {
                 do
-                {
-                    var tasks = CurrentUploadingUnits.Select(uploadUnit => uploadUnit.Wait()).ToArray();
-                    await Task.WhenAll(tasks).ConfigureAwait(true);
-                } while (WaitingUnits.Count >= 1);
+                {   
+                    List<Task> tasks = new List<Task>();
+                    lock (CurrentUploadingUnits)
+                    {
+                        tasks.AddRange(CurrentUploadingUnits.Select((unit => unit.UploadTask)));
+
+                    }
+
+                    //! Must take a copy of tasks (taken by to list) to avoid modification from another thread
+                    //System.InvalidOperationException: Collection was modified; enumeration operation may not execute.
+
+                    // tasks = CurrentUploadingUnits.Select(uploadUnit => uploadUnit.Wait()).ToList();
+
+
+
+                    await Task.WhenAll(tasks).ConfigureAwait(false);
+                } while (WaitingUnits.Count >= 1 || CurrentUploadingUnits.Count>=1);
 
                 goto Start;
             }
@@ -74,20 +92,20 @@ namespace assetsUpdater.Network
 
         public async Task QueueUpload(IEnumerable<IUploadUnit> uploadUnits)
         {
-            foreach (var uploadUnit in uploadUnits) await QueueUpload(uploadUnit);
+            foreach (var uploadUnit in uploadUnits) await QueueUpload(uploadUnit).ConfigureAwait(false);
         }
 
         public async Task QueueUpload(IUploadUnit uploadUnit)
         {
             uploadUnit.UploadCompletedEventHandler += UploadCompletedEventHandler;
 
-
+            
             AllUnits.Add(uploadUnit);
             if (CurrentUploadingUnits.Count < MaxParallelUploadCount)
             {
                 CurrentUploadingUnits.Add(uploadUnit);
 
-                await uploadUnit.Start().ConfigureAwait(true);
+                await uploadUnit.Start().ConfigureAwait(false);
             }
             else
             {
@@ -100,7 +118,7 @@ namespace assetsUpdater.Network
             if (ErrorUnits.Contains(uploadUnit))
             {
                 if (CurrentUploadingUnits.Count < MaxParallelUploadCount)
-                    await StartDownload(uploadUnit).ConfigureAwait(true);
+                    await StartDownload(uploadUnit).ConfigureAwait(false);
                 else
                     WaitingUnits.Add(uploadUnit);
             }
@@ -108,10 +126,14 @@ namespace assetsUpdater.Network
 
         private async Task StartDownload(IUploadUnit uploadUnit)
         {
+            if (uploadUnit==null)
+            {
+                return;
+            }
             WaitingUnits.Remove(uploadUnit);
             ErrorUnits.Remove(uploadUnit);
 
-            await uploadUnit.Start().ConfigureAwait(true);
+            await uploadUnit.Start().ConfigureAwait(false);
 
             CurrentUploadingUnits.Add(uploadUnit);
         }
@@ -119,27 +141,38 @@ namespace assetsUpdater.Network
 
         private async void UploadCompletedEventHandler(object sender, bool e)
         {
+            
             lock (CurrentUploadingUnits)
             {
+                
                 for (var i = 0; i < CurrentUploadingUnits.Count; i++)
                 {
                     //Identify Objects
                     if (!CurrentUploadingUnits[i].Equals(sender)) continue;
 
-
+                    //Got objects
                     if (!e) ErrorUnits.Add(CurrentUploadingUnits[i]);
 
                     CurrentUploadingUnits.Remove(CurrentUploadingUnits[i]);
                 }
             }
+            //Queue
 
             if (CurrentUploadingUnits.Count < MaxParallelUploadCount)
             {
                 if (WaitingUnits.Count >= 1)
-                    await StartDownload(WaitingUnits[0]).ConfigureAwait(true);
-                else if (AutoRestartFailedDownload)
-                    if (ErrorUnits.Count >= 1)
-                        await StartDownload(ErrorUnits[0]).ConfigureAwait(true);
+                {
+                    /*IUploadUnit unit=null;
+                    lock (WaitingUnits)
+                    {
+                        unit= WaitingUnits.FirstOrDefault();
+                    }
+                    */
+
+                    await StartDownload(WaitingUnits.FirstOrDefault()).ConfigureAwait(false);
+
+                }
+              
             }
         }
 

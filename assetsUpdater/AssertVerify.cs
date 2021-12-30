@@ -16,7 +16,29 @@ namespace assetsUpdater
     public static class AssertVerify
     {
         public static event EventHandler<MessageNotifyEventArgs> MessageNotify;
+        internal static void OnMessageNotify(object sender,MessageNotifyEventArgs e)
+        {
+            
+            MessageNotify?.Invoke(sender,e);
+        }
+        internal static void OnMessageNotify(object sender, string message,Exception e=null)
+        {
 
+            MessageNotify?.Invoke(sender, new MessageNotifyEventArgs(e==null?MsgL.Info:MsgL.Error,message,e!=null,e,null));
+          
+        }
+        internal static void OnMessageNotify(object sender, string message, MsgL level,Exception e = null)
+        {
+
+            MessageNotify?.Invoke(sender, new MessageNotifyEventArgs(level, message, e != null, e, null));
+
+        }
+    
+        internal static void OnMessageNotify( object sender, MsgL Level,string message,bool hasError,Exception e, object obj=null)
+        {
+
+            MessageNotify?.Invoke(sender, new MessageNotifyEventArgs(Level,message,hasError,e,obj));
+        }
         private static async Task<(RemoteDataManager remoteDataManager, bool isUpdateRequired)> Check_UpdateInternal(
             DataManager dm, string url)
         {
@@ -25,7 +47,7 @@ namespace assetsUpdater
                 //Data invalid return
                 return (null, false);
             }
-
+            
 
             var remoteDb = await RemoteDataManager.GetStorageProvider(url);
 
@@ -77,12 +99,14 @@ namespace assetsUpdater
         {
             
         }*/
-        public static AssertUpgradePackage DatabaseCompare(IStorageProvider remoteProvider,
+        public static Task<AssertUpgradePackage> DatabaseCompare(IStorageProvider remoteProvider,
             IStorageProvider localProvider)
         {
             var remoteData = remoteProvider.GetBuildInDbData().DatabaseFiles;
             var localData = localProvider.GetBuildInDbData().DatabaseFiles;
-            return DatabaseCompare(remoteData, localData);
+            var package = DatabaseCompare(remoteData, localData);
+
+            return Task.FromResult(package);
         }
 
         public static AssertUpgradePackage DatabaseCompare(IEnumerable<DatabaseFile> remoteFiles,
