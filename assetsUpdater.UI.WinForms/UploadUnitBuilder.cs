@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using assetsUpdater.Interfaces;
+﻿using assetsUpdater.Interfaces;
 using assetsUpdater.Model.Network;
 using assetsUpdater.Tencent.Network;
-using COSXML;
+
 using NLog;
+
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace assetsUpdater.UI.WinForms
 {
@@ -22,16 +19,15 @@ namespace assetsUpdater.UI.WinForms
             get;
         }
 
-        public UploadUnitBuilder(IAddressBuilder addressBuilder,string vcsName)
+        public UploadUnitBuilder(IAddressBuilder addressBuilder, string vcsName)
         {
             AddressBuilder = addressBuilder;
             //Possible Folder "Folder1\\folder2" instead of "example_folder"
-            VFolderName=vcsName.Replace('\\','/');
+            VFolderName = vcsName.Replace('\\', '/');
             Logger.Debug($"AddressBuidler->\nRootAddress:{addressBuilder.RootDownloadAddress}\nlocalPath:{addressBuilder.LocalRootPath}");
-
         }
 
-        public Task<TencentUploadUnit> Build( string key)
+        public Task<TencentUploadUnit> Build(string key)
         {
             var localPath = AddressBuilder.BuildDownloadLocalPath(key);
 
@@ -51,16 +47,12 @@ namespace assetsUpdater.UI.WinForms
       ;
             foreach (var key in keys)
             {
-                var unit =await Build(key).ConfigureAwait(false);
+                var unit = await Build(key).ConfigureAwait(false);
                 units.Add(unit);
-
             }
 
             return units;
             //Parallel.ForEach()
         }
-
-
-
     }
 }

@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-
-using assetsUpdater.Interfaces;
-using assetsUpdater.Model.Network;
-using assetsUpdater.Network;
+﻿using assetsUpdater.Model.Network;
 using assetsUpdater.Tencent.Network;
 
 using COSXML;
@@ -27,23 +17,28 @@ namespace assetsUpdaterExample
             SecretKey = secretKey;
             SignatureDuration = signatureDuration;
         }
+
         /// <summary>
         /// pokecity-1251938563
         /// </summary>
         public string BucketAppid { get; set; }
+
         /// <summary>
         ///  "1251938563" 设置腾讯云账户的账户标识 APPID
         /// </summary>
         public string Appid { get; set; }
+
         /// <summary>
         /// "ap-shanghai-fsi" 设置一个默认的存储桶地域
         /// </summary>
         public string DefaultRegion { get; set; }
+
         /// <summary>
         ///  "AKIDXwCMPLte1CC2i9tbfXFxUpzylPRLDI0W"
         /// // 云 API 密钥 SecretId, 获取 API 密钥请参照 https://console.cloud.tencent.com/cam/capi
         /// </summary>
         public string SecretId { get; set; }
+
         /// <summary>
         ///   "Z2JOG1cO4d0a0FKH4iBTZUEm8KNI4e6O"; // 云 API 密钥 SecretKey, 获取 API 密钥请参照 https://console.cloud.tencent.com/cam/capi
         /// </summary>
@@ -55,6 +50,7 @@ namespace assetsUpdaterExample
         /// </summary>
         public int SignatureDuration { get; set; }
     }
+
     public class TencentCosHelper
     {
         private static bool _isInitialized = false;
@@ -69,27 +65,28 @@ namespace assetsUpdaterExample
             var sigDuration = 600; //unit s
             var config = new TencentCosConfiguration(bucketId, appId, region, ak, sk, sigDuration);
             return config;
-
         }
+
         public static void Init(TencentCosConfiguration config)
         {
             _cosConfiguration = config;
 
             _isInitialized = true;
         }
+
         private static void IsInitializeCheck()
         {
             if (!_isInitialized)
             {
                 throw new Exception("TencentCosHelper not initialized")
                 {
-
                 };
             }
         }
 
         private static TencentCosConfiguration _cosConfiguration;
         private static CosXmlServer? _cosXmlServer;
+
         public static CosXmlServer CosXmlServer
         {
             get
@@ -100,13 +97,10 @@ namespace assetsUpdaterExample
                 }
                 return _cosXmlServer;
             }
-
         }
-
 
         private static CosXmlServer GetCosServer()
         {
-
             //string bucketName = "";
             var appid = _cosConfiguration.Appid; //设置腾讯云账户的账户标识 APPID
             var region = _cosConfiguration.DefaultRegion; //设置一个默认的存储桶地域
@@ -128,19 +122,18 @@ namespace assetsUpdaterExample
                 .IsHttps(true)
                 .Build();
 
-
             QCloudCredentialProvider qCloudCredentialProvider = new DefaultQCloudCredentialProvider(secretId,
                 secretKey, durationSecond);
 
             return new CosXmlServer(config, qCloudCredentialProvider);
         }
 
-
         public static TencentUploadUnit BuildUploadUnit(UploadPackage up)
         {
             var unit = new TencentUploadUnit(CosXmlServer, _cosConfiguration.BucketAppid, up);
             return unit;
         }
+
         /*
         private static async void TencentUploadQueueTest()
         {
@@ -159,9 +152,6 @@ namespace assetsUpdaterExample
             //Upload will override existing file if exist
             var unit = new TencentUploadUnit(cosXml, tencentBucketId, uploadPackageA);
             var unit2 = new TencentUploadUnit(cosXml, tencentBucketId, uploadPackageB);
-            
-
-
 
             var queue = new UploadQueue(1);
 
@@ -175,7 +165,5 @@ namespace assetsUpdaterExample
             await queue.WaitAll();
         }
         */
-
     }
 }
-

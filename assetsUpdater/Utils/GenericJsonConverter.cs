@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-
-namespace assetsUpdater.Utils
+﻿namespace assetsUpdater.Utils
 {
     /*public class GenericJsonConverter<T> : JsonConverter, IBaseJsonConverter<T>
     {

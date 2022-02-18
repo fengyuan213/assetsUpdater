@@ -21,7 +21,6 @@ namespace AssertsUpdaterTests.Network
         public void TestInitialize()
 
         {
-
             this.mockDownloadPackage = Mock.Create<DownloadPackage>();
             this.mockWebClient = Mock.Create<WebClient>();
         }
@@ -44,7 +43,6 @@ namespace AssertsUpdaterTests.Network
 
             Debugger.Break();
             // Assert
-
         }
 
         [TestMethod]
@@ -57,7 +55,6 @@ namespace AssertsUpdaterTests.Network
             await asyncDownload.Start();
             Debugger.Break();
             // Assert
-
         }
     }
 }

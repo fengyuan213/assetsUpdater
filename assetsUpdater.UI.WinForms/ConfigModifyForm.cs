@@ -27,10 +27,11 @@ namespace assetsUpdater.UI.WinForms
 
         private void InitializeUi()
         {
+            AddressBuilder_ComboBox.Enabled = false;
             var data = DataManager.StorageProvider.GetBuildInDbData();
 
             MajV_TextBox.Text = data.Config.MajorVersion.ToString();
-            MirrorV_TextBox.Text = data.Config.MirrorVersion.ToString();
+            MirrorV_TextBox.Text = data.Config.MinorVersion.ToString();
             UpdateUrl_TextBox.Text = data.Config.UpdateUrl?.ToString();
 
            Logger.Debug("MajorV:{0}",MajV_TextBox.Text);
@@ -41,7 +42,7 @@ namespace assetsUpdater.UI.WinForms
         private void UpdateResult()
         {
             var data = DataManager.StorageProvider.GetBuildInDbData();
-            data.Config.MirrorVersion = int.TryParse(MirrorV_TextBox.Text, out int result) ? result : data.Config.MirrorVersion;
+            data.Config.MinorVersion = int.TryParse(MirrorV_TextBox.Text, out int result) ? result : data.Config.MinorVersion;
 
             data.Config.MajorVersion = int.TryParse(MajV_TextBox.Text, out int r) ? r : data.Config.MajorVersion;
             data.Config.UpdateUrl = UpdateUrl_TextBox.Text;
@@ -52,17 +53,13 @@ namespace assetsUpdater.UI.WinForms
         {
             UpdateResult();
             Logger.Debug("MajorV:{0}", DataManager.StorageProvider.GetBuildInDbData().Config.MajorVersion);
-            Logger.Debug("MirrorV:{0}", DataManager.StorageProvider.GetBuildInDbData().Config.MirrorVersion);
+            Logger.Debug("MirrorV:{0}", DataManager.StorageProvider.GetBuildInDbData().Config.MinorVersion);
             Logger.Debug("UpdateUrl:{0}", DataManager.StorageProvider.GetBuildInDbData().Config.UpdateUrl);
             this.DialogResult=DialogResult.OK;
             this.Close();
         }
 
-        private void ConfigModifyForm_Load(object sender, System.EventArgs e)
-        {
-
-        }
-
+     
         private void ModifyDirList_Btn_Click(object sender, System.EventArgs e)
         {
             try

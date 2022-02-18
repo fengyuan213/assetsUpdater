@@ -34,18 +34,18 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.ModifyAddressBuilder_Btn = new System.Windows.Forms.Button();
             this.ModifyDirList_Btn = new System.Windows.Forms.Button();
             this.AddressBuilder_ComboBox = new System.Windows.Forms.ComboBox();
             this.UpdateUrl_TextBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.ModifyAddressBuilder_Btn = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // Confirm_Btn
             // 
-            this.Confirm_Btn.Location = new System.Drawing.Point(113, 190);
+            this.Confirm_Btn.Location = new System.Drawing.Point(100, 180);
             this.Confirm_Btn.Name = "Confirm_Btn";
             this.Confirm_Btn.Size = new System.Drawing.Size(75, 23);
             this.Confirm_Btn.TabIndex = 0;
@@ -100,9 +100,19 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "高级设置";
             // 
+            // ModifyAddressBuilder_Btn
+            // 
+            this.ModifyAddressBuilder_Btn.Location = new System.Drawing.Point(134, 55);
+            this.ModifyAddressBuilder_Btn.Name = "ModifyAddressBuilder_Btn";
+            this.ModifyAddressBuilder_Btn.Size = new System.Drawing.Size(141, 23);
+            this.ModifyAddressBuilder_Btn.TabIndex = 12;
+            this.ModifyAddressBuilder_Btn.Text = "修改AddressBuilder";
+            this.ModifyAddressBuilder_Btn.UseVisualStyleBackColor = true;
+            this.ModifyAddressBuilder_Btn.Click += new System.EventHandler(this.ModifyAddressBuilder_Btn_Click);
+            // 
             // ModifyDirList_Btn
             // 
-            this.ModifyDirList_Btn.Location = new System.Drawing.Point(24, 154);
+            this.ModifyDirList_Btn.Location = new System.Drawing.Point(52, 141);
             this.ModifyDirList_Btn.Name = "ModifyDirList_Btn";
             this.ModifyDirList_Btn.Size = new System.Drawing.Size(180, 26);
             this.ModifyDirList_Btn.TabIndex = 11;
@@ -122,7 +132,7 @@
             // 
             this.UpdateUrl_TextBox.Location = new System.Drawing.Point(101, 16);
             this.UpdateUrl_TextBox.Name = "UpdateUrl_TextBox";
-            this.UpdateUrl_TextBox.Size = new System.Drawing.Size(100, 23);
+            this.UpdateUrl_TextBox.Size = new System.Drawing.Size(184, 23);
             this.UpdateUrl_TextBox.TabIndex = 9;
             // 
             // label3
@@ -143,16 +153,6 @@
             this.label4.TabIndex = 7;
             this.label4.Text = "次要版本：";
             // 
-            // ModifyAddressBuilder_Btn
-            // 
-            this.ModifyAddressBuilder_Btn.Location = new System.Drawing.Point(144, 58);
-            this.ModifyAddressBuilder_Btn.Name = "ModifyAddressBuilder_Btn";
-            this.ModifyAddressBuilder_Btn.Size = new System.Drawing.Size(141, 23);
-            this.ModifyAddressBuilder_Btn.TabIndex = 12;
-            this.ModifyAddressBuilder_Btn.Text = "修改AddressBuilder";
-            this.ModifyAddressBuilder_Btn.UseVisualStyleBackColor = true;
-            this.ModifyAddressBuilder_Btn.Click += new System.EventHandler(this.ModifyAddressBuilder_Btn_Click);
-            // 
             // ConfigModifyForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -166,8 +166,7 @@
             this.Controls.Add(this.Confirm_Btn);
             this.Name = "ConfigModifyForm";
             this.Text = "ConfigModifyForm";
-            this.Load += new System.EventHandler(this.ConfigModifyForm_Load);
-            this.groupBox1.ResumeLayout(false);
+          this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();

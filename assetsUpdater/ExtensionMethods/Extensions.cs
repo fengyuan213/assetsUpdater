@@ -9,9 +9,7 @@ namespace assetsUpdater.ExtensionMethods
 {
     public static class Extensions
     {
-
-
-        public static T CastObject<T>(this DatabaseFile myobj)
+        public static T? CastObject<T>(this DatabaseFile myobj)
         {
             Type objectType = myobj.GetType();
             Type target = typeof(T);
@@ -25,16 +23,16 @@ namespace assetsUpdater.ExtensionMethods
                     select source;
             List<MemberInfo> members = d.Where(memberInfo => d.Select(c => c.Name)
                 .ToList().Contains(memberInfo.Name)).ToList();
-            PropertyInfo propertyInfo;
-            object value;
+            PropertyInfo? propertyInfo;
+            object? value;
             foreach (var memberInfo in members)
             {
                 propertyInfo = typeof(T).GetProperty(memberInfo.Name);
-                value = myobj.GetType().GetProperty(memberInfo.Name).GetValue(myobj, null);
+                value = myobj.GetType()?.GetProperty(memberInfo.Name)?.GetValue(myobj, null);
 
-                propertyInfo.SetValue(x, value, null);
+                propertyInfo?.SetValue(x, value, null);
             }
-            return (T)x;
+            return (T?)x;
         }
     }
 }

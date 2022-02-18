@@ -1,5 +1,11 @@
 ﻿#region Using
 
+using assetsUpdater.AddressBuilder;
+using assetsUpdater.Model.StorageProvider;
+using assetsUpdater.StorageProvider;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,10 +13,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using assetsUpdater.AddressBuilder;
-using assetsUpdater.Model.StorageProvider;
-using assetsUpdater.StorageProvider;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 #endregion
 
@@ -26,7 +28,6 @@ namespace AssertsUpdaterTests.StorageProvider
         public IEnumerable<string> FileHashes { get; set; }
         public IEnumerable<int> FileSizeInKbs { get; set; }
 
-
         [TestInitialize]
         public void TestInitialize()
         {
@@ -39,11 +40,11 @@ namespace AssertsUpdaterTests.StorageProvider
                 DatabaseSchema = new DbSchema
                 {
                     DirList = new List<string> { "testFiles" },
-                    FileList = new List<string>(){"FileItem1"}
+                    FileList = new List<string>() { "FileItem1" }
                 },
 
                 MajorVersion = 1,
-                MirrorVersion = 2,
+                MinorVersion = 2,
                 DownloadAddressBuilder =
                     new Cdn8N6NAddressBuilder(Directory.GetCurrentDirectory(), "apiroot", "apikey", "secret")
             };
@@ -87,7 +88,7 @@ namespace AssertsUpdaterTests.StorageProvider
 
             await exceptedFileDatafilesDatabase
                 .Export(Path.Join(Directory.GetCurrentDirectory(), "expectedFileDatabase.zip")).ConfigureAwait(true);
-            
+
             Assert.IsTrue(true);
         }
 
@@ -101,7 +102,7 @@ namespace AssertsUpdaterTests.StorageProvider
                     FileList = new List<string>() { "FileItem1" }
                 },
                 MajorVersion = 1,
-                MirrorVersion = 1,
+                MinorVersion = 1,
                 DownloadAddressBuilder =
                     new Cdn8N6NAddressBuilder(Directory.GetCurrentDirectory(), "apiRoot", "apiKey", "apiScret")
             };
@@ -132,17 +133,14 @@ namespace AssertsUpdaterTests.StorageProvider
 
             var obj = new List<object>(2) { url, new NetworkCredential() };
 
-
             // Act
 
             await fileDatabase.Download(obj).ConfigureAwait(true);
-
 
             // Assert
 
             Assert.IsTrue(fileDatabase.Equals(exceptedFileDatafilesDatabase));
         }
-
 
         [TestMethod]
         public async Task Read_StateUnderTest_ExpectedBehavior()
@@ -154,10 +152,8 @@ namespace AssertsUpdaterTests.StorageProvider
 
             await exceptedFileDatabase.Export(path).ConfigureAwait(true);
 
-
             // Act
             await fileDatabase.Read(path).ConfigureAwait(true);
-
 
             // Assert
             Assert.IsTrue(fileDatabase.Equals(exceptedFileDatabase));
@@ -202,7 +198,6 @@ namespace AssertsUpdaterTests.StorageProvider
             //Assert.AreEqual(fileDatabase.Data.DatabaseFiles.ToList()[0].FileName, FileNames.ToList()[0]);
         }
 
-
         [TestMethod]
         public void Equals_StateUnderTest_ExpectedBehavior()
         {
@@ -223,7 +218,6 @@ namespace AssertsUpdaterTests.StorageProvider
         {
             // Arrange
             var fileDatabase = CreateFileDatabase(GetExceptedDbData());
-
 
             // Act
             var result = fileDatabase.ConvertToDictionary();

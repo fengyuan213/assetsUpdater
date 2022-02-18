@@ -49,9 +49,9 @@
             this.relativePath_Col,
             this.fileType_Col});
             this.dirListView.HideSelection = false;
-            this.dirListView.Location = new System.Drawing.Point(12, 27);
+            this.dirListView.Location = new System.Drawing.Point(12, 23);
             this.dirListView.Name = "dirListView";
-            this.dirListView.Size = new System.Drawing.Size(588, 400);
+            this.dirListView.Size = new System.Drawing.Size(588, 404);
             this.dirListView.TabIndex = 0;
             this.dirListView.UseCompatibleStateImageBehavior = false;
             this.dirListView.View = System.Windows.Forms.View.Details;
@@ -97,6 +97,7 @@
             // 
             // ApplyChanges_Btn
             // 
+            this.ApplyChanges_Btn.Enabled = false;
             this.ApplyChanges_Btn.Location = new System.Drawing.Point(621, 356);
             this.ApplyChanges_Btn.Name = "ApplyChanges_Btn";
             this.ApplyChanges_Btn.Size = new System.Drawing.Size(126, 23);
@@ -122,7 +123,7 @@
             // VcsLabel
             // 
             this.VcsLabel.AutoSize = true;
-            this.VcsLabel.Location = new System.Drawing.Point(80, 434);
+            this.VcsLabel.Location = new System.Drawing.Point(45, 434);
             this.VcsLabel.Name = "VcsLabel";
             this.VcsLabel.Size = new System.Drawing.Size(43, 17);
             this.VcsLabel.TabIndex = 6;
@@ -140,6 +141,7 @@
             // 
             // debug_Btn
             // 
+            this.debug_Btn.Enabled = false;
             this.debug_Btn.Location = new System.Drawing.Point(621, 310);
             this.debug_Btn.Name = "debug_Btn";
             this.debug_Btn.Size = new System.Drawing.Size(126, 23);
@@ -152,7 +154,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(818, 460);
+            this.ClientSize = new System.Drawing.Size(785, 460);
             this.Controls.Add(this.debug_Btn);
             this.Controls.Add(this.ChangeVCSBtn);
             this.Controls.Add(this.VcsLabel);

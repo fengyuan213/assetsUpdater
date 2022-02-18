@@ -1,14 +1,16 @@
 ﻿#region Using
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using assetsUpdater;
 using assetsUpdater.Interfaces;
 using assetsUpdater.Model.StorageProvider;
 using assetsUpdater.StorageProvider;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 #endregion
 
@@ -23,7 +25,6 @@ namespace AssertsUpdaterTests
         public void TestInitialize()
         {
         }
-
 
         [TestMethod]
         public void DatabaseCompare_FileConstructor_ExpectedBehavior()
@@ -86,17 +87,14 @@ namespace AssertsUpdaterTests
             remoteFiles.Add(buildInData3);
             //dbConfig
             var config = new DbConfig(Directory.GetCurrentDirectory());
-            config.MirrorVersion = 1;
+            config.MinorVersion = 1;
             config.MajorVersion = 2;
-
 
             var localStorageProvider = new FileDatabase { Data = new DbData(config) { DatabaseFiles = localFiles } };
             var remoteStorageProvider = new FileDatabase { Data = new DbData(config) { DatabaseFiles = remoteFiles } };
 
-
             // Act
-            var result =  AssertVerify.DatabaseCompare(remoteStorageProvider, localStorageProvider).Result;
-
+            var result = AssertVerify.DatabaseCompare(remoteStorageProvider, localStorageProvider).Result;
 
             // Assert
             Assert.AreEqual(buildInData3, result.AddFile.First());
@@ -114,14 +112,13 @@ namespace AssertsUpdaterTests
             var dbConfig = new DbConfig(Directory.GetCurrentDirectory())
             {
                 MajorVersion = 111111111,
-                MirrorVersion = 1212212
+                MinorVersion = 1212212
             };
 
             var localProvider = new FileDatabase
             {
                 Data = new DbData(dbConfig)
             };
-
 
             return localProvider;
         }
@@ -130,7 +127,6 @@ namespace AssertsUpdaterTests
         public async void Check_Update_IStorageProvider_InvalidProviderTest()
         {
             var provider = new FileDatabase();
-
 
             var dbManager = await AssertVerify.Check_Update(provider, Check_UpdateUrl);
 

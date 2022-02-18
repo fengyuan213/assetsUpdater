@@ -1,17 +1,20 @@
 ﻿#region Using
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using assetsUpdater;
 using assetsUpdater.AddressBuilder;
 using assetsUpdater.EventArgs;
 using assetsUpdater.Interfaces;
 using assetsUpdater.Model.StorageProvider;
 using assetsUpdater.StorageProvider;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+
 using Telerik.JustMock;
 
 #endregion
@@ -22,10 +25,11 @@ namespace AssertsUpdaterTests
     public class DatabaseBuilderTests
     {
         private IStorageProvider mockStorageProvider;
-        const string testDir = "testFiles";
-        const string testDirWithRoot = "/rootDirTest";
-        const string testSFDir = "singleFile";
-        const string testSFDirWithRoot = "/root/rootedSingleFile";
+        private const string testDir = "testFiles";
+        private const string testDirWithRoot = "/rootDirTest";
+        private const string testSFDir = "singleFile";
+        private const string testSFDirWithRoot = "/root/rootedSingleFile";
+
         [TestInitialize]
         public void TestInitialize()
         {
@@ -49,7 +53,6 @@ namespace AssertsUpdaterTests
             IAddressBuilder downloadAddressBuilder =
                 new Cdn8N6NAddressBuilder(Directory.GetCurrentDirectory(), apiRoot, accessKey, secretKey);
             var vCFolder = Path.Join(Utils.Utils.WorkingDir);
-            
 
             var config = new DbConfig(vCFolder)
             {
@@ -60,11 +63,10 @@ namespace AssertsUpdaterTests
                 },
 
                 MajorVersion = 1,
-                MirrorVersion = 2,
+                MinorVersion = 2,
                 DownloadAddressBuilder =
                     new Cdn8N6NAddressBuilder(Directory.GetCurrentDirectory(), "apiRoot", "apiKey", "apiScret")
             };
-
 
             var data = new DbData(config);
             var fileCounts = Utils.Utils.GenTestFiles(testDir, out var fileNames, out var fileHashes,
@@ -73,7 +75,6 @@ namespace AssertsUpdaterTests
             fileNames = fileNames.ToList();
             fileHashes = fileHashes.ToList();
             fileSizeInMbs = fileSizeInMbs.ToList();
-
 
             var rootTestFileCounts = Utils.Utils.GenTestFiles(testDirWithRoot.Substring(1), out var rootTestFileNames,
                 out var rootTestFileHashes,
@@ -112,16 +113,16 @@ namespace AssertsUpdaterTests
             Assert.IsTrue(db.IsValidDb(true));
             Assert.IsFalse(string.IsNullOrWhiteSpace(db.Data.DatabaseFiles.ToArray()[0].DownloadAddress));
 
-
             Assert.IsTrue(db.Data.DatabaseFiles.Select((file, i) => file.RelativePath)
                 .Contains(Path.Join("testFiles".Replace('/', '\\'), fileNames.FirstOrDefault())));
             Assert.IsTrue(db.Data.DatabaseFiles.Select((file, i) => file.RelativePath)
-                .Contains(Path.Join(testSFDirWithRoot.Replace('/','\\'), fileNames.FirstOrDefault())));
+                .Contains(Path.Join(testSFDirWithRoot.Replace('/', '\\'), fileNames.FirstOrDefault())));
             Assert.IsTrue(db.Data.DatabaseFiles.Select((file, i) => file.RelativePath)
                 .Contains(Path.Join(testSFDir.Replace('/', '\\'), fileNames.FirstOrDefault())));
-            
+
             Assert.Inconclusive("请详细查看数据库:{0}", exportPath);
         }
+
         [TestCleanup]
         private void CleanUp()
         {
@@ -131,17 +132,16 @@ namespace AssertsUpdaterTests
                 Directory.Delete(testSFDirWithRoot, true);
                 Directory.Delete(testDir, true);
                 Directory.Delete(testDirWithRoot, true);
-
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-               
             }
         }
+
         private void AssertVerify_MessageNotify(object sender, MessageNotifyEventArgs e)
         {
-            Console.WriteLine("Message:{0},e:{1}",e.Message, e.Exception.Message);
+            Console.WriteLine("Message:{0},e:{1}", e.Message, e.Exception.Message);
         }
     }
 }

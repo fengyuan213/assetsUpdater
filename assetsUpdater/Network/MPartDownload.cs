@@ -22,14 +22,16 @@ namespace assetsUpdater.Network
     {
         private bool _isFinishedDownload;
 
-
-        public MPartDownload(DownloadPackage downloadPackage, DownloadSetting downloadSetting = null)
+        public MPartDownload(DownloadPackage downloadPackage, DownloadSetting? downloadSetting = null)
         {
             DownloadPackage = downloadPackage;
             DownloadSetting = downloadSetting ?? new DownloadSetting { IsDownloadTempEnabled = true };
 
-
-            InitDownload();
+            DownloadService = new DownloadService(GetDownloadConfiguration());
+            DownloadService.ChunkDownloadProgressChanged += OnChunkDownloadProgressChanged;
+            DownloadService.DownloadProgressChanged += OnDownloadProgressChanged;
+            DownloadService.DownloadFileCompleted += OnDownloadFileCompleted;
+            DownloadService.DownloadStarted += OnDownloadStarted;
         }
 
         public DownloadService DownloadService { get; private set; }
@@ -58,12 +60,11 @@ namespace assetsUpdater.Network
             //return Task.CompletedTask;
         }
 
-
         private static DownloadConfiguration GetDownloadConfiguration()
         {
             var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1";
             var cookies = new CookieContainer();
-            cookies.Add(new Cookie("download-type", "test") { Domain = "domain.com" });
+            //cookies.Add(new Cookie("download-type", "test") { Domain = "domain.com" });
 
             return new DownloadConfiguration
             {
@@ -74,7 +75,7 @@ namespace assetsUpdater.Network
                 OnTheFlyDownload = true, // caching in-memory or not? default values is true
                 ParallelDownload = true, // download parts of file as parallel or not. Default value is false
                 TempDirectory =
-                    "C:\\temp", // Set the temp path for buffering chunk files, the default path is Path.GetTempPath()
+                    Path.GetTempPath(), // Set the temp path for buffering chunk files, the default path is Path.GetTempPath()
                 Timeout = 1000, // timeout (millisecond) per stream block reader, default values is 1000
                 RequestConfiguration =
                 {
@@ -90,21 +91,12 @@ namespace assetsUpdater.Network
             };
         }
 
-        private void InitDownload()
-        {
-            DownloadService = new DownloadService(GetDownloadConfiguration());
-            DownloadService.ChunkDownloadProgressChanged += OnChunkDownloadProgressChanged;
-            DownloadService.DownloadProgressChanged += OnDownloadProgressChanged;
-            DownloadService.DownloadFileCompleted += OnDownloadFileCompleted;
-            DownloadService.DownloadStarted += OnDownloadStarted;
-        }
-
-        private void OnDownloadStarted(object sender, DownloadStartedEventArgs e)
+        private void OnDownloadStarted(object? sender, DownloadStartedEventArgs e)
         {
             Console.WriteLine($"Downloading {Path.GetFileName(e.FileName)} ...TotalSize:{e.TotalBytesToReceive}");
         }
 
-        private async void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        private async void OnDownloadFileCompleted(object? sender, AsyncCompletedEventArgs e)
         {
             //if (e.Cancelled == true) return;
             _isFinishedDownload = true;
@@ -118,12 +110,12 @@ namespace assetsUpdater.Network
                 Console.WriteLine("Download completed successfully.");
         }
 
-        private void OnChunkDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        private void OnChunkDownloadProgressChanged(object? sender, DownloadProgressChangedEventArgs e)
         {
             // progress.Tick((int)(e.ProgressPercentage * 100));
         }
 
-        private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        private void OnDownloadProgressChanged(object? sender, DownloadProgressChangedEventArgs e)
         {
             BytesReceived = e.ReceivedBytesSize;
             BytesReceivedPerSec = e.BytesPerSecondSpeed;
@@ -164,10 +156,10 @@ namespace assetsUpdater.Network
 
         private static string CalcMemoryMensurableUnit(double bytes)
         {
-            var kb = bytes / 1024; // · 1024 Bytes = 1 Kilobyte 
-            var mb = kb / 1024; // · 1024 Kilobytes = 1 Megabyte 
-            var gb = mb / 1024; // · 1024 Megabytes = 1 Gigabyte 
-            var tb = gb / 1024; // · 1024 Gigabytes = 1 Terabyte 
+            var kb = bytes / 1024; // · 1024 Bytes = 1 Kilobyte
+            var mb = kb / 1024; // · 1024 Kilobytes = 1 Megabyte
+            var gb = mb / 1024; // · 1024 Megabytes = 1 Gigabyte
+            var tb = gb / 1024; // · 1024 Gigabytes = 1 Terabyte
 
             var result =
                 tb > 1 ? $"{tb:0.##}TB" :

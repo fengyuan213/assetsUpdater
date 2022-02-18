@@ -1,10 +1,11 @@
 ﻿#region Using
 
+using assetsUpdater.Interfaces;
+
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using assetsUpdater.Interfaces;
 
 #endregion
 
@@ -45,10 +46,9 @@ namespace assetsUpdater.Network
             get { return AllUnits.Sum(uploadUnit => uploadUnit.TotalBytes); }
         }
 
-
         public async Task WaitAll()
         {
-            Start:
+        Start:
             if (CurrentUploadingUnits.Count < 1 && WaitingUnits.Count < 1)
             {
                 //Upload Finished
@@ -59,7 +59,6 @@ namespace assetsUpdater.Network
                         lock (WaitingUnits)
                         {
                             foreach (var uploadUnit in ErrorUnits) WaitingUnits.Add(uploadUnit);
-
                         }
                         goto Start;
                     }
@@ -68,12 +67,11 @@ namespace assetsUpdater.Network
             else
             {
                 do
-                {   
+                {
                     List<Task> tasks = new List<Task>();
                     lock (CurrentUploadingUnits)
                     {
                         tasks.AddRange(CurrentUploadingUnits.Select((unit => unit.UploadTask)));
-
                     }
 
                     //! Must take a copy of tasks (taken by to list) to avoid modification from another thread
@@ -81,10 +79,8 @@ namespace assetsUpdater.Network
 
                     // tasks = CurrentUploadingUnits.Select(uploadUnit => uploadUnit.Wait()).ToList();
 
-
-
                     await Task.WhenAll(tasks).ConfigureAwait(false);
-                } while (WaitingUnits.Count >= 1 || CurrentUploadingUnits.Count>=1);
+                } while (WaitingUnits.Count >= 1 || CurrentUploadingUnits.Count >= 1);
 
                 goto Start;
             }
@@ -99,7 +95,6 @@ namespace assetsUpdater.Network
         {
             uploadUnit.UploadCompletedEventHandler += UploadCompletedEventHandler;
 
-            
             AllUnits.Add(uploadUnit);
             if (CurrentUploadingUnits.Count < MaxParallelUploadCount)
             {
@@ -126,7 +121,7 @@ namespace assetsUpdater.Network
 
         private async Task StartDownload(IUploadUnit uploadUnit)
         {
-            if (uploadUnit==null)
+            if (uploadUnit == null)
             {
                 return;
             }
@@ -138,13 +133,10 @@ namespace assetsUpdater.Network
             CurrentUploadingUnits.Add(uploadUnit);
         }
 
-
-        private async void UploadCompletedEventHandler(object sender, bool e)
+        private async void UploadCompletedEventHandler(object? sender, bool e)
         {
-            
             lock (CurrentUploadingUnits)
             {
-                
                 for (var i = 0; i < CurrentUploadingUnits.Count; i++)
                 {
                     //Identify Objects
@@ -169,10 +161,8 @@ namespace assetsUpdater.Network
                     }
                     */
 
-                    await StartDownload(WaitingUnits.FirstOrDefault()).ConfigureAwait(false);
-
+                    await StartDownload(WaitingUnits.First()).ConfigureAwait(false);
                 }
-              
             }
         }
 

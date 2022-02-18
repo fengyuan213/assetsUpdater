@@ -32,11 +32,12 @@
             this.label1 = new System.Windows.Forms.Label();
             this.RootDownloadAddr_TextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.CurrentRootAddress_Label = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // Confirm_Btn
             // 
-            this.Confirm_Btn.Location = new System.Drawing.Point(161, 149);
+            this.Confirm_Btn.Location = new System.Drawing.Point(160, 149);
             this.Confirm_Btn.Name = "Confirm_Btn";
             this.Confirm_Btn.Size = new System.Drawing.Size(75, 23);
             this.Confirm_Btn.TabIndex = 0;
@@ -47,7 +48,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 52);
+            this.label1.Location = new System.Drawing.Point(12, 28);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(146, 17);
             this.label1.TabIndex = 1;
@@ -55,7 +56,7 @@
             // 
             // RootDownloadAddr_TextBox
             // 
-            this.RootDownloadAddr_TextBox.Location = new System.Drawing.Point(12, 82);
+            this.RootDownloadAddr_TextBox.Location = new System.Drawing.Point(12, 58);
             this.RootDownloadAddr_TextBox.Name = "RootDownloadAddr_TextBox";
             this.RootDownloadAddr_TextBox.Size = new System.Drawing.Size(400, 23);
             this.RootDownloadAddr_TextBox.TabIndex = 2;
@@ -63,17 +64,28 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(65, 108);
+            this.label2.Location = new System.Drawing.Point(65, 84);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(243, 17);
             this.label2.TabIndex = 3;
             this.label2.Text = "示例：https://pokecity.file.myqcloud.com";
+            // 
+            // CurrentRootAddress_Label
+            // 
+            this.CurrentRootAddress_Label.AutoSize = true;
+            this.CurrentRootAddress_Label.Location = new System.Drawing.Point(44, 120);
+            this.CurrentRootAddress_Label.Name = "CurrentRootAddress_Label";
+            this.CurrentRootAddress_Label.Size = new System.Drawing.Size(43, 17);
+            this.CurrentRootAddress_Label.TabIndex = 4;
+            this.CurrentRootAddress_Label.Text = "label3";
+            this.CurrentRootAddress_Label.Click += new System.EventHandler(this.CurrentRootAddress_Label_Click);
             // 
             // ModifyAddressBuilderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(441, 184);
+            this.Controls.Add(this.CurrentRootAddress_Label);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.RootDownloadAddr_TextBox);
             this.Controls.Add(this.label1);
@@ -91,5 +103,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox RootDownloadAddr_TextBox;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label CurrentRootAddress_Label;
     }
 }

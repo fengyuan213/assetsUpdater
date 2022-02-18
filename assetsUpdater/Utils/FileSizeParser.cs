@@ -9,10 +9,10 @@
         /// <returns></returns>
         public static string ParseAuto(double bytes)
         {
-            double kb = bytes / 1024; // · 1024 Bytes = 1 Kilobyte 
-            double mb = kb / 1024; // · 1024 Kilobytes = 1 Megabyte 
-            double gb = mb / 1024; // · 1024 Megabytes = 1 Gigabyte 
-            double tb = gb / 1024; // · 1024 Gigabytes = 1 Terabyte 
+            double kb = bytes / 1024; // · 1024 Bytes = 1 Kilobyte
+            double mb = kb / 1024; // · 1024 Kilobytes = 1 Megabyte
+            double gb = mb / 1024; // · 1024 Megabytes = 1 Gigabyte
+            double tb = gb / 1024; // · 1024 Gigabytes = 1 Terabyte
 
             string result =
                 tb > 1 ? $"{tb:0.##}TB" :
@@ -24,23 +24,25 @@
             result = result.Replace("/", ".");
             return result;
         }
+
         public static int ParseMb(long bytes)
         {
-            double kb = bytes / 1024; // · 1024 Bytes = 1 Kilobyte 
-            double mb = kb / 1024; // · 1024 Kilobytes = 1 Megabyte 
+            double kb = bytes / 1024; // · 1024 Bytes = 1 Kilobyte
+            double mb = kb / 1024; // · 1024 Kilobytes = 1 Megabyte
             return (int)mb;
         }
 
         public static int ParseGb(long bytes)
         {
-            double kb = bytes / 1024; // · 1024 Bytes = 1 Kilobyte 
-            double mb = kb / 1024; // · 1024 Kilobytes = 1 Megabyte 
-            double gb = mb / 1024; // · 1024 Megabytes = 1 Gigabyte 
+            double kb = bytes / 1024; // · 1024 Bytes = 1 Kilobyte
+            double mb = kb / 1024; // · 1024 Kilobytes = 1 Megabyte
+            double gb = mb / 1024; // · 1024 Megabytes = 1 Gigabyte
             return (int)gb;
         }
+
         public static int ParseKb(long bytes)
         {
-            double kb = bytes / 1024; // · 1024 Bytes = 1 Kilobyte 
+            double kb = bytes / 1024; // · 1024 Bytes = 1 Kilobyte
             return (int)kb;
         }
     }

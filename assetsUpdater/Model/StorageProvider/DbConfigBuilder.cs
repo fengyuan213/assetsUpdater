@@ -9,6 +9,5 @@ namespace assetsUpdater.Model.StorageProvider
     public partial class DbConfig
 
     {
-
     }
 }

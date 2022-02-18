@@ -1,20 +1,16 @@
 ﻿#region Using
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Diagnostics;
+
 using assetsUpdater.Interfaces;
 using assetsUpdater.Model.Network;
-using assetsUpdater.Model.StorageProvider;
 using assetsUpdater.Utils;
+
 using COSXML;
 using COSXML.CosException;
 using COSXML.Model;
 using COSXML.Transfer;
+
+using System;
+using System.Threading.Tasks;
 
 #endregion
 
@@ -51,6 +47,7 @@ namespace assetsUpdater.Tencent.Network
         {
             get { return CurrentUploadingTask ?? Task.CompletedTask; }
         }
+
         public long BytesSent { get; private set; }
         public double Progress { get; private set; }
 
@@ -63,7 +60,6 @@ namespace assetsUpdater.Tencent.Network
         /// <returns></returns>
         public Task Start()
         {
-
             // 初始化 TransferConfig
             var transferConfig = new TransferConfig();
             // 初始化 TransferManager
@@ -85,10 +81,8 @@ namespace assetsUpdater.Tencent.Network
             CurrentUploadingTask = transferManager.UploadAsync(uploadTask);
             //AllUploadTasks= AllUploadTasks.Append(uploadTask);
 
-
             return Task.CompletedTask;
         }
-
 
         /// <summary>
         ///     May throw exception
@@ -97,7 +91,6 @@ namespace assetsUpdater.Tencent.Network
         public Task Wait()
         {
             if (CurrentUploadingTask == null) return Task.CompletedTask;
-
 
             var result = CurrentUploadingTask.Result;
 
@@ -126,7 +119,7 @@ namespace assetsUpdater.Tencent.Network
 
             Progress = completed / (double)TotalBytes / 1d;
 
-            if (Progress == 1)
+            if (BytesSent == TotalBytes)
                 if (!_isOnCompleteHandlerCalled)
                 {
                     OnUploadCompleted(true);

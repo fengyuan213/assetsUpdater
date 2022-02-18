@@ -1,14 +1,15 @@
 ﻿#region Using
 
-using System;
-using System.IO;
-using System.Text;
-using System.Threading;
 using NLog;
 using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets;
 using NLog.Targets.Wrappers;
+
+using System;
+using System.IO;
+using System.Text;
+using System.Threading;
 
 #endregion
 
@@ -16,16 +17,19 @@ namespace assetsUpdater.UI.WinForms
 {
     internal static class NLogLoader
     {
-        public static string LoggingDirName="";
+        public static string LoggingDirName = "";
+#pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的 字段“LogDirectory”必须包含非 null 值。请考虑将 字段 声明为可以为 null。
         public static string LogDirectory;
+#pragma warning restore CS8618 // 在退出构造函数时，不可为 null 的 字段“LogDirectory”必须包含非 null 值。请考虑将 字段 声明为可以为 null。
         public static string LogFileName = "App." + DateTime.Now.ToString("MM-dd-HHmmss") + ".log";
         private static int _wrapperIncrementer = 1;
 
-        internal static void Load(in Thread uiThread,in string projectName)
+        internal static void Load(in Thread uiThread, in string projectName)
         {
             uiThread.Name = "UI-Thread";
             Load(projectName);
         }
+
         internal static void Load(string logDirName)
         {
             LoggingDirName = logDirName;
@@ -72,19 +76,19 @@ namespace assetsUpdater.UI.WinForms
             //Wrappers
             var autoFlushSepFileWrapper = GetAsyncAutoFlushTargetWrapper(logFile, "FileWrapper");
             var autoFlushFileWrapper = GetAsyncAutoFlushTargetWrapper(logSepFile, "SepFileWrapper");
-            
+
             //Configure LogLevels
             var minLevelSepFile = GetLogLevel(LogLevel.Trace, LogLevel.Debug);
             var minLevelConsole = GetLogLevel(LogLevel.Trace, LogLevel.Debug);
             var minLevelFile = GetLogLevel(LogLevel.Trace, LogLevel.Info);
-            
+
             //NLog configuration section
             var config = new LoggingConfiguration();
-            // Rules for mapping loggers to targets            
+            // Rules for mapping loggers to targets
             config.AddRule(minLevelConsole, LogLevel.Fatal, logColoredConsole);
             config.AddRule(minLevelFile, LogLevel.Fatal, autoFlushFileWrapper);
             config.AddRule(minLevelSepFile, LogLevel.Fatal, autoFlushSepFileWrapper);
-            // Apply config           
+            // Apply config
             LogManager.Configuration = config;
         }
 
@@ -123,7 +127,6 @@ namespace assetsUpdater.UI.WinForms
 #endif
             return lvl;
         }
-
 
         private static AutoFlushTargetWrapper GetAsyncAutoFlushTargetWrapper(Target target, string name = "")
         {

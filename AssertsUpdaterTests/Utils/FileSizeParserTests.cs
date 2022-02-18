@@ -7,15 +7,10 @@ namespace AssertsUpdaterTests.Utils
     [TestClass]
     public class FileSizeParserTests
     {
-
-
         [TestInitialize]
         public void TestInitialize()
         {
-
         }
-
-
 
         [TestMethod]
         public void ParseAuto_StateUnderTest_ExpectedBehavior()

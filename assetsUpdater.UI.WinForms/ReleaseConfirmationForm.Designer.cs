@@ -130,9 +130,9 @@
             this.typeModified_Col,
             this.relativePath_Col});
             this.dirListView.HideSelection = false;
-            this.dirListView.Location = new System.Drawing.Point(341, 85);
+            this.dirListView.Location = new System.Drawing.Point(17, 84);
             this.dirListView.Name = "dirListView";
-            this.dirListView.Size = new System.Drawing.Size(588, 400);
+            this.dirListView.Size = new System.Drawing.Size(886, 400);
             this.dirListView.TabIndex = 8;
             this.dirListView.UseCompatibleStateImageBehavior = false;
             this.dirListView.View = System.Windows.Forms.View.Details;
@@ -140,15 +140,16 @@
             // typeModified_Col
             // 
             this.typeModified_Col.Text = "修改类型";
+            this.typeModified_Col.Width = 100;
             // 
             // relativePath_Col
             // 
             this.relativePath_Col.Text = "相对路径";
-            this.relativePath_Col.Width = 150;
+            this.relativePath_Col.Width = 300;
             // 
             // debug_btn
             // 
-            this.debug_btn.Location = new System.Drawing.Point(964, 46);
+            this.debug_btn.Location = new System.Drawing.Point(249, 513);
             this.debug_btn.Name = "debug_btn";
             this.debug_btn.Size = new System.Drawing.Size(86, 40);
             this.debug_btn.TabIndex = 9;
@@ -160,7 +161,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1150, 565);
+            this.ClientSize = new System.Drawing.Size(915, 565);
             this.Controls.Add(this.debug_btn);
             this.Controls.Add(this.dirListView);
             this.Controls.Add(this.Cancel_Btn);
@@ -173,6 +174,7 @@
             this.Controls.Add(this.label1);
             this.Name = "ReleaseConfirmationForm";
             this.Text = "ReleaseConfirmationForm";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ReleaseConfirmationForm_FormClosed);
             this.Load += new System.EventHandler(this.ReleaseConfirmationForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

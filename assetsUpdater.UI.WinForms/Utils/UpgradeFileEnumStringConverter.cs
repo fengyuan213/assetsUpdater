@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.AccessControl;
-using System.Text;
-using System.Threading.Tasks;
-using assetsUpdater.Model;
-using assetsUpdater.Utils;
+﻿using assetsUpdater.Model;
+
+using System;
+
 // ReSharper disable InconsistentNaming
 
 namespace assetsUpdater.UI.WinForms.Utils
@@ -25,33 +21,37 @@ namespace assetsUpdater.UI.WinForms.Utils
                 case UpgradeFileType.AddFile:
                     str = DisplayString_AddFile;
                     break;
+
                 case UpgradeFileType.DifferFile:
                     str = DisplayString_DifferFile;
 
                     break;
+
                 case UpgradeFileType.DeleteFile:
-                    str=DisplayString_DeleteFile;
+                    str = DisplayString_DeleteFile;
                     break;
+
                 default:
                     break;
             }
 
             return str;
         }
+
         public static UpgradeFileType Convert(string s)
         {
             UpgradeFileType type;
-            if (s==DisplayString_AddFile)
+            if (s == DisplayString_AddFile)
             {
-                type=UpgradeFileType.AddFile;
+                type = UpgradeFileType.AddFile;
             }
             else if (s == DisplayString_DifferFile)
             {
                 type = UpgradeFileType.DifferFile;
             }
-            else if (s==DisplayString_DeleteFile)
+            else if (s == DisplayString_DeleteFile)
             {
-                type=UpgradeFileType.DeleteFile;
+                type = UpgradeFileType.DeleteFile;
             }
             else
             {
@@ -60,5 +60,4 @@ namespace assetsUpdater.UI.WinForms.Utils
             return type;
         }
     }
-
 }

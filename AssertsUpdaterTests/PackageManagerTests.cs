@@ -16,6 +16,7 @@ namespace AssertsUpdaterTests
     {
         private AssertUpgradePackage mockAssertUpgradePackage;
         private string _localRootPath = Path.Join(Path.GetTempPath(), "PackageManagerTests");
+
         [TestInitialize]
         public void TestInitialize()
         {
@@ -26,7 +27,6 @@ namespace AssertsUpdaterTests
         {
             return new PackageManager(this.mockAssertUpgradePackage,
                 new DefaultAddressBuilder("defautRootAddress", _localRootPath));
-
         }
 
         [TestMethod]

@@ -1,10 +1,5 @@
 ﻿#region Using
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using assetsUpdater.EventArgs;
 using assetsUpdater.Exceptions;
 using assetsUpdater.Interfaces;
@@ -13,6 +8,12 @@ using assetsUpdater.Model.Network;
 using assetsUpdater.Model.StorageProvider;
 using assetsUpdater.Network;
 using assetsUpdater.Utils;
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 #endregion
 
@@ -76,7 +77,7 @@ namespace assetsUpdater
 
         protected virtual DownloadPackage BuildDownloadPackage(DatabaseFile databaseFile)
         {
-            Uri uri = null;
+            Uri uri;
 
             if (string.IsNullOrWhiteSpace(databaseFile.DownloadAddress))
                 uri = _addressBuilder.BuildUri(databaseFile.RelativePath);
@@ -132,8 +133,7 @@ namespace assetsUpdater
             return Task.CompletedTask;
         }
 
-
-        private void OnDeletionFailed(string msg, string filepath, Exception e = null)
+        private void OnDeletionFailed(string msg, string filepath, Exception? e = null)
         {
             var ex = new FailedDeletionException($"Failed to remove {filepath}, Please delete it manually", filepath);
             AssertVerify.OnMessageNotify(this,

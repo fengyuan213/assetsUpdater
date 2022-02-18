@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using assetsUpdater.Interfaces;
+﻿using assetsUpdater.Interfaces;
 using assetsUpdater.Model.Network;
 using assetsUpdater.Tencent.Network;
 
-using COSXML;
-
+using System.Diagnostics;
 
 namespace assetsUpdaterExample
 {
@@ -29,8 +20,7 @@ namespace assetsUpdaterExample
             AddressBuilder = addressBuilder;
             //Possible Folder "Folder1\\folder2" instead of "example_folder"
             VFolderName = vcsName.Replace('\\', '/');
-            Debug.WriteLine ($"AddressBuidler->\nRootAddress:{addressBuilder.RootDownloadAddress}\nlocalPath:{addressBuilder.LocalRootPath}");
-
+            Debug.WriteLine($"AddressBuidler->\nRootAddress:{addressBuilder.RootDownloadAddress}\nlocalPath:{addressBuilder.LocalRootPath}");
         }
 
         public Task<TencentUploadUnit> Build(string key)
@@ -55,15 +45,10 @@ namespace assetsUpdaterExample
             {
                 var unit = await Build(key).ConfigureAwait(false);
                 units.Add(unit);
-
             }
 
             return units;
             //Parallel.ForEach()
         }
-
-
-
     }
 }
-

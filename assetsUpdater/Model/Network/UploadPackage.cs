@@ -6,6 +6,7 @@
         /// Resource key to access object storage
         /// </summary>
         public string ResourceKey { get; set; }
+
         /// <summary>
         ///  Local Absolute path to a file to upload
         /// </summary>

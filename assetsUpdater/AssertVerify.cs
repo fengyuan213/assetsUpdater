@@ -1,13 +1,16 @@
 #region Using
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using assetsUpdater.EventArgs;
 using assetsUpdater.Interfaces;
 using assetsUpdater.Model;
 using assetsUpdater.Model.StorageProvider;
+using assetsUpdater.Utils;
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 #endregion
 
@@ -15,39 +18,39 @@ namespace assetsUpdater
 {
     public static class AssertVerify
     {
-        public static event EventHandler<MessageNotifyEventArgs> MessageNotify;
-        internal static void OnMessageNotify(object sender,MessageNotifyEventArgs e)
-        {
-            
-            MessageNotify?.Invoke(sender,e);
-        }
-        internal static void OnMessageNotify(object sender, string message,Exception e=null)
-        {
+        public static event EventHandler<MessageNotifyEventArgs>? MessageNotify;
 
-            MessageNotify?.Invoke(sender, new MessageNotifyEventArgs(e==null?MsgL.Info:MsgL.Error,message,e!=null,e,null));
-          
-        }
-        internal static void OnMessageNotify(object sender, string message, MsgL level,Exception e = null)
+        internal static void OnMessageNotify(object? sender, MessageNotifyEventArgs e)
         {
+            MessageNotify?.Invoke(sender, e);
+        }
 
+        internal static void OnMessageNotify(object? sender, string message, Exception? e = null)
+        {
+            MessageNotify?.Invoke(sender, new MessageNotifyEventArgs(e == null ? MsgL.Info : MsgL.Error, message, e != null, e, null));
+        }
+
+        internal static void OnMessageNotify(object? sender, string message, MsgL level, Exception? e = null)
+        {
             MessageNotify?.Invoke(sender, new MessageNotifyEventArgs(level, message, e != null, e, null));
-
         }
-    
-        internal static void OnMessageNotify( object sender, MsgL Level,string message,bool hasError,Exception e, object obj=null)
+
+        internal static void OnMessageNotify(object? sender, MsgL Level, string message, bool hasError, Exception? e, object? obj = null)
         {
-
-            MessageNotify?.Invoke(sender, new MessageNotifyEventArgs(Level,message,hasError,e,obj));
+            MessageNotify?.Invoke(sender, new MessageNotifyEventArgs(Level, message, hasError, e, obj));
         }
+
         private static async Task<(RemoteDataManager remoteDataManager, bool isUpdateRequired)> Check_UpdateInternal(
             DataManager dm, string url)
         {
             if (!await dm.IsDataValid())
             {
                 //Data invalid return
-                return (null, false);
+                throw new InvalidDataException("local db invalid")
+                {
+                };
+                //return (new RemoteDataManager(), false);
             }
-            
 
             var remoteDb = await RemoteDataManager.GetStorageProvider(url);
 
@@ -55,16 +58,15 @@ namespace assetsUpdater
             {
                 return (new RemoteDataManager(remoteDb), true);
             }
-            //No updates return default    
+            //No updates return default
 
             return (new RemoteDataManager(remoteDb), false);
         }
 
-
         public static async Task<(RemoteDataManager remoteDataManager, bool isUpdateRequired)> Check_Update(
             IStorageProvider localProvider, string remoteUrl)
         {
-            if (string.IsNullOrWhiteSpace(remoteUrl)) return (null, false);
+            if (string.IsNullOrWhiteSpace(remoteUrl)) throw new ArgumentNullException(remoteUrl);
             LocalDataManager localDataManager = new LocalDataManager(localProvider);
             return await Check_UpdateInternal(localDataManager, remoteUrl);
         }
@@ -72,7 +74,7 @@ namespace assetsUpdater
         public static async Task<(RemoteDataManager remoteDataManager, bool isUpdateRequired)> Check_Update(
             string localDbPath, string remoteUrl)
         {
-            if (string.IsNullOrWhiteSpace(localDbPath) || string.IsNullOrWhiteSpace(remoteUrl)) return (null, false);
+            if (string.IsNullOrWhiteSpace(localDbPath) || string.IsNullOrWhiteSpace(remoteUrl)) throw new ArgumentNullException(remoteUrl);
             LocalDataManager localDataManager = new LocalDataManager(localDbPath);
             return await Check_UpdateInternal(localDataManager, remoteUrl);
         }
@@ -84,21 +86,20 @@ namespace assetsUpdater
             var remoteData = remote.GetBuildInDbData();
 
             if (localData.Config.MajorVersion != remoteData.Config.MajorVersion ||
-                localData.Config.MirrorVersion != remoteData.Config.MirrorVersion)
+                localData.Config.MinorVersion != remoteData.Config.MinorVersion)
             {
                 return Task.FromResult(false);
             }
 
             return ignoreMirrorChanges
                 ? Task.FromResult(true)
-                : Task.FromResult(localData.Config.MirrorVersion == remoteData.Config.MirrorVersion);
+                : Task.FromResult(localData.Config.MinorVersion == remoteData.Config.MinorVersion);
         }
-
 
         /*public static void Compare(IEnumerable<AssertUpgradePackage> assertUpgradesA,IEnumerable<AssertUpgradePackage> assertUpgradesB)
         {
-            
         }*/
+
         public static Task<AssertUpgradePackage> DatabaseCompare(IStorageProvider remoteProvider,
             IStorageProvider localProvider)
         {
@@ -114,7 +115,7 @@ namespace assetsUpdater
         {
             var assetUpgradePackage = new AssertUpgradePackage();
             foreach (var remoteFile in remoteFiles)
-                if (localFiles.Select((file => file.RelativePath)).Contains(remoteFile.RelativePath))
+                if (localFiles.Contains(remoteFile, new DbFileValueEqualityComparer()))
                 {
                     foreach (var localFile in localFiles)
                     {
@@ -144,9 +145,9 @@ namespace assetsUpdater
 
             //判断本地应该删除的文件
 
-
             foreach (var localFile in localFiles)
-                if (remoteFiles.Contains(localFile))
+
+                if (remoteFiles.Contains(localFile, new DbFileValueEqualityComparer()))
                 {
                     //本地数据库文件在数据库中存在
                 }

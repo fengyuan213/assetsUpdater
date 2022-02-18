@@ -1,15 +1,20 @@
 ﻿#region Using
 
+using assetsUpdater.Interfaces;
+using assetsUpdater.Network;
+using assetsUpdater.Utils;
+
+using Downloader;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using assetsUpdater.Interfaces;
-using assetsUpdater.Network;
-using assetsUpdater.Utils;
-using Downloader;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using Telerik.JustMock;
+
 using DownloadPackage = assetsUpdater.Model.Network.DownloadPackage;
 
 #endregion
@@ -49,7 +54,6 @@ namespace AssertsUpdaterTests
         {
             await asyncDownload.Start().ConfigureAwait(true);
 
-
             await asyncDownload.Wait().ContinueWith(task =>
             {
                 if (!task.IsCompletedSuccessfully) Assert.Fail("Download UNCOMPLECTED");
@@ -64,9 +68,7 @@ namespace AssertsUpdaterTests
             var asyncDownload = new AsyncDownload(mockdownloadPackageExternal, mockDownloadSetting, mockWebClient);
             Mock.Arrange(() => asyncDownload.DownloadPackage).Returns(mockdownloadPackageExternal);
 
-
             await asyncDownload.Start().ConfigureAwait(true);
-
 
             await asyncDownload.Wait().ContinueWith(task =>
             {
@@ -83,7 +85,6 @@ namespace AssertsUpdaterTests
             mockdownloadPackageExternal.DownloadMode = DownloadMode.MultiPart;
             var mPartDownload = new MPartDownload(mockdownloadPackageExternal, mockDownloadSetting);
             Mock.Arrange(() => mPartDownload.DownloadPackage).Returns(mockdownloadPackageExternal);
-
 
             await mPartDownload.Start().ConfigureAwait(true);
             await mPartDownload.Wait().ConfigureAwait(true);

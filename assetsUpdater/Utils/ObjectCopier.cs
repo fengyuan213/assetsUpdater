@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+
+using System;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using Newtonsoft.Json;
 
 namespace assetsUpdater.Utils
 {
@@ -19,9 +20,8 @@ namespace assetsUpdater.Utils
         /// <typeparam name="T">The type of object being copied.</typeparam>
         /// <param name="source">The object instance to copy.</param>
         /// <returns>The copied object.</returns>
-        public static T CloneJson<T>(this T source,JsonSerializerSettings settings =null)
+        public static T CloneJson<T>(this T source, JsonSerializerSettings? settings = null)
         {
-
             // Don't serialize a null object, simply return the default for that object
             if (ReferenceEquals(source, null)) return default;
 
@@ -32,17 +32,19 @@ namespace assetsUpdater.Utils
             settings ??= new JsonSerializerSettings();
             settings.ObjectCreationHandling = ObjectCreationHandling.Replace;
 
-
-                
             var t = source.GetType();
-            return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(source), settings);
+            var value = JsonConvert.SerializeObject(source);
+            return JsonConvert.DeserializeObject<T>(value, settings) ?? throw new SerializationException($"Unable to clone {typeof(T)}");
         }
+
         /// <summary>
         /// Perform a deep copy of the object via serialization.
         /// </summary>
         /// <typeparam name="T">The type of object being copied.</typeparam>
         /// <param name="source">The object instance to copy.</param>
         /// <returns>A deep copy of the object.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public static T CloneBinary<T>(T source)
         {
             if (!typeof(T).IsSerializable)
@@ -53,11 +55,15 @@ namespace assetsUpdater.Utils
             // Don't serialize a null object, simply return the default for that object
             if (ReferenceEquals(source, null)) return default;
 
-            using var stream = new MemoryStream();
+            using MemoryStream stream = new MemoryStream();
             IFormatter formatter = new BinaryFormatter();
-            formatter.Serialize(stream, source);
+#pragma warning disable SYSLIB0011 // 类型或成员已过时
+            formatter.Serialize(stream, source ?? throw new ArgumentNullException(nameof(source)));
+#pragma warning restore SYSLIB0011 // 类型或成员已过时
             stream.Seek(0, SeekOrigin.Begin);
+#pragma warning disable SYSLIB0011 // 类型或成员已过时
             return (T)formatter.Deserialize(stream);
+#pragma warning restore SYSLIB0011 // 类型或成员已过时
         }
     }
 }

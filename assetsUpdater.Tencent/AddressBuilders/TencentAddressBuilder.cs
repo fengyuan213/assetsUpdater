@@ -1,20 +1,16 @@
 ﻿#region Using
-using global::System;
-using System.Collections.Generic;
-using System.IO;
-using global::System.Linq;
-using global::System.Net.Http;
-using global::System.Threading;
-using global::System.Threading.Tasks;
 
 using assetsUpdater.Interfaces;
 using assetsUpdater.Utils;
+
+using global::System;
+
+using System.IO;
 
 #endregion
 
 namespace assetsUpdater.Tencent.AddressBuilders
 {
-
     public class TencentAddressBuilder : IAddressBuilder
     {
         public TencentAddressBuilder(string rootDownloadAddress, string localRootPath, string typeDSecret)
@@ -54,7 +50,6 @@ namespace assetsUpdater.Tencent.AddressBuilders
             if (string.IsNullOrWhiteSpace(relativePath)) throw new ArgumentNullException(relativePath, "relativePath null");
             if (string.IsNullOrWhiteSpace(LocalRootPath))
                 throw new ArgumentNullException(LocalRootPath, "localrootpath null");
-
 
             return Path.Join(LocalRootPath, relativePath);
         }

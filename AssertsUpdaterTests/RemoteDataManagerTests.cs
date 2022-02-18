@@ -11,13 +11,12 @@ using System.Threading.Tasks;
 
 namespace AssertsUpdaterTests
 {
-
-
     [TestClass]
     public class RemoteDataManagerTests
     {
         private string _dbPath = "";
-        string _dbRemoteUrl = null;
+        private string _dbRemoteUrl = null;
+
         [TestInitialize]
         public async void TestInitialize()
         {
@@ -27,6 +26,7 @@ namespace AssertsUpdaterTests
             await db.Export(path);
             _dbPath = path;
         }
+
         private DbData GetExceptedDbData()
         {
             var config = new DbConfig("vcs")
@@ -43,23 +43,21 @@ namespace AssertsUpdaterTests
                     }
                 },
                 MajorVersion = 1,
-                MirrorVersion = 1,
+                MinorVersion = 1,
                 DownloadAddressBuilder = new Cdn8N6NAddressBuilder(Directory.GetCurrentDirectory(), "apiRoot", "apiKey", "apiScret")
-
             };
             return new DbData(config)
             {
-
                 DatabaseFiles = new List<DatabaseFile>()
                 {
                     new DatabaseFile("Test\\data", "abcdefg", 123, "")
                 }
             };
         }
+
         private RemoteDataManager CreateManager()
         {
             var dbm = new RemoteDataManager(_dbPath);
-
 
             return dbm;
         }
@@ -83,12 +81,10 @@ namespace AssertsUpdaterTests
             // Arrange
             var manager = this.CreateManager();
 
-
             // Act
             var result = await RemoteDataManager.GetStorageProvider(
                 _dbRemoteUrl);
             var rdm = new RemoteDataManager(result);
-
 
             // Assert
             Assert.IsTrue(await rdm.IsDataValid(), "DataInvalid");

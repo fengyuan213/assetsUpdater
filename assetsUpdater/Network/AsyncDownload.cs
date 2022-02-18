@@ -1,12 +1,13 @@
 ﻿#region Using
 
+using assetsUpdater.Interfaces;
+using assetsUpdater.Model.Network;
+
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Security;
 using System.Threading.Tasks;
-using assetsUpdater.Interfaces;
-using assetsUpdater.Model.Network;
 
 #endregion
 
@@ -14,11 +15,10 @@ namespace assetsUpdater.Network
 {
     public class AsyncDownload : IDownloadUnit
     {
-        public AsyncDownload(DownloadPackage downloadPackage, DownloadSetting downloadSetting = null,
-            WebClient webClient = null)
+        public AsyncDownload(DownloadPackage downloadPackage, DownloadSetting? downloadSetting = null,
+            WebClient? webClient = null)
         {
             DownloadPackage = downloadPackage;
-
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, errors) =>
             {
                 // local dev, just approve all certs
@@ -32,15 +32,14 @@ namespace assetsUpdater.Network
             };
             WebClient = webClient ?? new WebClient();
             WebClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
+
             WebClient.DownloadFileCompleted += WebClient_DownloadFileCompleted;
         }
 
-
         public WebClient WebClient { get; set; }
-        public Task CurrentDownloadingTask { get; set; }
-        public string DisplaySpeed => null;
+        public Task? CurrentDownloadingTask { get; set; }
+        public string? DisplaySpeed => null;
         public DownloadPackage DownloadPackage { get; set; }
-
 
         public DownloadMode DownloadMode { get; set; }
         public double BytesReceivedPerSec { get; set; }
@@ -58,15 +57,12 @@ namespace assetsUpdater.Network
             CurrentDownloadingTask = WebClient.DownloadFileTaskAsync(DownloadPackage.Uri.OriginalString,
                 DownloadPackage.LocalPath);
 
-
             return Task.CompletedTask;
         }
 
-
         public DownloadSetting DownloadSetting { get; set; }
 
-
-        private void WebClient_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        private void WebClient_DownloadFileCompleted(object? sender, AsyncCompletedEventArgs e)
         {
             Debugger.Break();
             if (!(e.Error != null || e.Cancelled))

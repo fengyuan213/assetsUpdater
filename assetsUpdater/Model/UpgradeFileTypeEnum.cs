@@ -1,5 +1,4 @@
-﻿
-namespace assetsUpdater.Model
+﻿namespace assetsUpdater.Model
 {
     public enum UpgradeFileType
     {
@@ -7,5 +6,4 @@ namespace assetsUpdater.Model
         DifferFile,
         DeleteFile
     }
-
 }

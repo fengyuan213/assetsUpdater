@@ -11,13 +11,14 @@ namespace assetsUpdater.Interfaces
         ///     The main download Address to download VersionControlFiles.
         ///     Usage format: RealDownloadUrl= &"{RootDownloadUrl}/version control filename"
         /// </summary>
-        /// 
+        ///
         [NotNull]
         [JsonProperty("RootDownloadAddress")]
         public string RootDownloadAddress { get; set; }
-        [JsonIgnore]
 
+        [JsonIgnore]
         public string LocalRootPath { get; set; }
+
         public Uri BuildUri(string relativePath);
 
         public string BuildDownloadLocalPath(string relativePath);

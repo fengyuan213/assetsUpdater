@@ -1,0 +1,7 @@
+﻿[*.cs]
+
+# CS8603: 可能返回 null 引用。
+dotnet_diagnostic.CS8603.severity = suggestion
+
+# CS8600: 将 null 字面量或可能为 null 的值转换为非 null 类型。
+dotnet_diagnostic.CS8600.severity = error

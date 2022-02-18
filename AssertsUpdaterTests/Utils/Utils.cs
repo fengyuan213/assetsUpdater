@@ -26,7 +26,6 @@ namespace AssertsUpdaterTests.Utils
                 fileNames = fileNames.Append(fileName);
                 fileHashes = fileHashes.Append(fileHash);
                 fileSizeInMbs = fileSizeInMbs.Append(fileSizeMb);
-
             }
 
             return upper;

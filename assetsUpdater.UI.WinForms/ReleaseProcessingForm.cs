@@ -1,37 +1,65 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
-using assetsUpdater.Interfaces;
-using assetsUpdater.Model;
-using assetsUpdater.Model.StorageProvider;
+﻿using assetsUpdater.Interfaces;
 using assetsUpdater.Network;
 using assetsUpdater.Tencent.Network;
 using assetsUpdater.Utils;
+
 using NLog;
+
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace assetsUpdater.UI.WinForms
 {
     public partial class ReleaseProcessingForm : Form
     {
         public static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-      
-        public IEnumerable<string> UnitKeys { get;  }
-        public UploadUnitBuilder UploadUnitBuilder { get;  }
-        public ReleaseProcessingForm(IEnumerable<string> keys,IAddressBuilder addressBuilder,string vFolderKey)
+
+        public IEnumerable<string> UnitKeys { get; }
+        public UploadUnitBuilder UploadUnitBuilder { get; }
+        private double _BuildUnitProgress = 0;
+
+        public ReleaseProcessingForm(IEnumerable<string> keys, IAddressBuilder addressBuilder, string vFolderKey)
         {
             UnitKeys = keys;
             UploadUnitBuilder = new UploadUnitBuilder(addressBuilder, vFolderKey);
             InitializeComponent();
+            InitializeUi();
         }
-        
+
+        private void InitializeUi()
+        {
+            UpdateStatus_Timer.Stop();
+            UpdateStatus_Timer.Enabled = true;
+            UpdateStatus_Timer.Interval = 1000;
+            UpdateStatus_Timer.Start();
+
+            UploadQueue.ErrorUnits.CollectionChanged += ErrorUnits_CollectionChanged;
+        }
+
+        private void ErrorUnits_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add || e.NewItems?.Count > 0)
+            {
+                foreach (IUploadUnit eNewItem in e.NewItems ?? new List<IUploadUnit>())
+                {
+                    AddLogListViewMessage($"无法上传文件：{eNewItem.UploadPackage.FileLocalPath}{eNewItem} 请稍后重试或访问调试Log来获得更多信息", LogLevel.Error);
+                }
+            }
+        }
+
+        private void AddLogListViewMessage(string msg, LogLevel lvl)
+        {
+            Logger.Log(lvl, msg);
+            log_listView.Items.Add(new ListViewItem(new[] { msg })
+            {
+            });
+        }
+
         public UploadQueue UploadQueue { get; set; } = new UploadQueue(10);
+
         private async Task StartUpload()
         {
             Logger.Info("Start Building Upload Units");
@@ -47,7 +75,7 @@ namespace assetsUpdater.UI.WinForms
             await UploadQueue.WaitAll().ConfigureAwait(false);
             Logger.Info("Upload Queue upload finished");
         }
-        
+
         private async Task<IEnumerable<TencentUploadUnit>> BuildUploadUnits()
         {
             var units = await UploadUnitBuilder.Build(UnitKeys).ConfigureAwait(false);
@@ -55,7 +83,42 @@ namespace assetsUpdater.UI.WinForms
             return units;
         }
 
-        private Task UpdateStatus()
+        private double GetTotalProgressBarProgress()
+        {
+            //upload 70 100
+            //BuildUploadUnits()50 100
+            //80
+            var uploadProgress = UploadQueue.Progress * 100;
+            var progress = (_BuildUnitProgress / 5 + uploadProgress) / (100 / 5 + 100) * 100;
+            return progress
+                ;
+        }
+
+        private async Task UpdateStatus()
+        {
+            //Update Ui Control
+
+            AllUnitCount_Label.Text = UploadQueue.AllUnits.Count.ToString();
+            CurrentUnitCount_Label.Text = UploadQueue.CurrentUploadingUnits.Count.ToString();
+            WaitingUnitCount_Label.Text = UploadQueue.WaitingUnits.Count.ToString();
+            ErrorUnitCount_Label.Text = UploadQueue.ErrorUnits.Count.ToString();
+            UploadProgress_Label.Text =
+                $@"{FileSizeParser.ParseAuto(UploadQueue.BytesSent)}/{FileSizeParser.ParseAuto(UploadQueue.TotalBytesToUpload)}";
+
+            if (UploadQueue.CurrentUploadingUnits.Count > 0)
+            {
+                currentProcessBar.Value = (int)UploadQueue.CurrentUploadingUnits[0].Progress;
+            }
+            else
+            {
+                currentProcessBar.Value = totalProccessBar.Value;
+            }
+            totalProccessBar.Value = (int)(GetTotalProgressBarProgress());
+
+            await LogUpdateStatus().ConfigureAwait(false);
+        }
+
+        private Task LogUpdateStatus()
         {
             //alias
             var progress = UploadQueue.Progress;
@@ -63,49 +126,47 @@ namespace assetsUpdater.UI.WinForms
             var totalB = UploadQueue.TotalBytesToUpload;
             var allUnits = UploadQueue.AllUnits;
             var waitingUnits = UploadQueue.WaitingUnits;
-            var errorUnits= UploadQueue.ErrorUnits;
+            var errorUnits = UploadQueue.ErrorUnits;
             var currentUnits = UploadQueue.CurrentUploadingUnits;
             Logger.Debug("--- Upload Trace Data Start ---");
             Logger.Debug($"Progress:{progress},Uploaded:{FileSizeParser.ParseAuto(uploadedB)}, Total:{FileSizeParser.ParseAuto(totalB)}");
-            Logger.Debug($"Uploaded Bytes:{uploadedB}, Total Bytes:{totalB}");
+            Logger.Info($"Uploaded Bytes:{uploadedB}, Total Bytes:{totalB}");
             Logger.Debug($"Units Count- Waiting:{waitingUnits.Count} All:{allUnits.Count} Current:{currentUnits.Count} Error:{errorUnits.Count}");
             Logger.Debug("Lists of waiting, error and current");
-            LogUnits("Waiting",waitingUnits);
+            LogUnits("Waiting", waitingUnits);
             LogUnits("Error", errorUnits);
             LogUnits("Current", waitingUnits);
-           
-            Logger.Debug("--- Upload Trace Data End ---");
-            void LogUnits(in string unitName,in IEnumerable<IUploadUnit> units)
-            {
-                foreach (var unit in units)
-                {
-                 
-                    //alias
-                    var key = unit.UploadPackage.ResourceKey;
-                    var localPath = unit.UploadPackage.FileLocalPath;
-                    var p = unit.Progress;
-                    var byteSent = unit.BytesSent;
-                    var totalByte = unit.TotalBytes;
 
-                    Logger.Debug($"Status:{unitName}->Key:{key} localPath:{localPath}\n Byte Sent:{byteSent}, Byte Total:{totalByte}, Progress:{p}");
-                }
-            }
+            Logger.Debug("--- Upload Trace Data End ---");
 
             return Task.CompletedTask;
         }
+
+        private void LogUnits(in string unitName, in IEnumerable<IUploadUnit> units)
+        {
+            foreach (var unit in units)
+            {
+                //alias
+                var key = unit.UploadPackage.ResourceKey;
+                var localPath = unit.UploadPackage.FileLocalPath;
+                var p = unit.Progress;
+                var byteSent = unit.BytesSent;
+                var totalByte = unit.TotalBytes;
+
+                Logger.Debug($"Status:{unitName}->Key:{key} localPath:{localPath}\n Byte Sent:{byteSent}, Byte Total:{totalByte}, Progress:{p}");
+            }
+        }
+
         private async void UpdateStatus_Timer_Tick(object sender, System.EventArgs e)
         {
             //UpdateStatus_Timer.Enabled=false;
-            //await UpdateStatus().ConfigureAwait(true);
-            UpdateStatus().Wait();
-
+            await UpdateStatus().ConfigureAwait(true);
         }
 
         private async void Start_Btn_Click(object sender, System.EventArgs e)
         {
             await StartUpload().ConfigureAwait(false);
             await WaitUpload().ConfigureAwait(false);
-
         }
 
         private void ReleaseProcessingForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -117,10 +178,10 @@ namespace assetsUpdater.UI.WinForms
         {
             //UpdateStatus_Timer.Interval = 500;
             //UpdateStatus_Timer.Start();
-           
+
             try
             {
-               // UpdateStatus_Timer.Stop();
+                // UpdateStatus_Timer.Stop();
                 //UpdateStatus_Timer.Interval = 3000;
                 //UpdateStatus_Timer.Start();
 
@@ -129,9 +190,11 @@ namespace assetsUpdater.UI.WinForms
             catch (Exception exception)
             {
                 Console.WriteLine(exception);
-                
             }
-           
+        }
+
+        private void ReleaseProcessingForm_Load(object sender, System.EventArgs e)
+        {
         }
     }
 }

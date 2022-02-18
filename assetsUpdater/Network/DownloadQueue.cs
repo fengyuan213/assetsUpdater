@@ -1,12 +1,13 @@
 ﻿#region Using
 
+using assetsUpdater.Interfaces;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using assetsUpdater.Interfaces;
 
 #endregion
 
@@ -63,7 +64,7 @@ namespace assetsUpdater.Network
 
         public async Task WaitAll()
         {
-            Start:
+        Start:
             if (CurrentDownloadingObj.Count < 1 && WaitingList.Count < 1)
             {
                 //Downlading finsihed
@@ -131,7 +132,6 @@ namespace assetsUpdater.Network
             }
         }
 
-
         public Task RestartFailedDownload(IDownloadUnit downloadUnit)
         {
             var maxDownloadCount = downloadUnit.DownloadMode == DownloadMode.Async
@@ -158,8 +158,7 @@ namespace assetsUpdater.Network
             CurrentDownloadingObj.Add(downloadUnit);
         }
 
-
-        private void MPartDownload_DownloadCompleted(object sender, AsyncCompletedEventArgs e)
+        private void MPartDownload_DownloadCompleted(object? sender, AsyncCompletedEventArgs e)
         {
             lock (CurrentDownloadingObj)
             {
@@ -168,7 +167,6 @@ namespace assetsUpdater.Network
                     var mPartDownload = (MPartDownload)CurrentDownloadingObj[i];
                     if (mPartDownload.DownloadService != sender) continue;
                     if (e.Cancelled || e.Error != null) ErrorList.Add(CurrentDownloadingObj[i]);
-
 
                     CurrentDownloadingObj.Remove(CurrentDownloadingObj[i]);
                 }
@@ -184,7 +182,7 @@ namespace assetsUpdater.Network
             }
         }
 
-        private void Async_WebClient_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        private void Async_WebClient_DownloadFileCompleted(object? sender, AsyncCompletedEventArgs e)
         {
             lock (CurrentDownloadingObj)
             {
@@ -196,7 +194,6 @@ namespace assetsUpdater.Network
 
                         if (!asyncDownload.WebClient.Equals(sender)) continue;
                     }
-
 
                     if (!(e.Cancelled == false || e.Error == null)) ErrorList.Add(CurrentDownloadingObj[i]);
                     CurrentDownloadingObj.Remove(CurrentDownloadingObj[i]);

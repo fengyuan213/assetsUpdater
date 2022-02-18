@@ -1,10 +1,12 @@
 ﻿#region Using
 
-using System;
-using System.IO;
 using assetsUpdater.Interfaces;
 using assetsUpdater.Utils;
+
 using Newtonsoft.Json;
+
+using System;
+using System.IO;
 
 #endregion
 
@@ -19,7 +21,6 @@ namespace assetsUpdater.AddressBuilder
             ApiSecret = apiSecret;
             LocalRootPath = downloadLocalRoot;
         }
-
 
         [JsonIgnore] public string ApiKey { get; set; }
 

@@ -1,9 +1,10 @@
 ﻿#region Using
 
-using System;
-using System.IO;
 using assetsUpdater.Interfaces;
 using assetsUpdater.Utils;
+
+using System;
+using System.IO;
 
 #endregion
 
@@ -26,12 +27,11 @@ namespace assetsUpdater.AddressBuilder
 
             relativePath = AlgorithmHelper.UrlEncodeUTF8(relativePath);
 
-            return new Uri(RootDownloadAddress +'/'+ relativePath);
+            return new Uri(RootDownloadAddress + '/' + relativePath);
         }
 
         public string BuildDownloadLocalPath(string relativePath)
         {
-     
             return Path.Join(LocalRootPath, relativePath);
         }
     }

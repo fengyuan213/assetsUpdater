@@ -1,11 +1,15 @@
 ﻿#region Using
 
+using assetsUpdater.Model.StorageProvider;
+
+using NLog;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using NLog;
 
 #endregion
 
@@ -17,23 +21,42 @@ namespace assetsUpdater.UI.WinForms
         private const string DirListViewTypeFolder = "文件夹";
         private const int DirListViewSubItemCount = 2;
         public static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        public DbSchema? DatabaseSchema;
+        public string? VcsRoot;
+
+        public ModifyDirListForm(string vcsRoot, DbSchema dbSchema)
+        {
+            DatabaseSchema = dbSchema ?? new DbSchema();
+            VcsRoot = vcsRoot;
+            Initialize();
+        }
+
+        public ModifyDirListForm(string vcsFolder)
+        {
+            VcsRoot = vcsFolder;
+            DatabaseSchema = new DbSchema();
+            Initialize();
+        }
 
         public ModifyDirListForm(DataManager dataManager)
         {
-            DataManager = dataManager;
+            VcsRoot = dataManager.StorageProvider.GetBuildInDbData().Config.VersionControlFolder;
+            DatabaseSchema = dataManager.StorageProvider.GetBuildInDbData().Config.DatabaseSchema ?? new DbSchema();
+            Initialize();
+        }
+
+        private void Initialize()
+        {
             InitializeComponent();
             InitializeDialogs();
             InitializeUi();
         }
 
-        public DataManager DataManager { get; set; }
-
         private void debug_Btn_Click(object sender, System.EventArgs e)
         {
-            var dbSchema = DataManager.StorageProvider.GetBuildInDbData().Config.DatabaseSchema;
-
-            foreach (var path in dbSchema.FileList) Logger.Trace($"FilePath:{path}");
-            foreach (var path in dbSchema.DirList) Logger.Trace($"FolderPath:{path}");
+            if (DatabaseSchema == null) return;
+            foreach (var path in DatabaseSchema.FileList) Logger.Trace($"FilePath:{path}");
+            foreach (var path in DatabaseSchema.DirList) Logger.Trace($"FolderPath:{path}");
         }
 
         private void ModifyDirListForm_Load(object sender, System.EventArgs e)
@@ -51,12 +74,10 @@ namespace assetsUpdater.UI.WinForms
             //CheckDebugging
             if (!Debugger.IsAttached) debug_Btn.Visible = false;
 
-            var vcsFolder = DataManager.StorageProvider.GetBuildInDbData().Config.VersionControlFolder;
-
-
-            VcsLabel.Text = vcsFolder;
-            var dirList = DataManager.StorageProvider.GetBuildInDbData().Config.DatabaseSchema.DirList;
-            var fileList = DataManager.StorageProvider.GetBuildInDbData().Config.DatabaseSchema.FileList;
+            VcsLabel.Text = VcsRoot;
+            if (DatabaseSchema == null) return;
+            var dirList = DatabaseSchema.DirList;
+            var fileList = DatabaseSchema.FileList;
 
             foreach (var dataPath in dirList)
             {
@@ -73,22 +94,18 @@ namespace assetsUpdater.UI.WinForms
             }
         }
 
-
         private void Confirm_Btn_Click(object sender, System.EventArgs e)
         {
             var result = MessageBox.Show("是否保存更改？", "?", MessageBoxButtons.OKCancel);
             if (result == DialogResult.OK) Apply_Internal();
 
-
             Close();
         }
-
 
         private void ApplyChanges_Btn_Click(object sender, System.EventArgs e)
         {
             Apply_Internal();
         }
-
 
         private void DeleteSelectedBtn_Click(object sender, System.EventArgs e)
         {
@@ -104,13 +121,12 @@ namespace assetsUpdater.UI.WinForms
         {
             var result = folderBrowserDialog.ShowDialog();
             if (result == DialogResult.OK)
-                DataManager.StorageProvider.GetBuildInDbData().Config.VersionControlFolder =
+                VcsRoot =
                     folderBrowserDialog.SelectedPath;
 
             //Update UI
-            VcsLabel.Text = DataManager.StorageProvider.GetBuildInDbData().Config.VersionControlFolder;
+            VcsLabel.Text = VcsRoot;
         }
-
 
         private void AddDir_Btn_Click(object sender, System.EventArgs e)
         {
@@ -121,13 +137,12 @@ namespace assetsUpdater.UI.WinForms
                 if (Directory.Exists(chosenFolder))
                 {
                     var relative = GetRelativePathOfAbsolute(
-                        DataManager.StorageProvider.GetBuildInDbData().Config.VersionControlFolder, chosenFolder);
+                        VcsRoot ?? throw new ArgumentNullException(nameof(VcsRoot)), chosenFolder);
                     if (string.IsNullOrWhiteSpace(relative))
                     {
                         MessageBox.Show("所选目录不在数据库包含范围内");
                         return;
                     }
-
 
                     AddListViewItem(relative, DirListViewTypeFolder);
 
@@ -147,13 +162,12 @@ namespace assetsUpdater.UI.WinForms
                 if (File.Exists(chosenFile))
                 {
                     var relative = GetRelativePathOfAbsolute(
-                        DataManager.StorageProvider.GetBuildInDbData().Config.VersionControlFolder, chosenFile);
+                        VcsRoot ?? throw new ArgumentNullException(nameof(VcsRoot)), chosenFile);
                     if (string.IsNullOrWhiteSpace(relative))
                     {
                         MessageBox.Show("所选文件不在数据库包含范围内");
                         return;
                     }
-
 
                     AddListViewItem(relative, DirListViewTypeFile);
 
@@ -181,26 +195,27 @@ namespace assetsUpdater.UI.WinForms
 
         private void Apply_Internal()
         {
-            var dbSchema = DataManager.StorageProvider.GetBuildInDbData().Config.DatabaseSchema;
+            if (DatabaseSchema == null) return;
             //ReInitDbSchema
-            dbSchema.FileList = new List<string>();
-            dbSchema.DirList = new List<string>();
+            DatabaseSchema.FileList = new List<string>();
+            DatabaseSchema.DirList = new List<string>();
             var schemasList = GetDirListViewData();
 
-            var dbSchemaFileList = dbSchema.FileList as string[] ?? dbSchema.FileList.ToArray();
-            var dbSchemaDirList = dbSchema.DirList as string[] ?? dbSchema.DirList.ToArray();
+            var dbSchemaFileList = DatabaseSchema.FileList as string[] ?? DatabaseSchema.FileList.ToArray();
+            var dbSchemaDirList = DatabaseSchema.DirList as string[] ?? DatabaseSchema.DirList.ToArray();
             foreach (var valueTuple in schemasList)
                 switch (valueTuple.Type)
                 {
                     case DirListViewTypeFile:
 
                         if (!dbSchemaFileList.Contains(valueTuple.RelativePath))
-                            dbSchema.FileList = dbSchemaFileList.Append(valueTuple.RelativePath);
+                            DatabaseSchema.FileList = dbSchemaFileList.Append(valueTuple.RelativePath);
 
                         break;
+
                     case DirListViewTypeFolder:
                         if (!dbSchemaDirList.Contains(valueTuple.RelativePath))
-                            dbSchema.DirList = dbSchemaFileList.Append(valueTuple.RelativePath);
+                            DatabaseSchema.DirList = dbSchemaFileList.Append(valueTuple.RelativePath);
 
                         break;
                 }
@@ -208,7 +223,6 @@ namespace assetsUpdater.UI.WinForms
             foreach (var path in dbSchemaFileList) Logger.Trace($"DbSchema FilePath:{path}");
             foreach (var path in dbSchemaDirList) Logger.Trace($"DbSchema FolderPath:{path}");
         }
-
 
         private string GetStandardRelativePath(string relativePath)
         {
@@ -231,7 +245,6 @@ namespace assetsUpdater.UI.WinForms
             if (!path.Contains(range)) return "";
 
             var result = GetStandardRelativePath(path.Replace(range, ""));
-
 
             return result;
         }

@@ -25,7 +25,6 @@ namespace assetsUpdater.Utils
             }
             catch (Exception ex)
             {
-                
                 throw new CryptographicException("计算Sha256错误", ex);
             }
         }
@@ -46,6 +45,7 @@ namespace assetsUpdater.Utils
             var length = response.ContentLength;
             return length;
         }
+
         public static string MakeStandardRelativePath(string relativePath)
         {
             char dirSeparator = Path.DirectorySeparatorChar;
@@ -54,6 +54,7 @@ namespace assetsUpdater.Utils
             relativePath = relativePath.TrimStart(dirSeparator).TrimEnd(dirSeparator);
             return relativePath;
         }
+
         /// <summary>
         /// May occur Directory not Found Exception
         /// </summary>

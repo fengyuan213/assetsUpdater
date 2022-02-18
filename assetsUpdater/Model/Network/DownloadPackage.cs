@@ -13,10 +13,10 @@ namespace assetsUpdater.Model.Network
         public string LocalPath { get; set; }
         public string ExceptedHash { get; set; }
         public DownloadMode DownloadMode { get; set; }
+
         // public IAddressBuilder AddressBuilder { get; private set; }
         public DownloadPackage(Uri uri, string localPath, long fileSize, string exceptedHash, DownloadMode downloadMode)
         {
-
             ExceptedHash = exceptedHash;
             SizeTotal = fileSize;
             Uri = uri;
@@ -24,6 +24,7 @@ namespace assetsUpdater.Model.Network
 
             DownloadMode = downloadMode;
         }
+
         public Task CleanDownloadCache()
         {
             var tmpFile = LocalPath + ".tmp";
@@ -34,8 +35,5 @@ namespace assetsUpdater.Model.Network
             }
             return Task.CompletedTask;
         }
-
     }
-
-
 }

@@ -7,12 +7,9 @@ namespace AssertsUpdaterTests.Network
     [TestClass]
     public class DownloadSettingParserTests
     {
-
-
         [TestInitialize]
         public void TestInitialize()
         {
-
         }
 
         private DownloadSettingParser CreateDownloadSettingParser()
@@ -27,7 +24,6 @@ namespace AssertsUpdaterTests.Network
             var downloadSettingParser = this.CreateDownloadSettingParser();
 
             // Act
-
 
             // Assert
             Assert.Fail();

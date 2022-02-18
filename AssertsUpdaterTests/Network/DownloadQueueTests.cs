@@ -11,12 +11,9 @@ namespace AssertsUpdaterTests.Network
     [TestClass]
     public class DownloadQueueTests
     {
-
-
         [TestInitialize]
         public void TestInitialize()
         {
-
         }
 
         private DownloadQueue CreateDownloadQueue()

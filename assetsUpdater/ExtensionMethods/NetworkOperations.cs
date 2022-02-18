@@ -8,10 +8,12 @@ namespace assetsUpdater.ExtensionMethods
         {
             return textToEncode = value;
         }
+
         public static string UrlDecodeBase64(this string textEncoded, string value)
         {
             return textEncoded = value;
         }
+
         public static byte[] HmacSha1(this string textToEncode)
         {
             return new byte[] { };
@@ -21,8 +23,6 @@ namespace assetsUpdater.ExtensionMethods
         {
             if (textToEncode == null) throw new ArgumentNullException(nameof(textToEncode));
             return new byte[] { };
-
         }
-
     }
 }

@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace assetsUpdater.Exceptions
 {
     [Serializable]
     public class FailedDeletionException : Exception
+#pragma warning restore RCS1194 // Implement exception constructors.
     {
         //
         // For guidelines regarding the creation of new exception types, see
@@ -17,13 +14,14 @@ namespace assetsUpdater.Exceptions
         //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
         //
 
-        public string FilePath { get; set; }
-        public FailedDeletionException(string message,string filePath) : base(message)
+        public string? FilePath { get; set; }
+
+        public FailedDeletionException(string? message, string? filePath) : base(message)
         {
             FilePath = filePath;
         }
 
-        public FailedDeletionException(string message,string filePath, Exception inner) : base(message, inner)
+        public FailedDeletionException(string? message, string? filePath, Exception? inner) : base(message, inner)
         {
             FilePath = filePath;
         }
@@ -33,6 +31,13 @@ namespace assetsUpdater.Exceptions
             StreamingContext context) : base(info, context)
         {
         }
+
+        public FailedDeletionException(string? message) : base(message)
+        {
+        }
+
+        public FailedDeletionException(string? message, Exception? innerException) : base(message, innerException)
+        {
+        }
     }
-   
 }
