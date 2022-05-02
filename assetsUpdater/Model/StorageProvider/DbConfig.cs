@@ -4,6 +4,7 @@ using assetsUpdater.Utils;
 using Newtonsoft.Json;
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
@@ -88,6 +89,8 @@ namespace assetsUpdater.Model.StorageProvider
             dbConfig.UpdateUrl = UpdateUrl.CloneJson() ?? "null";
             dbConfig.MajorVersion = MajorVersion;
             dbConfig.MinorVersion = MinorVersion;
+           
+            
             dbConfig.VersionControlFolder = VersionControlFolder.CloneJson() ?? "null";
 
             var settings = new JsonSerializerSettings();
