@@ -1,27 +1,24 @@
-﻿using assetsUpdater.Model;
-using assetsUpdater.StorageProvider;
-using assetsUpdater.UI.WinForms.Utils;
-
-using NLog;
+﻿#region Using
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using assetsUpdater.Model;
+using assetsUpdater.StorageProvider;
+using assetsUpdater.UI.WinForms.Utils;
+using NLog;
+
+#endregion
 
 namespace assetsUpdater.UI.WinForms
 {
     public partial class ReleaseConfirmationForm : Form
     {
-        private BackgroundWorker _initBg = new BackgroundWorker();
         public static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        public DataManager OriginalDataManager { get; set; }
-        public DataManager CurrentDataManager { get; set; }
-        public RemoteDataManager? RemoteDataManager { get; set; } = null;
-        public AssertUpgradePackage? AssertUpgradePackage { get; set; }
+        private readonly BackgroundWorker _initBg = new();
 
         public ReleaseConfirmationForm(DataManager currentDataManager, DataManager originalDataManager)
         {
@@ -32,6 +29,11 @@ namespace assetsUpdater.UI.WinForms
             InitializeUi();
             Initialize();
         }
+
+        public DataManager OriginalDataManager { get; set; }
+        public DataManager CurrentDataManager { get; set; }
+        public RemoteDataManager RemoteDataManager { get; set; }
+        public AssertUpgradePackage AssertUpgradePackage { get; set; }
 
         private async void InitBgDoWork(object? sender, DoWorkEventArgs e)
         {
@@ -66,7 +68,9 @@ namespace assetsUpdater.UI.WinForms
 
             try
             {
-                var provider = await DataManager.BuildDatabase<FileDatabase>(CurrentDataManager.StorageProvider.GetBuildInDbData().Config).ConfigureAwait(false);
+                var provider = await DataManager
+                    .BuildDatabase<FileDatabase>(CurrentDataManager.StorageProvider.GetBuildInDbData().Config)
+                    .ConfigureAwait(false);
                 RemoteDataManager = new RemoteDataManager(provider);
             }
             catch (Exception exception)
@@ -77,13 +81,11 @@ namespace assetsUpdater.UI.WinForms
             }
 
             if (RemoteDataManager != null)
-            {
                 if (!await RemoteDataManager.IsDataValid())
                 {
                     MessageBox.Show("Invalid RDB");
                     Close(DialogResult.Abort);
                 }
-            }
 
             /*//Remote database builder
             DatabaseBuilder db = new DatabaseBuilder(new FileDatabase()
@@ -102,8 +104,10 @@ namespace assetsUpdater.UI.WinForms
             _initBg.RunWorkerAsync();
             dirListView.AutoArrange = false;
             //Initialize Coloring Rule
-            var originalV = GetVersionString(OriginalDataManager.StorageProvider.GetBuildInDbData().Config.MajorVersion, OriginalDataManager.StorageProvider.GetBuildInDbData().Config.MinorVersion);
-            var currentV = GetVersionString(CurrentDataManager.StorageProvider.GetBuildInDbData().Config.MajorVersion, CurrentDataManager.StorageProvider.GetBuildInDbData().Config.MinorVersion);
+            var originalV = GetVersionString(OriginalDataManager.StorageProvider.GetBuildInDbData().Config.MajorVersion,
+                OriginalDataManager.StorageProvider.GetBuildInDbData().Config.MinorVersion);
+            var currentV = GetVersionString(CurrentDataManager.StorageProvider.GetBuildInDbData().Config.MajorVersion,
+                CurrentDataManager.StorageProvider.GetBuildInDbData().Config.MinorVersion);
 
             OriginalVer_Label.Text = originalV;
             CurrentVer_Label.Text = currentV;
@@ -112,7 +116,7 @@ namespace assetsUpdater.UI.WinForms
 
         private string GetVersionString(int major, int mirror)
         {
-            var s = major.ToString() + "." + mirror.ToString();
+            var s = major + "." + mirror;
             return s;
         }
 
@@ -128,27 +132,30 @@ namespace assetsUpdater.UI.WinForms
             {
                 if (await ReleasePreCheck().ConfigureAwait(false))
                 {
-                    string vFolderKey = "testdata";
-                    List<string> uploadKeys = new List<string>()
-                    ;
-                    uploadKeys.AddRange(AssertUpgradePackage?.AddFile.Select((file => file.RelativePath)) ?? Array.Empty<string>());
-                    uploadKeys.AddRange(AssertUpgradePackage?.DifferFile.Select((file => file.RelativePath)) ?? Array.Empty<string>());
+                    var vFolderKey = "testdata";
+                    var uploadKeys = new List<string>()
+                        ;
+                    uploadKeys.AddRange(AssertUpgradePackage?.AddFile.Select(file => file.RelativePath) ??
+                                        Array.Empty<string>());
+                    uploadKeys.AddRange(AssertUpgradePackage?.DifferFile.Select(file => file.RelativePath) ??
+                                        Array.Empty<string>());
 
-                    Logger.Debug($"Files to upload:");
-                    uploadKeys.ForEach((s => Logger.Debug(s)));
+                    Logger.Debug("Files to upload:");
+                    uploadKeys.ForEach(s => Logger.Debug(s));
                     var localRoot = RemoteDataManager?.StorageProvider.GetBuildInDbData().Config.DownloadAddressBuilder
                         .LocalRootPath;
                     if (string.IsNullOrWhiteSpace(localRoot))
-                    {
                         localRoot = RemoteDataManager?.StorageProvider.GetBuildInDbData().Config.VersionControlFolder;
-                    }
 
                     if (uploadKeys.Count < 1)
                     {
                         MessageBox.Show("没有文件需要更新！");
                         return;
                     }
-                    var rpf = new ReleaseProcessingForm(uploadKeys, RemoteDataManager?.StorageProvider.GetBuildInDbData().Config.DownloadAddressBuilder ?? throw new ArgumentNullException(nameof(RemoteDataManager)), vFolderKey);
+
+                    var rpf = new ReleaseProcessingForm(uploadKeys,
+                        RemoteDataManager?.StorageProvider.GetBuildInDbData().Config.DownloadAddressBuilder ??
+                        throw new ArgumentNullException(nameof(RemoteDataManager)), vFolderKey);
                     var result = rpf.ShowDialog(this);
                     Logger.Info($"Release Window Result:{result}");
                     Close();
@@ -168,10 +175,7 @@ namespace assetsUpdater.UI.WinForms
         {
             //todo:
 
-            if (AssertUpgradePackage == null)
-            {
-                return false;
-            }
+            if (AssertUpgradePackage == null) return false;
 
             if (RemoteDataManager == null) return false;
             await RemoteDataManager.IsDataValid().ConfigureAwait(false);
@@ -185,31 +189,24 @@ namespace assetsUpdater.UI.WinForms
 
         private async Task UpdateListView()
         {
-            if (RemoteDataManager == null)
-            {
-                return;
-            }
+            if (RemoteDataManager == null) return;
             var data = RemoteDataManager.StorageProvider.GetBuildInDbData();
-            AssertUpgradePackage = await AssertVerify.DatabaseCompare(RemoteDataManager.StorageProvider, OriginalDataManager.StorageProvider).ConfigureAwait(false);
+            AssertUpgradePackage = await AssertVerify
+                .DatabaseCompare(RemoteDataManager.StorageProvider, OriginalDataManager.StorageProvider)
+                .ConfigureAwait(false);
 
             foreach (var addFile in AssertUpgradePackage.AddFile)
-            {
                 AddListViewItem(UpgradeFileType.AddFile, addFile.RelativePath);
-            }
             foreach (var differFile in AssertUpgradePackage.DifferFile)
-            {
                 AddListViewItem(UpgradeFileType.DifferFile, differFile.RelativePath);
-            }
             foreach (var deleteFile in AssertUpgradePackage.DeleteFile)
-            {
                 AddListViewItem(UpgradeFileType.DeleteFile, deleteFile.RelativePath);
-            }
-            return;
         }
 
         private void AddListViewItem(UpgradeFileType type, string relativePath, string absPath = "null")
         {
-            dirListView.Items.Add(new ListViewItem(new[] { UpgradeFileEnumStringConverter.Convert(type), relativePath }));
+            dirListView.Items.Add(
+                new ListViewItem(new[] { UpgradeFileEnumStringConverter.Convert(type), relativePath }));
         }
 
         private void ReleaseConfirmationForm_Load(object sender, System.EventArgs e)
@@ -219,7 +216,7 @@ namespace assetsUpdater.UI.WinForms
         private void Close(DialogResult e)
         {
             DialogResult = e;
-            this.Close();
+            Close();
         }
 
         private void ReleaseConfirmationForm_FormClosed(object sender, FormClosedEventArgs e)

@@ -1,9 +1,12 @@
-﻿using assetsUpdater.Interfaces;
-using assetsUpdater.StorageProvider;
+﻿#region Using
 
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using assetsUpdater.Interfaces;
+using assetsUpdater.StorageProvider;
+
+#endregion
 
 namespace assetsUpdater
 {
@@ -28,22 +31,15 @@ namespace assetsUpdater
 
         public override async Task<bool> IsDataValid()
         {
-            if (!await base.IsDataValid().ConfigureAwait(false))
-
-            {
-                return false;
-            }
+            if (!await base.IsDataValid().ConfigureAwait(false)) return false;
 
             if (!string.IsNullOrWhiteSpace(DatabasePath))
             {
                 if (!File.Exists(DatabasePath)) return false;
                 try
                 {
-                    FileDatabase database = new FileDatabase(StorageProvider);
-                    if (string.IsNullOrWhiteSpace(database.Data.Config.VersionControlFolder))
-                    {
-                        return false;
-                    }
+                    var database = new FileDatabase(StorageProvider);
+                    if (string.IsNullOrWhiteSpace(database.Data.Config.VersionControlFolder)) return false;
                     return database.IsValidDb();
                 }
                 catch (Exception e)

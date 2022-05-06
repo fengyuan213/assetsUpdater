@@ -1,5 +1,10 @@
 ﻿#region Using
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using assetsUpdater.EventArgs;
 using assetsUpdater.Exceptions;
 using assetsUpdater.Interfaces;
@@ -8,12 +13,6 @@ using assetsUpdater.Model.Network;
 using assetsUpdater.Model.StorageProvider;
 using assetsUpdater.Network;
 using assetsUpdater.Utils;
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 #endregion
 

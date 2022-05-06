@@ -1,10 +1,9 @@
 ﻿#region Using
 
-using assetsUpdater.Interfaces;
-using assetsUpdater.Utils;
-
 using System;
 using System.IO;
+using assetsUpdater.Interfaces;
+using assetsUpdater.Utils;
 
 #endregion
 

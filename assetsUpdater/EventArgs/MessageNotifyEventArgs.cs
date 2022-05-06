@@ -1,4 +1,8 @@
-﻿using System;
+﻿#region Using
+
+using System;
+
+#endregion
 
 namespace assetsUpdater.EventArgs
 {
@@ -15,12 +19,13 @@ namespace assetsUpdater.EventArgs
     public class MessageNotifyEventArgs : System.EventArgs
     {
         public Exception? Exception;
+        public bool HasError;
         public string Message;
-        public bool HasError = false;
         public MsgL MessageLevel;
-        public object? Obj = null;//Extra object pass through
+        public object? Obj; //Extra object pass through
 
-        public MessageNotifyEventArgs(MsgL level, string message, bool hasError = false, Exception? exception = null, object? obj = null)
+        public MessageNotifyEventArgs(MsgL level, string message, bool hasError = false, Exception? exception = null,
+            object? obj = null)
         {
             Exception = exception;
             Message = message;

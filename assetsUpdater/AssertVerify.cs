@@ -1,16 +1,15 @@
 #region Using
 
-using assetsUpdater.EventArgs;
-using assetsUpdater.Interfaces;
-using assetsUpdater.Model;
-using assetsUpdater.Model.StorageProvider;
-using assetsUpdater.Utils;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using assetsUpdater.EventArgs;
+using assetsUpdater.Interfaces;
+using assetsUpdater.Model;
+using assetsUpdater.Model.StorageProvider;
+using assetsUpdater.Utils;
 
 #endregion
 
@@ -18,24 +17,26 @@ namespace assetsUpdater
 {
     public static class AssertVerify
     {
-        public static event EventHandler<MessageNotifyEventArgs>? MessageNotify;
+        public static event EventHandler<MessageNotifyEventArgs> MessageNotify;
 
-        internal static void OnMessageNotify(object? sender, MessageNotifyEventArgs e)
+        internal static void OnMessageNotify(object sender, MessageNotifyEventArgs e)
         {
             MessageNotify?.Invoke(sender, e);
         }
 
-        internal static void OnMessageNotify(object? sender, string message, Exception? e = null)
+        internal static void OnMessageNotify(object sender, string message, Exception? e = null)
         {
-            MessageNotify?.Invoke(sender, new MessageNotifyEventArgs(e == null ? MsgL.Info : MsgL.Error, message, e != null, e, null));
+            MessageNotify?.Invoke(sender,
+                new MessageNotifyEventArgs(e == null ? MsgL.Info : MsgL.Error, message, e != null, e));
         }
 
-        internal static void OnMessageNotify(object? sender, string message, MsgL level, Exception? e = null)
+        internal static void OnMessageNotify(object sender, string message, MsgL level, Exception? e = null)
         {
-            MessageNotify?.Invoke(sender, new MessageNotifyEventArgs(level, message, e != null, e, null));
+            MessageNotify?.Invoke(sender, new MessageNotifyEventArgs(level, message, e != null, e));
         }
 
-        internal static void OnMessageNotify(object? sender, MsgL Level, string message, bool hasError, Exception? e, object? obj = null)
+        internal static void OnMessageNotify(object sender, MsgL Level, string message, bool hasError, Exception e,
+            object obj = null)
         {
             MessageNotify?.Invoke(sender, new MessageNotifyEventArgs(Level, message, hasError, e, obj));
         }
@@ -44,20 +45,13 @@ namespace assetsUpdater
             DataManager dm, string url)
         {
             if (!await dm.IsDataValid())
-            {
                 //Data invalid return
-                throw new InvalidDataException("local db invalid")
-                {
-                };
-                //return (new RemoteDataManager(), false);
-            }
+                throw new InvalidDataException("local db invalid");
+            //return (new RemoteDataManager(), false);
 
             var remoteDb = await RemoteDataManager.GetStorageProvider(url);
 
-            if (await IsUpdateRequired(dm.StorageProvider, remoteDb))
-            {
-                return (new RemoteDataManager(remoteDb), true);
-            }
+            if (await IsUpdateRequired(dm.StorageProvider, remoteDb)) return (new RemoteDataManager(remoteDb), true);
             //No updates return default
 
             return (new RemoteDataManager(remoteDb), false);
@@ -67,15 +61,16 @@ namespace assetsUpdater
             IStorageProvider localProvider, string remoteUrl)
         {
             if (string.IsNullOrWhiteSpace(remoteUrl)) throw new ArgumentNullException(remoteUrl);
-            LocalDataManager localDataManager = new LocalDataManager(localProvider);
+            var localDataManager = new LocalDataManager(localProvider);
             return await Check_UpdateInternal(localDataManager, remoteUrl);
         }
 
         public static async Task<(RemoteDataManager remoteDataManager, bool isUpdateRequired)> Check_Update(
             string localDbPath, string remoteUrl)
         {
-            if (string.IsNullOrWhiteSpace(localDbPath) || string.IsNullOrWhiteSpace(remoteUrl)) throw new ArgumentNullException(remoteUrl);
-            LocalDataManager localDataManager = new LocalDataManager(localDbPath);
+            if (string.IsNullOrWhiteSpace(localDbPath) || string.IsNullOrWhiteSpace(remoteUrl))
+                throw new ArgumentNullException(remoteUrl);
+            var localDataManager = new LocalDataManager(localDbPath);
             return await Check_UpdateInternal(localDataManager, remoteUrl);
         }
 
@@ -87,9 +82,7 @@ namespace assetsUpdater
 
             if (localData.Config.MajorVersion != remoteData.Config.MajorVersion ||
                 localData.Config.MinorVersion != remoteData.Config.MinorVersion)
-            {
                 return Task.FromResult(false);
-            }
 
             return ignoreMirrorChanges
                 ? Task.FromResult(true)
@@ -118,7 +111,6 @@ namespace assetsUpdater
                 if (localFiles.Contains(remoteFile, new DbFileValueEqualityComparer()))
                 {
                     foreach (var localFile in localFiles)
-                    {
                         if (localFile.RelativePath == remoteFile.RelativePath)
                         {
                             //本地文件中有数据库的文件名
@@ -134,7 +126,6 @@ namespace assetsUpdater
                                 assetUpgradePackage.DifferFile = assetUpgradePackage.DifferFile.Append(remoteFile);
                             }
                         }
-                    }
                 }
                 else
                 {

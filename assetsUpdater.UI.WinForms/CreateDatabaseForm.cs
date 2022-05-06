@@ -17,7 +17,7 @@ namespace assetsUpdater.UI.WinForms
     public partial class CreateDatabaseForm : Form
     {
         public static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private DbConfig? _dbConfigInstance;
+        private DbConfig _dbConfigInstance;
         private string _vcsPath;
 #pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的 字段“_vcsPath”必须包含非 null 值。请考虑将 字段 声明为可以为 null。
         public CreateDatabaseForm()
@@ -62,9 +62,9 @@ namespace assetsUpdater.UI.WinForms
             */
         }
 
-        private Type? GetSelectedAddressBuilderType()
+        private Type GetSelectedAddressBuilderType()
         {
-            Type? t = null;
+            Type t;
             switch (AddressBuilderType_ComboBox.SelectedItem)
             {
                 case "TencentCloud":
@@ -76,7 +76,7 @@ namespace assetsUpdater.UI.WinForms
 
                     break;
                 default:
-                    t = null;
+                    t = typeof(DefaultAddressBuilder);
                     break;
             }
 
@@ -104,6 +104,7 @@ namespace assetsUpdater.UI.WinForms
 
             Logger.Info("UI Updated");
         }
+
 
         private async Task<RemoteDataManager> ConstructDatabase()
         {
@@ -139,15 +140,16 @@ namespace assetsUpdater.UI.WinForms
             catch (Exception exception)
             {
                 Console.WriteLine(exception);
-                MessageBox.Show($"构建出错:{exception}");
-                return null;
+
+                throw;
             }
         }
 
         private async void CreateDbBtn_Click(object sender, System.EventArgs e)
         {
-            var rdm = await ConstructDatabase().ConfigureAwait(false);
-            if (rdm != null)
+            try
+            {
+                var rdm = await ConstructDatabase().ConfigureAwait(false);
                 if (
                     dbSaveFileDialog.ShowDialog(this) == DialogResult.OK)
                 {
@@ -159,10 +161,15 @@ namespace assetsUpdater.UI.WinForms
                     var r = MessageBox.Show("你想打开输出文件所在目录吗?", "信息", MessageBoxButtons.YesNo);
                     if (r == DialogResult.Yes)
                     {
-                        var p = Process.Start($"explorer {path}");
-                        p.Dispose();
+                        using var p = Process.Start($"explorer {path}");
                     }
                 }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+                MessageBox.Show(exception.ToString());
+            }
         }
 
 

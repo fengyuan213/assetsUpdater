@@ -1,8 +1,11 @@
-﻿using assetsUpdater.EventArgs;
-using assetsUpdater.Model.StorageProvider;
+﻿#region Using
 
 using System;
 using System.Collections.Generic;
+using assetsUpdater.EventArgs;
+using assetsUpdater.Model.StorageProvider;
+
+#endregion
 
 namespace assetsUpdater.Utils
 {
@@ -15,17 +18,15 @@ namespace assetsUpdater.Utils
             if (x.GetType() != y.GetType()) return false;
 
             if (x.Hash == y.Hash)
-            {
                 return true;
-            }
-            else if (string.IsNullOrWhiteSpace(x.Hash) || string.IsNullOrWhiteSpace(y.Hash))
-            {
+            if (string.IsNullOrWhiteSpace(x.Hash) || string.IsNullOrWhiteSpace(y.Hash))
                 if (x.FileSize == y.FileSize && x.FileName == y.FileName && x.RelativePath == y.RelativePath)
                 {
-                    AssertVerify.OnMessageNotify(this, $"Returning true for Less rigorous match detected x:{x.RelativePath},y:{y.RelativePath} ", MsgL.Warning);
+                    AssertVerify.OnMessageNotify(this,
+                        $"Returning true for Less rigorous match detected x:{x.RelativePath},y:{y.RelativePath} ",
+                        MsgL.Warning);
                     return true;
                 }
-            }
 
             return false;
         }

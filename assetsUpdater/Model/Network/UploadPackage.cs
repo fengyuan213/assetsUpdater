@@ -3,12 +3,12 @@
     public struct UploadPackage
     {
         /// <summary>
-        /// Resource key to access object storage
+        ///     Resource key to access object storage
         /// </summary>
         public string ResourceKey { get; set; }
 
         /// <summary>
-        ///  Local Absolute path to a file to upload
+        ///     Local Absolute path to a file to upload
         /// </summary>
         public string FileLocalPath { get; set; }
 

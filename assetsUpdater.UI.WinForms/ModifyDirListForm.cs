@@ -1,15 +1,13 @@
 ﻿#region Using
 
-using assetsUpdater.Model.StorageProvider;
-
-using NLog;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using assetsUpdater.Model.StorageProvider;
+using NLog;
 
 #endregion
 
@@ -21,8 +19,8 @@ namespace assetsUpdater.UI.WinForms
         private const string DirListViewTypeFolder = "文件夹";
         private const int DirListViewSubItemCount = 2;
         public static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        public DbSchema? DatabaseSchema;
-        public string? VcsRoot;
+        public DbSchema DatabaseSchema;
+        public string VcsRoot;
 
         public ModifyDirListForm(string vcsRoot, DbSchema dbSchema)
         {

@@ -1,21 +1,25 @@
-﻿using Newtonsoft.Json;
+﻿#region Using
 
 using System;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using Newtonsoft.Json;
+
+#endregion
 
 namespace assetsUpdater.Utils
 {
     /// <summary>
-    /// Reference Article http://www.codeproject.com/KB/tips/SerializedObjectCloner.aspx
-    /// Provides a method for performing a deep copy of an object.
-    /// Binary Serialization is used to perform the copy.
+    ///     Reference Article http://www.codeproject.com/KB/tips/SerializedObjectCloner.aspx
+    ///     Provides a method for performing a deep copy of an object.
+    ///     Binary Serialization is used to perform the copy.
     /// </summary>
     public static class ObjectCopier
     {
         /// <summary>
-        /// Perform a deep Copy of the object, using Json as a serialization method. NOTE: Private members are not cloned using this method.
+        ///     Perform a deep Copy of the object, using Json as a serialization method. NOTE: Private members are not cloned using
+        ///     this method.
         /// </summary>
         /// <typeparam name="T">The type of object being copied.</typeparam>
         /// <param name="source">The object instance to copy.</param>
@@ -34,11 +38,12 @@ namespace assetsUpdater.Utils
 
             var t = source.GetType();
             var value = JsonConvert.SerializeObject(source);
-            return JsonConvert.DeserializeObject<T>(value, settings) ?? throw new SerializationException($"Unable to clone {typeof(T)}");
+            return JsonConvert.DeserializeObject<T>(value, settings) ??
+                   throw new SerializationException($"Unable to clone {typeof(T)}");
         }
 
         /// <summary>
-        /// Perform a deep copy of the object via serialization.
+        ///     Perform a deep copy of the object via serialization.
         /// </summary>
         /// <typeparam name="T">The type of object being copied.</typeparam>
         /// <param name="source">The object instance to copy.</param>
@@ -48,14 +53,13 @@ namespace assetsUpdater.Utils
         public static T CloneBinary<T>(T source)
         {
             if (!typeof(T).IsSerializable)
-            {
                 throw new ArgumentException("The type must be serializable.", nameof(source));
-            }
+
 
             // Don't serialize a null object, simply return the default for that object
             if (ReferenceEquals(source, null)) return default;
 
-            using MemoryStream stream = new MemoryStream();
+            using var stream = new MemoryStream();
             IFormatter formatter = new BinaryFormatter();
 #pragma warning disable SYSLIB0011 // 类型或成员已过时
             formatter.Serialize(stream, source ?? throw new ArgumentNullException(nameof(source)));

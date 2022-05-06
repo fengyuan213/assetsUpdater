@@ -1,16 +1,19 @@
-﻿using assetsUpdater.Model.Network;
-using assetsUpdater.Tencent.Network;
+﻿#region Using
 
+using System;
+using assetsUpdater.Model.Network;
+using assetsUpdater.Tencent.Network;
 using COSXML;
 using COSXML.Auth;
 
-using System;
+#endregion
 
 namespace assetsUpdater.UI.WinForms
 {
     public struct TencentCosConfiguration
     {
-        public TencentCosConfiguration(string bucketAppid, string appid, string defaultRegion, string secretId, string secretKey, int signatureDuration)
+        public TencentCosConfiguration(string bucketAppid, string appid, string defaultRegion, string secretId,
+            string secretKey, int signatureDuration)
         {
             BucketAppid = bucketAppid;
             Appid = appid;
@@ -21,41 +24,53 @@ namespace assetsUpdater.UI.WinForms
         }
 
         /// <summary>
-        /// pokecity-1251938563
+        ///     pokecity-1251938563
         /// </summary>
         public string BucketAppid { get; set; }
 
         /// <summary>
-        ///  "1251938563" 设置腾讯云账户的账户标识 APPID
+        ///     "1251938563" 设置腾讯云账户的账户标识 APPID
         /// </summary>
         public string Appid { get; set; }
 
         /// <summary>
-        /// "ap-shanghai-fsi" 设置一个默认的存储桶地域
+        ///     "ap-shanghai-fsi" 设置一个默认的存储桶地域
         /// </summary>
         public string DefaultRegion { get; set; }
 
         /// <summary>
-        ///  "AKIDXwCMPLte1CC2i9tbfXFxUpzylPRLDI0W"
-        /// // 云 API 密钥 SecretId, 获取 API 密钥请参照 https://console.cloud.tencent.com/cam/capi
+        ///     "AKIDXwCMPLte1CC2i9tbfXFxUpzylPRLDI0W"
+        ///     // 云 API 密钥 SecretId, 获取 API 密钥请参照 https://console.cloud.tencent.com/cam/capi
         /// </summary>
         public string SecretId { get; set; }
 
         /// <summary>
-        ///   "Z2JOG1cO4d0a0FKH4iBTZUEm8KNI4e6O"; // 云 API 密钥 SecretKey, 获取 API 密钥请参照 https://console.cloud.tencent.com/cam/capi
+        ///     "Z2JOG1cO4d0a0FKH4iBTZUEm8KNI4e6O"; // 云 API 密钥 SecretKey, 获取 API 密钥请参照 https://console.cloud.tencent.com/cam/capi
         /// </summary>
         public string SecretKey { get; set; }
 
         /// <summary>
-        /// 每次请求签名有效时长，单位为秒
-        /// Unit: Seconds, recommend:600
+        ///     每次请求签名有效时长，单位为秒
+        ///     Unit: Seconds, recommend:600
         /// </summary>
         public int SignatureDuration { get; set; }
     }
 
     public static class TencentCosHelper
     {
-        private static bool _isInitialized = false;
+        private static bool _isInitialized;
+
+        private static TencentCosConfiguration _cosConfiguration;
+        private static CosXmlServer _cosXmlServer;
+
+        public static CosXmlServer CosXmlServer
+        {
+            get
+            {
+                if (_cosXmlServer == null) _cosXmlServer = GetCosServer();
+                return _cosXmlServer;
+            }
+        }
 
         public static TencentCosConfiguration DefaultCosConfiguration()
         {
@@ -78,27 +93,7 @@ namespace assetsUpdater.UI.WinForms
 
         private static void IsInitializeCheck()
         {
-            if (!_isInitialized)
-            {
-                throw new Exception("TencentCosHelper not initialized")
-                {
-                };
-            }
-        }
-
-        private static TencentCosConfiguration _cosConfiguration;
-        private static CosXmlServer? _cosXmlServer;
-
-        public static CosXmlServer CosXmlServer
-        {
-            get
-            {
-                if (_cosXmlServer == null)
-                {
-                    _cosXmlServer = GetCosServer();
-                }
-                return _cosXmlServer;
-            }
+            if (!_isInitialized) throw new Exception("TencentCosHelper not initialized");
         }
 
         private static CosXmlServer GetCosServer()
@@ -108,11 +103,13 @@ namespace assetsUpdater.UI.WinForms
             var region = _cosConfiguration.DefaultRegion; //设置一个默认的存储桶地域
 
             var secretId =
-                _cosConfiguration.SecretId; // 云 API 密钥 SecretId, 获取 API 密钥请参照 https://console.cloud.tencent.com/cam/capi
+                _cosConfiguration
+                    .SecretId; // 云 API 密钥 SecretId, 获取 API 密钥请参照 https://console.cloud.tencent.com/cam/capi
             var secretKey =
-                _cosConfiguration.SecretKey; // 云 API 密钥 SecretKey, 获取 API 密钥请参照 https://console.cloud.tencent.com/cam/capi
+                _cosConfiguration
+                    .SecretKey; // 云 API 密钥 SecretKey, 获取 API 密钥请参照 https://console.cloud.tencent.com/cam/capi
             long durationSecond = _cosConfiguration.SignatureDuration; //每次请求签名有效时长，单位为秒
-            bool isDebug = false;
+            var isDebug = false;
 #if DEBUG
             isDebug = true;
 #endif

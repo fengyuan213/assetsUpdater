@@ -1,4 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿#region Using
+
+using Newtonsoft.Json;
+
+#endregion
 
 namespace assetsUpdater.Utils
 {

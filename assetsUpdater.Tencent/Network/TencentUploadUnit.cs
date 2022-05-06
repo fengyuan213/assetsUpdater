@@ -1,16 +1,14 @@
 ﻿#region Using
 
+using System;
+using System.Threading.Tasks;
 using assetsUpdater.Interfaces;
 using assetsUpdater.Model.Network;
 using assetsUpdater.Utils;
-
 using COSXML;
 using COSXML.CosException;
 using COSXML.Model;
 using COSXML.Transfer;
-
-using System;
-using System.Threading.Tasks;
 
 #endregion
 
@@ -30,9 +28,9 @@ namespace assetsUpdater.Tencent.Network
             CosXmlUploadTask = null;
         }
 
-        public COSXMLUploadTask? CosXmlUploadTask { get; private set; }
+        public COSXMLUploadTask CosXmlUploadTask { get; private set; }
         public CosXmlServer CosXml { get; }
-        public Task<COSXMLUploadTask.UploadTaskResult>? CurrentUploadingTask { get; private set; }
+        public Task<COSXMLUploadTask.UploadTaskResult> CurrentUploadingTask { get; private set; }
 
         /// <summary>
         ///     存储桶名称，此处填入格式必须为 bucketname-APPID, 其中 APPID 获取参考 https://console.cloud.tencent.com/developer
@@ -43,10 +41,7 @@ namespace assetsUpdater.Tencent.Network
         public event EventHandler<bool>? UploadCompletedEventHandler;
 
         //public IEnumerable<COSXMLUploadTask> AllUploadTasks { get; set; } = new List<COSXMLUploadTask>();
-        public Task UploadTask
-        {
-            get { return CurrentUploadingTask ?? Task.CompletedTask; }
-        }
+        public Task UploadTask => CurrentUploadingTask ?? Task.CompletedTask;
 
         public long BytesSent { get; private set; }
         public double Progress { get; private set; }

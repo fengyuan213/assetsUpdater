@@ -1,14 +1,17 @@
-﻿using assetsUpdater.Model.Network;
+﻿#region Using
 
 using System;
 using System.Threading.Tasks;
+using assetsUpdater.Model.Network;
+
+#endregion
 
 namespace assetsUpdater.Interfaces
 {
     public interface IUploadUnit
     {
         /// <summary>
-        /// Task represent current uploading task of upload unit
+        ///     Task represent current uploading task of upload unit
         /// </summary>
         public Task UploadTask { get; }
 

@@ -1,23 +1,24 @@
+#region Using
+
+using System.Threading.Tasks;
 using assetsUpdater.Model.Network;
 using assetsUpdater.Network;
 
-using System.Threading.Tasks;
+#endregion
 
 namespace assetsUpdater.Interfaces
 {
     public enum DownloadMode
     {
-        Async, MultiPart
+        Async,
+        MultiPart
     }
 
     public interface IDownloadUnit
     {
         public DownloadMode DownloadMode { get; set; }
 
-        public double BytesReceivedPerSec
-        {
-            get; set;
-        }
+        public double BytesReceivedPerSec { get; set; }
 
         public double Progress { get; }
 
@@ -25,12 +26,12 @@ namespace assetsUpdater.Interfaces
 
         public long BytesToReceive { get; }
 
-        public Task Wait();
-
-        public Task Start();
-
         public DownloadSetting DownloadSetting { get; set; }
 
         public DownloadPackage DownloadPackage { get; set; }
+
+        public Task Wait();
+
+        public Task Start();
     }
 }

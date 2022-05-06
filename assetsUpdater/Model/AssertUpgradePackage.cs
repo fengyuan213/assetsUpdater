@@ -1,11 +1,14 @@
-using assetsUpdater.Model.StorageProvider;
+#region Using
 
 using System.Collections.Generic;
+using assetsUpdater.Model.StorageProvider;
+
+#endregion
 
 namespace assetsUpdater.Model
 {
     /// <summary>
-    ///  One hole AssertUpgradePackage
+    ///     One hole AssertUpgradePackage
     /// </summary>
     public class AssertUpgradePackage
     {

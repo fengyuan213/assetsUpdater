@@ -48,7 +48,7 @@ namespace assetsUpdater.Utils
 
         public static string MakeStandardRelativePath(string relativePath)
         {
-            char dirSeparator = Path.DirectorySeparatorChar;
+            var dirSeparator = Path.DirectorySeparatorChar;
             relativePath = relativePath.Replace('\\', dirSeparator);
             relativePath = relativePath.Replace('/', dirSeparator);
             relativePath = relativePath.TrimStart(dirSeparator).TrimEnd(dirSeparator);
@@ -56,7 +56,7 @@ namespace assetsUpdater.Utils
         }
 
         /// <summary>
-        /// May occur Directory not Found Exception
+        ///     May occur Directory not Found Exception
         /// </summary>
         /// <param name="rootFolder"></param>
         /// <param name="directory"></param>
@@ -68,10 +68,8 @@ namespace assetsUpdater.Utils
             if (string.IsNullOrWhiteSpace(directory)) return Array.Empty<string>();
             var directoryPath = Path.Join(rootFolder, directory);
             if (!Directory.Exists(directoryPath))
-            {
                 return Array.Empty<string>();
-                //throw new DirectoryNotFoundException(directoryPath);
-            }
+            //throw new DirectoryNotFoundException(directoryPath);
             //rootFolder.TrimEnd('/', '\\');
             /*if (rootFolder.Last() == '/' || rootFolder.Last() == '\\')
                 rootFolder = rootFolder.Remove(rootFolder.Length - 1);*/
@@ -84,7 +82,8 @@ namespace assetsUpdater.Utils
             var dirInfo = new DirectoryInfo(directoryPath);
             var fileInfos = dirInfo.GetFiles("*.*", SearchOption.AllDirectories);
             //var a = fileInfos.Select(fileInfo => fileInfo.FullName.Remove(0, Path.GetFullPath(rootFolder).Length + 1)).ToArray();
-            var a = fileInfos.Select(fileInfo => MakeStandardRelativePath(fileInfo.FullName.Remove(0, Path.GetFullPath(rootFolder).Length)))
+            var a = fileInfos.Select(fileInfo =>
+                    MakeStandardRelativePath(fileInfo.FullName.Remove(0, Path.GetFullPath(rootFolder).Length)))
                 .ToArray();
             return a;
         }

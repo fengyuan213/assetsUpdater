@@ -1,4 +1,8 @@
+#region Using
+
 using System;
+
+#endregion
 
 namespace assetsUpdater.ExtensionMethods
 {

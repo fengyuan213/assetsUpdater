@@ -2,11 +2,13 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <AssemblyVersion>1.0.*</AssemblyVersion>
     <SignAssembly>False</SignAssembly>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>False</UseWPF>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -22,8 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.7.13" />
-    <PackageReference Include="Tencent.QCloud.Cos.Sdk" Version="5.4.24" />
+    <PackageReference Include="NLog" Version="4.7.15" />
+    <PackageReference Include="Tencent.QCloud.Cos.Sdk" Version="5.4.29" />
   </ItemGroup>
 
   <ItemGroup>

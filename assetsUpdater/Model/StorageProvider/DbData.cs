@@ -1,6 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿#region Using
 
 using System.Collections.Generic;
+using Newtonsoft.Json;
+
+#endregion
 
 namespace assetsUpdater.Model.StorageProvider
 {

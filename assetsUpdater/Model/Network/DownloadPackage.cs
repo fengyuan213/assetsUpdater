@@ -1,19 +1,16 @@
-﻿using assetsUpdater.Interfaces;
+﻿#region Using
 
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using assetsUpdater.Interfaces;
+
+#endregion
 
 namespace assetsUpdater.Model.Network
 {
     public class DownloadPackage
     {
-        public long SizeTotal { get; private set; }
-        public Uri Uri { get; set; }
-        public string LocalPath { get; set; }
-        public string ExceptedHash { get; set; }
-        public DownloadMode DownloadMode { get; set; }
-
         // public IAddressBuilder AddressBuilder { get; private set; }
         public DownloadPackage(Uri uri, string localPath, long fileSize, string exceptedHash, DownloadMode downloadMode)
         {
@@ -25,14 +22,21 @@ namespace assetsUpdater.Model.Network
             DownloadMode = downloadMode;
         }
 
+        public long SizeTotal { get; }
+        public Uri Uri { get; set; }
+        public string LocalPath { get; set; }
+        public string ExceptedHash { get; set; }
+        public DownloadMode DownloadMode { get; set; }
+
         public Task CleanDownloadCache()
         {
             var tmpFile = LocalPath + ".tmp";
-            if (System.IO.File.Exists(tmpFile))
+            if (File.Exists(tmpFile))
             {
                 File.Copy(tmpFile, LocalPath, true);
-                System.IO.File.Delete(tmpFile);
+                File.Delete(tmpFile);
             }
+
             return Task.CompletedTask;
         }
     }

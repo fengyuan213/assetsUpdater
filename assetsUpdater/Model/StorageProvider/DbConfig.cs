@@ -1,12 +1,13 @@
-﻿using assetsUpdater.Interfaces;
-using assetsUpdater.Utils;
-
-using Newtonsoft.Json;
+﻿#region Using
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using assetsUpdater.Interfaces;
+using assetsUpdater.Utils;
+using Newtonsoft.Json;
+
+#endregion
 
 namespace assetsUpdater.Model.StorageProvider
 {
@@ -16,10 +17,10 @@ namespace assetsUpdater.Model.StorageProvider
 
     public partial class DbConfig : ICloneable
     {
-        private string? _versionControlFolder = null;
+        private string _versionControlFolder;
 
         /// <summary>
-        /// This constructor is used for creating local database
+        ///     This constructor is used for creating local database
         /// </summary>
         /// <param name="versionControlFolder"></param>
         [JsonConstructor]
@@ -41,10 +42,8 @@ namespace assetsUpdater.Model.StorageProvider
                     _versionControlFolder = null;
                     throw new ArgumentException("Invalid Version Control Folder", nameof(VersionControlFolder));
                 }
-                else
-                {
-                    _versionControlFolder = value;
-                }
+
+                _versionControlFolder = value;
             }
         }
 
@@ -53,34 +52,18 @@ namespace assetsUpdater.Model.StorageProvider
         /// <summary>
         ///     The major version of the database
         /// </summary>
-        [AllowNull] public int MajorVersion { get; set; }
+        [AllowNull]
+        public int MajorVersion { get; set; }
 
         /// <summary>
         ///     The mirror version of the database
         /// </summary>
-        [AllowNull] public int MinorVersion { get; set; }
+        [AllowNull]
+        public int MinorVersion { get; set; }
 
         public string UpdateUrl { get; set; }
 
         [AllowNull] public IAddressBuilder DownloadAddressBuilder { get; set; }
-
-        public sealed class Builder
-        {
-            public Builder()
-            {
-            }
-
-            [JsonIgnore]
-            private DbConfig.Builder _builder = new Builder();
-
-            [JsonIgnore]
-            private DbConfig _config = new DbConfig("");
-
-            public DbConfig.Builder SetDatabaseSchema()
-            {
-                return _builder;
-            }
-        }
 
         public object Clone()
         {
@@ -89,8 +72,8 @@ namespace assetsUpdater.Model.StorageProvider
             dbConfig.UpdateUrl = UpdateUrl.CloneJson() ?? "null";
             dbConfig.MajorVersion = MajorVersion;
             dbConfig.MinorVersion = MinorVersion;
-           
-            
+
+
             dbConfig.VersionControlFolder = VersionControlFolder.CloneJson() ?? "null";
 
             var settings = new JsonSerializerSettings();
@@ -98,6 +81,18 @@ namespace assetsUpdater.Model.StorageProvider
             settings.Converters.Add(new ConcreteTypeConverter<IAddressBuilder>(t));
             dbConfig.DownloadAddressBuilder = DownloadAddressBuilder.CloneJson(settings);
             return dbConfig;
+        }
+
+        public sealed class Builder
+        {
+            [JsonIgnore] private readonly Builder _builder = new();
+
+            [JsonIgnore] private DbConfig _config = new("");
+
+            public Builder SetDatabaseSchema()
+            {
+                return _builder;
+            }
         }
     }
 }

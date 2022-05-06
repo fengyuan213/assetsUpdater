@@ -1,11 +1,10 @@
 #region Using
 
-using assetsUpdater.Model.StorageProvider;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using assetsUpdater.Model.StorageProvider;
 
 #endregion
 

@@ -1,5 +1,9 @@
-﻿using System;
+﻿#region Using
+
+using System;
 using System.Runtime.Serialization;
+
+#endregion
 
 namespace assetsUpdater.Exceptions
 {

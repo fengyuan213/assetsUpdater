@@ -1,12 +1,11 @@
 ﻿#region Using
 
-using assetsUpdater.EventArgs;
-using assetsUpdater.Interfaces;
-using assetsUpdater.StorageProvider;
-
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using assetsUpdater.EventArgs;
+using assetsUpdater.Interfaces;
+using assetsUpdater.StorageProvider;
 
 #endregion
 
@@ -44,6 +43,7 @@ namespace assetsUpdater
                 AssertVerify.OnMessageNotify(this, "Invalid RDB AddressBuilder-> RootDownloadAddress null", MsgL.Debug);
                 return false;
             }
+
             ;
 
             /*foreach (var df in data.DatabaseFiles)

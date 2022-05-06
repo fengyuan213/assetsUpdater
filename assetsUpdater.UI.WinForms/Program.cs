@@ -1,12 +1,10 @@
 #region Using
 
-using assetsUpdater.EventArgs;
-
-using NLog;
-
 using System;
 using System.Threading;
 using System.Windows.Forms;
+using assetsUpdater.EventArgs;
+using NLog;
 
 #endregion
 
@@ -63,7 +61,7 @@ namespace assetsUpdater.UI.WinForms
 
         private static void AssertVerify_LogNotify(object? sender, MessageNotifyEventArgs e)
         {
-            LogLevel nLogLevel = LogLevel.Trace;
+            var nLogLevel = LogLevel.Trace;
 
             switch (e.MessageLevel)
             {
@@ -87,6 +85,7 @@ namespace assetsUpdater.UI.WinForms
                     nLogLevel = LogLevel.Fatal;
                     break;
             }
+
             KernelLogger.Log(nLogLevel, e.Message, e.Exception, e.Obj);
 
             //Console.WriteLine("{0}:{1}| {2} ", e.MessageLevel, e.Message, e.Exception);

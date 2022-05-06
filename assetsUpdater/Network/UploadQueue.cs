@@ -1,11 +1,10 @@
 ﻿#region Using
 
-using assetsUpdater.Interfaces;
-
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using assetsUpdater.Interfaces;
 
 #endregion
 
@@ -48,7 +47,7 @@ namespace assetsUpdater.Network
 
         public async Task WaitAll()
         {
-        Start:
+            Start:
             if (CurrentUploadingUnits.Count < 1 && WaitingUnits.Count < 1)
             {
                 //Upload Finished
@@ -60,30 +59,30 @@ namespace assetsUpdater.Network
                         {
                             foreach (var uploadUnit in ErrorUnits) WaitingUnits.Add(uploadUnit);
                         }
+
                         goto Start;
                     }
+
                 return;
             }
-            else
+
+            do
             {
-                do
+                var tasks = new List<Task>();
+                lock (CurrentUploadingUnits)
                 {
-                    List<Task> tasks = new List<Task>();
-                    lock (CurrentUploadingUnits)
-                    {
-                        tasks.AddRange(CurrentUploadingUnits.Select((unit => unit.UploadTask)));
-                    }
+                    tasks.AddRange(CurrentUploadingUnits.Select(unit => unit.UploadTask));
+                }
 
-                    //! Must take a copy of tasks (taken by to list) to avoid modification from another thread
-                    //System.InvalidOperationException: Collection was modified; enumeration operation may not execute.
+                //! Must take a copy of tasks (taken by to list) to avoid modification from another thread
+                //System.InvalidOperationException: Collection was modified; enumeration operation may not execute.
 
-                    // tasks = CurrentUploadingUnits.Select(uploadUnit => uploadUnit.Wait()).ToList();
+                // tasks = CurrentUploadingUnits.Select(uploadUnit => uploadUnit.Wait()).ToList();
 
-                    await Task.WhenAll(tasks).ConfigureAwait(false);
-                } while (WaitingUnits.Count >= 1 || CurrentUploadingUnits.Count >= 1);
+                await Task.WhenAll(tasks).ConfigureAwait(false);
+            } while (WaitingUnits.Count >= 1 || CurrentUploadingUnits.Count >= 1);
 
-                goto Start;
-            }
+            goto Start;
         }
 
         public async Task QueueUpload(IEnumerable<IUploadUnit> uploadUnits)
@@ -121,10 +120,7 @@ namespace assetsUpdater.Network
 
         private async Task StartDownload(IUploadUnit uploadUnit)
         {
-            if (uploadUnit == null)
-            {
-                return;
-            }
+            if (uploadUnit == null) return;
             WaitingUnits.Remove(uploadUnit);
             ErrorUnits.Remove(uploadUnit);
 
@@ -151,9 +147,7 @@ namespace assetsUpdater.Network
             //Queue
 
             if (CurrentUploadingUnits.Count < MaxParallelUploadCount)
-            {
                 if (WaitingUnits.Count >= 1)
-                {
                     /*IUploadUnit unit=null;
                     lock (WaitingUnits)
                     {
@@ -162,8 +156,6 @@ namespace assetsUpdater.Network
                     */
 
                     await StartDownload(WaitingUnits.First()).ConfigureAwait(false);
-                }
-            }
         }
 
         ~UploadQueue()

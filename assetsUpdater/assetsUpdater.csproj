@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <ErrorReport>prompt</ErrorReport>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <AssemblyVersion>1.0.*</AssemblyVersion>
     <FileVersion>1.0.*</FileVersion>
   </PropertyGroup>
@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Downloader" Version="2.3.0" />
+    <PackageReference Include="Downloader" Version="2.3.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 

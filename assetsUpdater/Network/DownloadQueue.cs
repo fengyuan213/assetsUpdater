@@ -1,13 +1,12 @@
 ﻿#region Using
 
-using assetsUpdater.Interfaces;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using assetsUpdater.Interfaces;
 
 #endregion
 
@@ -64,7 +63,7 @@ namespace assetsUpdater.Network
 
         public async Task WaitAll()
         {
-        Start:
+            Start:
             if (CurrentDownloadingObj.Count < 1 && WaitingList.Count < 1)
             {
                 //Downlading finsihed

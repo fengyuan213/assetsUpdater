@@ -1,9 +1,8 @@
 ﻿#region Using
 
+using System.Threading.Tasks;
 using assetsUpdater.Interfaces;
 using assetsUpdater.Model.StorageProvider;
-
-using System.Threading.Tasks;
 
 #endregion
 

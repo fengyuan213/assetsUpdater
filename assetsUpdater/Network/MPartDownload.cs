@@ -1,16 +1,13 @@
 ﻿#region Using
 
-using assetsUpdater.Interfaces;
-
-using Downloader;
-
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
-
+using assetsUpdater.Interfaces;
+using Downloader;
 using DownloadPackage = assetsUpdater.Model.Network.DownloadPackage;
 using DownloadProgressChangedEventArgs = Downloader.DownloadProgressChangedEventArgs;
 
@@ -34,7 +31,7 @@ namespace assetsUpdater.Network
             DownloadService.DownloadStarted += OnDownloadStarted;
         }
 
-        public DownloadService DownloadService { get; private set; }
+        public DownloadService DownloadService { get; }
         public DownloadSetting DownloadSetting { get; set; }
 
         public DownloadPackage DownloadPackage { get; set; }

@@ -1,4 +1,9 @@
-﻿using System;
+﻿#region Using
+
+using System;
+using System.Runtime.Serialization;
+
+#endregion
 
 namespace assetsUpdater.Exceptions
 {
@@ -6,7 +11,8 @@ namespace assetsUpdater.Exceptions
     public class PackageManagerNotInitializedException : Exception
     {
         public PackageManagerNotInitializedException()
-        { }
+        {
+        }
 
         public PackageManagerNotInitializedException(string message) : base(message)
         {
@@ -17,7 +23,9 @@ namespace assetsUpdater.Exceptions
         }
 
         protected PackageManagerNotInitializedException(
-          System.Runtime.Serialization.SerializationInfo info,
-          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+            SerializationInfo info,
+            StreamingContext context) : base(info, context)
+        {
+        }
     }
 }

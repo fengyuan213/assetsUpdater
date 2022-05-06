@@ -1,25 +1,28 @@
-﻿using NLog;
+﻿#region Using
 
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using NLog;
+
+#endregion
 
 namespace assetsUpdater.UI.WinForms
 {
     public partial class MainForm : Form
     {
         public static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private ReleaseVersionForm? _releaseVersionForm;
+        private ReleaseVersionForm _releaseVersionForm;
+
+        public MainForm()
+        {
+            InitializeComponent();
+        }
 
         public ReleaseVersionForm ReleaseVersionForm
         {
             get => _releaseVersionForm ??= new ReleaseVersionForm();
             set => _releaseVersionForm = value;
-        }
-
-        public MainForm()
-        {
-            InitializeComponent();
         }
 
         private void ReleaseNewVersion_Btn_Click(object sender, System.EventArgs e)

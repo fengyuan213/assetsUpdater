@@ -2,15 +2,6 @@
 
 #region Using
 
-using assetsUpdater.AddressBuilder;
-using assetsUpdater.EventArgs;
-using assetsUpdater.Exceptions;
-using assetsUpdater.Interfaces;
-using assetsUpdater.Model.StorageProvider;
-using assetsUpdater.Utils;
-
-using Newtonsoft.Json;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -19,8 +10,15 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using assetsUpdater.AddressBuilder;
+using assetsUpdater.EventArgs;
+using assetsUpdater.Exceptions;
+using assetsUpdater.Interfaces;
+using assetsUpdater.Model.StorageProvider;
+using assetsUpdater.Utils;
+using Newtonsoft.Json;
 
-#endregion Using
+#endregion
 
 #endregion
 
@@ -37,7 +35,6 @@ namespace assetsUpdater.StorageProvider
         /// <param name="path"></param>
         /// <param name="isAsync"></param>
 #pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的 属性“Data”必须包含非 null 值。请考虑将 属性 声明为可以为 null。
-
         public FileDatabase(string path, bool isAsync = false)
 #pragma warning restore CS8618 // 在退出构造函数时，不可为 null 的 属性“Data”必须包含非 null 值。请考虑将 属性 声明为可以为 null。
         {
