@@ -4,6 +4,7 @@ using System;
 using System.Threading;
 using System.Windows.Forms;
 using assetsUpdater.EventArgs;
+using assetsUpdater.Tencent;
 using NLog;
 
 #endregion
@@ -42,8 +43,7 @@ namespace assetsUpdater.UI.WinForms
             #endregion
 
             Logger.Info("Initializeing TencentCos");
-            TencentCosHelper.Init(TencentCosHelper.DefaultCosConfiguration());
-
+        
             DisplaySampleLog();
 
             Application.Run(new MainForm());

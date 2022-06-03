@@ -1,33 +1,38 @@
-﻿using assetsUpdater.Interfaces;
-using assetsUpdater.Network;
-using assetsUpdater.Tencent.Network;
-using assetsUpdater.Utils;
-
-using NLog;
+﻿#region Using
 
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using assetsUpdater.Interfaces;
+using assetsUpdater.Network;
+using assetsUpdater.Tencent;
+using assetsUpdater.Tencent.Network;
+using assetsUpdater.Utils;
+using NLog;
+
+#endregion
 
 namespace assetsUpdater.UI.WinForms
 {
     public partial class ReleaseProcessingForm : Form
     {
         public static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        public IEnumerable<string> UnitKeys { get; }
-        public UploadUnitBuilder UploadUnitBuilder { get; }
-        private double _BuildUnitProgress = 0;
+        private readonly double _BuildUnitProgress = 0;
 
         public ReleaseProcessingForm(IEnumerable<string> keys, IAddressBuilder addressBuilder, string vFolderKey)
         {
             UnitKeys = keys;
-            UploadUnitBuilder = new UploadUnitBuilder(addressBuilder, vFolderKey);
+            TencentUnitBuilder = new TencentUnitBuilder(addressBuilder, vFolderKey);
             InitializeComponent();
             InitializeUi();
         }
+
+        public IEnumerable<string> UnitKeys { get; }
+        public TencentUnitBuilder TencentUnitBuilder { get; }
+
+        public UploadQueue UploadQueue { get; set; } = new(10);
 
         private void InitializeUi()
         {
@@ -39,26 +44,20 @@ namespace assetsUpdater.UI.WinForms
             UploadQueue.ErrorUnits.CollectionChanged += ErrorUnits_CollectionChanged;
         }
 
-        private void ErrorUnits_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void ErrorUnits_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add || e.NewItems?.Count > 0)
-            {
                 foreach (IUploadUnit eNewItem in e.NewItems ?? new List<IUploadUnit>())
-                {
-                    AddLogListViewMessage($"无法上传文件：{eNewItem.UploadPackage.FileLocalPath}{eNewItem} 请稍后重试或访问调试Log来获得更多信息", LogLevel.Error);
-                }
-            }
+                    AddLogListViewMessage(
+                        $"无法上传文件：{eNewItem.UploadPackage.FileLocalPath}{eNewItem} 请稍后重试或访问调试Log来获得更多信息",
+                        LogLevel.Error);
         }
 
         private void AddLogListViewMessage(string msg, LogLevel lvl)
         {
             Logger.Log(lvl, msg);
-            log_listView.Items.Add(new ListViewItem(new[] { msg })
-            {
-            });
+            log_listView.Items.Add(new ListViewItem(new[] { msg }));
         }
-
-        public UploadQueue UploadQueue { get; set; } = new UploadQueue(10);
 
         private async Task StartUpload()
         {
@@ -78,7 +77,7 @@ namespace assetsUpdater.UI.WinForms
 
         private async Task<IEnumerable<TencentUploadUnit>> BuildUploadUnits()
         {
-            var units = await UploadUnitBuilder.Build(UnitKeys).ConfigureAwait(false);
+            var units = TencentUnitBuilder.Build(UnitKeys);
 
             return units;
         }
@@ -106,14 +105,10 @@ namespace assetsUpdater.UI.WinForms
                 $@"{FileSizeParser.ParseAuto(UploadQueue.BytesSent)}/{FileSizeParser.ParseAuto(UploadQueue.TotalBytesToUpload)}";
 
             if (UploadQueue.CurrentUploadingUnits.Count > 0)
-            {
                 currentProcessBar.Value = (int)UploadQueue.CurrentUploadingUnits[0].Progress;
-            }
             else
-            {
                 currentProcessBar.Value = totalProccessBar.Value;
-            }
-            totalProccessBar.Value = (int)(GetTotalProgressBarProgress());
+            totalProccessBar.Value = (int)GetTotalProgressBarProgress();
 
             await LogUpdateStatus().ConfigureAwait(false);
         }
@@ -129,9 +124,11 @@ namespace assetsUpdater.UI.WinForms
             var errorUnits = UploadQueue.ErrorUnits;
             var currentUnits = UploadQueue.CurrentUploadingUnits;
             Logger.Debug("--- Upload Trace Data Start ---");
-            Logger.Debug($"Progress:{progress},Uploaded:{FileSizeParser.ParseAuto(uploadedB)}, Total:{FileSizeParser.ParseAuto(totalB)}");
+            Logger.Debug(
+                $"Progress:{progress},Uploaded:{FileSizeParser.ParseAuto(uploadedB)}, Total:{FileSizeParser.ParseAuto(totalB)}");
             Logger.Info($"Uploaded Bytes:{uploadedB}, Total Bytes:{totalB}");
-            Logger.Debug($"Units Count- Waiting:{waitingUnits.Count} All:{allUnits.Count} Current:{currentUnits.Count} Error:{errorUnits.Count}");
+            Logger.Debug(
+                $"Units Count- Waiting:{waitingUnits.Count} All:{allUnits.Count} Current:{currentUnits.Count} Error:{errorUnits.Count}");
             Logger.Debug("Lists of waiting, error and current");
             LogUnits("Waiting", waitingUnits);
             LogUnits("Error", errorUnits);
@@ -153,7 +150,8 @@ namespace assetsUpdater.UI.WinForms
                 var byteSent = unit.BytesSent;
                 var totalByte = unit.TotalBytes;
 
-                Logger.Debug($"Status:{unitName}->Key:{key} localPath:{localPath}\n Byte Sent:{byteSent}, Byte Total:{totalByte}, Progress:{p}");
+                Logger.Debug(
+                    $"Status:{unitName}->Key:{key} localPath:{localPath}\n Byte Sent:{byteSent}, Byte Total:{totalByte}, Progress:{p}");
             }
         }
 

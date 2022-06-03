@@ -21,7 +21,7 @@ namespace assetsUpdater
     public class PackageManager
     {
         private readonly IAddressBuilder _addressBuilder;
-        private bool _isInitialized;
+
 
         public PackageManager(AssertUpgradePackage assertUpgradePackage, IAddressBuilder addressBuilder)
         {
@@ -32,10 +32,7 @@ namespace assetsUpdater
 
         public AssertUpgradePackage AssertUpgradePackage { get; set; }
 
-        public void Init()
-        {
-            _isInitialized = true;
-        }
+
 
         /// <summary>
         ///     This will apply both Local and Remote (Means start download queue)
@@ -111,8 +108,7 @@ namespace assetsUpdater
 
         public virtual async Task<DownloadQueue> Apply_Remote()
         {
-            if (!_isInitialized) throw new PackageManagerNotInitializedException("Package Manager not initialized");
-
+         
             var downloadQueue = BuildDownloadConfig();
             var downloadUnits = BuildDownloadUnits();
             await downloadQueue.QueueDownload(downloadUnits).ConfigureAwait(true);
@@ -121,8 +117,7 @@ namespace assetsUpdater
 
         public Task Apply_Local()
         {
-            if (!_isInitialized) throw new PackageManagerNotInitializedException("Package Manager not initialized");
-
+           
             foreach (var deleteFile in AssertUpgradePackage.DeleteFile)
                 RemoveFile(_addressBuilder.BuildDownloadLocalPath(deleteFile.RelativePath));
 

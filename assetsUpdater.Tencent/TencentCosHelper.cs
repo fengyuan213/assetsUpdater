@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using System.Reflection.Metadata;
 using assetsUpdater.Model.Network;
 using assetsUpdater.Tencent.Network;
 using COSXML;
@@ -8,7 +9,7 @@ using COSXML.Auth;
 
 #endregion
 
-namespace assetsUpdater.UI.WinForms
+namespace assetsUpdater.Tencent
 {
     public struct TencentCosConfiguration
     {
@@ -56,21 +57,13 @@ namespace assetsUpdater.UI.WinForms
         public int SignatureDuration { get; set; }
     }
 
-    public static class TencentCosHelper
+    public class TencentCosHelper
     {
-        private static bool _isInitialized;
+   
+        private TencentCosConfiguration _cosConfiguration;
+        private CosXmlServer _cosXmlServer;
 
-        private static TencentCosConfiguration _cosConfiguration;
-        private static CosXmlServer _cosXmlServer;
-
-        public static CosXmlServer CosXmlServer
-        {
-            get
-            {
-                if (_cosXmlServer == null) _cosXmlServer = GetCosServer();
-                return _cosXmlServer;
-            }
-        }
+        public CosXmlServer CosXmlServer => _cosXmlServer ??= GetCosServer();
 
         public static TencentCosConfiguration DefaultCosConfiguration()
         {
@@ -84,19 +77,13 @@ namespace assetsUpdater.UI.WinForms
             return config;
         }
 
-        public static void Init(TencentCosConfiguration config)
+        public TencentCosHelper(TencentCosConfiguration config)
         {
             _cosConfiguration = config;
-
-            _isInitialized = true;
         }
+    
 
-        private static void IsInitializeCheck()
-        {
-            if (!_isInitialized) throw new Exception("TencentCosHelper not initialized");
-        }
-
-        private static CosXmlServer GetCosServer()
+        private  CosXmlServer GetCosServer()
         {
             //string bucketName = "";
             var appid = _cosConfiguration.Appid; //设置腾讯云账户的账户标识 APPID
@@ -127,7 +114,7 @@ namespace assetsUpdater.UI.WinForms
             return new CosXmlServer(config, qCloudCredentialProvider);
         }
 
-        public static TencentUploadUnit BuildUploadUnit(UploadPackage up)
+        public  TencentUploadUnit BuildUploadUnit(UploadPackage up)
         {
             var unit = new TencentUploadUnit(CosXmlServer, _cosConfiguration.BucketAppid, up);
             return unit;
