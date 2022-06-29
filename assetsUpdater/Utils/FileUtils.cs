@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+
 using System.Net;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -56,7 +57,7 @@ namespace assetsUpdater.Utils
         }
 
         /// <summary>
-        ///     May occur Directory not Found Exception
+        ///     May occur Directory not Found Exception called when creating database
         /// </summary>
         /// <param name="rootFolder"></param>
         /// <param name="directory"></param>
@@ -82,10 +83,13 @@ namespace assetsUpdater.Utils
             var dirInfo = new DirectoryInfo(directoryPath);
             var fileInfos = dirInfo.GetFiles("*.*", SearchOption.AllDirectories);
             //var a = fileInfos.Select(fileInfo => fileInfo.FullName.Remove(0, Path.GetFullPath(rootFolder).Length + 1)).ToArray();
-            var a = fileInfos.Select(fileInfo =>
-                    MakeStandardRelativePath(fileInfo.FullName.Remove(0, Path.GetFullPath(rootFolder).Length)))
+
+           // var re1s = fileInfos.AsParallel().Select(fileInfo =>
+            //        MakeStandardRelativePath(fileInfo.FullName.Remove(0, Path.GetFullPath(rootFolder).Length))).ToArray();
+            var res = fileInfos.AsParallel().Select(fileInfo =>
+                    fileInfo.FullName.Remove(0, Path.GetFullPath(rootFolder).Length))
                 .ToArray();
-            return a;
+            return res;
         }
     }
 }

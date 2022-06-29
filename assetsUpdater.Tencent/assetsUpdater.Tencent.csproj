@@ -1,10 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v17.0\TextTemplating\Microsoft.TextTemplating.targets" />
+	<PropertyGroup>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	
+	</PropertyGroup>
+
 
   <PropertyGroup>
 	<TargetFramework>net5.0</TargetFramework>
 	  <Nullable>disable</Nullable>
-	  <AssemblyVersion>1.0.*</AssemblyVersion>
-	  <FileVersion>1.0.*</FileVersion>
+	
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -12,15 +18,45 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <Deterministic>False</Deterministic>
+	  <TransformOnBuild>true</TransformOnBuild>
+	  <OverwriteReadOnlyOutputFiles>true</OverwriteReadOnlyOutputFiles>
+	  <TransformOutOfDateOnly>false</TransformOutOfDateOnly>
+	  <Deterministic>False</Deterministic>
   </PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="Tencent.QCloud.Cos.Sdk" Version="5.4.29" />
+    <None Include="Properties\AssemblyInfo.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AssemblyInfo.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+	<PackageReference Include="Tencent.QCloud.Cos.Sdk" Version="5.4.31" />
   </ItemGroup>
 
   <ItemGroup>
 	<ProjectReference Include="..\assetsUpdater\assetsUpdater.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\AssemblyInfo.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>AssemblyInfo.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\AssemblyInfo.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AssemblyInfo.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

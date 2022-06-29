@@ -1,10 +1,44 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
+
+	<Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v17.0\TextTemplating\Microsoft.TextTemplating.targets" />
+	<PropertyGroup>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Update="Properties\AssemblyInfo.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>AssemblyInfo.tt</DependentUpon>
+		</Compile>
+
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\.editorconfig" Link="Properties\.editorconfig" />
+		<None Include="Properties\AssemblyInfo.cs">
+			<DesignTime>True</DesignTime>
+
+			<AutoGen>True</AutoGen>
+			<DependentUpon>AssemblyInfo.tt</DependentUpon>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+
+		<None Update="Properties\AssemblyInfo.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<TransformOnBuild>true</TransformOnBuild>
+			<LastGenOutput>AssemblyInfo.cs</LastGenOutput>
+		</None>
+	</ItemGroup>
+
+
+	<PropertyGroup>
     <OutputType>Exe</OutputType>
     <Nullable>disable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
-    <AssemblyVersion>1.0.*</AssemblyVersion>
+
     <SignAssembly>False</SignAssembly>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>False</UseWPF>
@@ -16,20 +50,30 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <Deterministic>False</Deterministic>
+	  <TransformOnBuild>true</TransformOnBuild>
+	  <OverwriteReadOnlyOutputFiles>true</OverwriteReadOnlyOutputFiles>
+	  <TransformOutOfDateOnly>false</TransformOutOfDateOnly>
+	  <Deterministic>False</Deterministic>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="C:\Users\fengy\.nuget\packages\nlog.config\4.7.13\contentFiles\any\any\NLog.config" />
   </ItemGroup>
 
+
+
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.7.15" />
-    <PackageReference Include="Tencent.QCloud.Cos.Sdk" Version="5.4.29" />
+    <PackageReference Include="NLog" Version="5.0.1" />
+    <PackageReference Include="Tencent.QCloud.Cos.Sdk" Version="5.4.31" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\assetsUpdater.Tencent\assetsUpdater.Tencent.csproj" />
+  </ItemGroup>
+
+ 
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
 </Project>

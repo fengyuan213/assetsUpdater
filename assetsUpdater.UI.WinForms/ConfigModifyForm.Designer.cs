@@ -39,13 +39,13 @@
             this.AddressBuilder_ComboBox = new System.Windows.Forms.ComboBox();
             this.UpdateUrl_TextBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // Confirm_Btn
             // 
-            this.Confirm_Btn.Location = new System.Drawing.Point(100, 180);
+            this.Confirm_Btn.Location = new System.Drawing.Point(205, 86);
             this.Confirm_Btn.Name = "Confirm_Btn";
             this.Confirm_Btn.Size = new System.Drawing.Size(75, 23);
             this.Confirm_Btn.TabIndex = 0;
@@ -55,14 +55,14 @@
             // 
             // MajV_TextBox
             // 
-            this.MajV_TextBox.Location = new System.Drawing.Point(113, 66);
+            this.MajV_TextBox.Location = new System.Drawing.Point(133, 46);
             this.MajV_TextBox.Name = "MajV_TextBox";
             this.MajV_TextBox.Size = new System.Drawing.Size(62, 23);
             this.MajV_TextBox.TabIndex = 1;
             // 
             // MirrorV_TextBox
             // 
-            this.MirrorV_TextBox.Location = new System.Drawing.Point(113, 119);
+            this.MirrorV_TextBox.Location = new System.Drawing.Point(218, 46);
             this.MirrorV_TextBox.Name = "MirrorV_TextBox";
             this.MirrorV_TextBox.Size = new System.Drawing.Size(62, 23);
             this.MirrorV_TextBox.TabIndex = 2;
@@ -70,7 +70,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(24, 58);
+            this.label1.Location = new System.Drawing.Point(6, 60);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(104, 17);
             this.label1.TabIndex = 3;
@@ -79,7 +79,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(24, 19);
+            this.label2.Location = new System.Drawing.Point(6, 21);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(71, 17);
             this.label2.TabIndex = 4;
@@ -88,21 +88,20 @@
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.ModifyAddressBuilder_Btn);
-            this.groupBox1.Controls.Add(this.ModifyDirList_Btn);
             this.groupBox1.Controls.Add(this.AddressBuilder_ComboBox);
             this.groupBox1.Controls.Add(this.UpdateUrl_TextBox);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(205, 36);
+            this.groupBox1.Location = new System.Drawing.Point(40, 130);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(343, 222);
+            this.groupBox1.Size = new System.Drawing.Size(282, 127);
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "高级设置";
             // 
             // ModifyAddressBuilder_Btn
             // 
-            this.ModifyAddressBuilder_Btn.Location = new System.Drawing.Point(134, 55);
+            this.ModifyAddressBuilder_Btn.Location = new System.Drawing.Point(116, 57);
             this.ModifyAddressBuilder_Btn.Name = "ModifyAddressBuilder_Btn";
             this.ModifyAddressBuilder_Btn.Size = new System.Drawing.Size(141, 23);
             this.ModifyAddressBuilder_Btn.TabIndex = 12;
@@ -112,25 +111,25 @@
             // 
             // ModifyDirList_Btn
             // 
-            this.ModifyDirList_Btn.Location = new System.Drawing.Point(52, 141);
+            this.ModifyDirList_Btn.Location = new System.Drawing.Point(58, 83);
             this.ModifyDirList_Btn.Name = "ModifyDirList_Btn";
-            this.ModifyDirList_Btn.Size = new System.Drawing.Size(180, 26);
+            this.ModifyDirList_Btn.Size = new System.Drawing.Size(123, 26);
             this.ModifyDirList_Btn.TabIndex = 11;
-            this.ModifyDirList_Btn.Text = "修改DbSchema";
+            this.ModifyDirList_Btn.Text = "修改包含的文件(夹)";
             this.ModifyDirList_Btn.UseVisualStyleBackColor = true;
             this.ModifyDirList_Btn.Click += new System.EventHandler(this.ModifyDirList_Btn_Click);
             // 
             // AddressBuilder_ComboBox
             // 
             this.AddressBuilder_ComboBox.FormattingEnabled = true;
-            this.AddressBuilder_ComboBox.Location = new System.Drawing.Point(66, 87);
+            this.AddressBuilder_ComboBox.Location = new System.Drawing.Point(146, 86);
             this.AddressBuilder_ComboBox.Name = "AddressBuilder_ComboBox";
             this.AddressBuilder_ComboBox.Size = new System.Drawing.Size(121, 25);
             this.AddressBuilder_ComboBox.TabIndex = 10;
             // 
             // UpdateUrl_TextBox
             // 
-            this.UpdateUrl_TextBox.Location = new System.Drawing.Point(101, 16);
+            this.UpdateUrl_TextBox.Location = new System.Drawing.Point(83, 18);
             this.UpdateUrl_TextBox.Name = "UpdateUrl_TextBox";
             this.UpdateUrl_TextBox.Size = new System.Drawing.Size(184, 23);
             this.UpdateUrl_TextBox.TabIndex = 9;
@@ -138,27 +137,28 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(39, 72);
+            this.label3.Location = new System.Drawing.Point(58, 49);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(59, 17);
+            this.label3.Size = new System.Drawing.Size(71, 17);
             this.label3.TabIndex = 6;
-            this.label3.Text = "主要版本:";
+            this.label3.Text = "当前版本号:";
             // 
-            // label4
+            // label5
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(39, 119);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(68, 17);
-            this.label4.TabIndex = 7;
-            this.label4.Text = "次要版本：";
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(201, 52);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(11, 17);
+            this.label5.TabIndex = 8;
+            this.label5.Text = ".";
             // 
             // ConfigModifyForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(648, 355);
-            this.Controls.Add(this.label4);
+            this.ClientSize = new System.Drawing.Size(372, 281);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.ModifyDirList_Btn);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.MirrorV_TextBox);
@@ -166,7 +166,7 @@
             this.Controls.Add(this.Confirm_Btn);
             this.Name = "ConfigModifyForm";
             this.Text = "ConfigModifyForm";
-          this.groupBox1.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -182,12 +182,12 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
 
         private System.Windows.Forms.TextBox MirrorV_TextBox;
         private System.Windows.Forms.ComboBox AddressBuilder_ComboBox;
         private System.Windows.Forms.TextBox UpdateUrl_TextBox;
         private System.Windows.Forms.Button ModifyDirList_Btn;
         private System.Windows.Forms.Button ModifyAddressBuilder_Btn;
+        private System.Windows.Forms.Label label5;
     }
 }

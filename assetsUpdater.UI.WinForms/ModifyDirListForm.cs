@@ -70,7 +70,7 @@ namespace assetsUpdater.UI.WinForms
         private void InitializeUi()
         {
             //CheckDebugging
-            if (!Debugger.IsAttached) debug_Btn.Visible = false;
+            //if (!Debugger.IsAttached) debug_Btn.Visible = false;
 
             VcsLabel.Text = VcsRoot;
             if (DatabaseSchema == null) return;
@@ -94,15 +94,15 @@ namespace assetsUpdater.UI.WinForms
 
         private void Confirm_Btn_Click(object sender, System.EventArgs e)
         {
-            var result = MessageBox.Show("是否保存更改？", "?", MessageBoxButtons.OKCancel);
-            if (result == DialogResult.OK) Apply_Internal();
+          /*  var result = MessageBox.Show("是否保存更改？", "?", MessageBoxButtons.OKCancel);
+            if (result == DialogResult.OK) */
+          Apply_Internal();
 
             Close();
         }
 
         private void ApplyChanges_Btn_Click(object sender, System.EventArgs e)
         {
-            Apply_Internal();
         }
 
         private void DeleteSelectedBtn_Click(object sender, System.EventArgs e)

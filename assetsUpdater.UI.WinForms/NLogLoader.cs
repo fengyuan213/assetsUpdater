@@ -67,7 +67,7 @@ namespace assetsUpdater.UI.WinForms
                 Encoding = Encoding.Default,
                 Layout = coloredConsoleLayout,
                 UseDefaultRowHighlightingRules = true,
-                ErrorStream = true,
+                
                 EnableAnsiOutput = false,
                 DetectConsoleAvailable = true,
                 AutoFlush = true
@@ -140,7 +140,7 @@ namespace assetsUpdater.UI.WinForms
             var autoFlushWrapper = new AutoFlushTargetWrapper(string.Join("AsyncAutoFlush", name), asyncWrapper)
             {
                 AsyncFlush = true,
-                OptimizeBufferReuse = true
+           
             };
             return autoFlushWrapper;
         }

@@ -47,8 +47,7 @@ namespace assetsUpdater
                 data.DatabaseFiles == null ||
                 (data.Config.MinorVersion == 0 &&
                  data.Config.MajorVersion == 0) ||
-                string.IsNullOrWhiteSpace(data.Config.VersionControlFolder) ||
-                data.Config.DatabaseSchema == null
+                string.IsNullOrWhiteSpace(data.Config.VersionControlFolder) 
                )
                 return Task.FromResult(false);
             foreach (var df in data.DatabaseFiles)

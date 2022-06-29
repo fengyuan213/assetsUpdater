@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using System.Net;
 using System.Threading.Tasks;
 using assetsUpdater.Interfaces;
 using assetsUpdater.Model.Network;
@@ -38,7 +39,7 @@ namespace assetsUpdater.Tencent.Network
         /// </summary>
         public string TencentBucketAppId { get; }
 
-        public event EventHandler<bool>? UploadCompletedEventHandler;
+        public event EventHandler<bool> UploadCompletedEventHandler;
 
         //public IEnumerable<COSXMLUploadTask> AllUploadTasks { get; set; } = new List<COSXMLUploadTask>();
         public Task UploadTask => CurrentUploadingTask ?? Task.CompletedTask;
@@ -59,6 +60,7 @@ namespace assetsUpdater.Tencent.Network
             var transferConfig = new TransferConfig();
             // 初始化 TransferManager
             var transferManager = new TransferManager(CosXml, transferConfig);
+            
             // 存储桶名称，此处填入格式必须为 bucketname-APPID, 其中 APPID 获取参考 https://console.cloud.tencent.com/developer
 
             var bucket = TencentBucketAppId;
@@ -67,11 +69,12 @@ namespace assetsUpdater.Tencent.Network
 
             // 上传对象
             var uploadTask = new COSXMLUploadTask(bucket, cosPath);
-
+     
             uploadTask.SetSrcPath(srcPath);
             uploadTask.failCallback = FailCallback;
             uploadTask.successCallback = UploadSucceedCallBack;
             uploadTask.progressCallback = UploadProgressCallBack;
+            
             CosXmlUploadTask = uploadTask;
             CurrentUploadingTask = transferManager.UploadAsync(uploadTask);
             //AllUploadTasks= AllUploadTasks.Append(uploadTask);
@@ -88,7 +91,7 @@ namespace assetsUpdater.Tencent.Network
             if (CurrentUploadingTask == null) return Task.CompletedTask;
 
             var result = CurrentUploadingTask.Result;
-
+          
             //Debug.WriteLine("Upload Result Info{0}", result.GetResultInfo());
 
             var eTag = result.eTag;
@@ -104,6 +107,11 @@ namespace assetsUpdater.Tencent.Network
 
         protected virtual void OnUploadCompleted(bool isSucceed)
         {
+            if (isSucceed)
+            {
+                Progress = 1;
+
+            }
             UploadCompletedEventHandler?.Invoke(this, isSucceed);
         }
 

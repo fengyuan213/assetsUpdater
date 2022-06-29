@@ -3,6 +3,7 @@
 #region Using
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -169,7 +170,7 @@ namespace assetsUpdater.StorageProvider
         /// <exception cref="IOException"> When Database path not valid</exception>
         public async Task Read([NotNull] string dbPath)
         {
-            if (string.IsNullOrWhiteSpace(dbPath)) throw new ArgumentNullException(dbPath, "数据库路径不能为空");
+            if (string.IsNullOrWhiteSpace(dbPath)) throw new ArgumentNullException(dbPath, "Database path can't be empty");
             if (!File.Exists(dbPath)) throw new IOException("Database can't be found");
             try
             {
@@ -180,7 +181,7 @@ namespace assetsUpdater.StorageProvider
             }
             catch (InvalidDataException e)
             {
-                AssertVerify.OnMessageNotify(this, "数据库不合法", e);
+                AssertVerify.OnMessageNotify(this, "Invalid FileDatabase", e);
                 throw;
             }
         }
@@ -204,8 +205,7 @@ namespace assetsUpdater.StorageProvider
         {
             config = (DbConfig)config.Clone();
             var files = new List<string>();
-
-            //TODO: Build database Testing with FileList and DirList
+            
             foreach (var file in config.DatabaseSchema.FileList)
                 try
                 {
@@ -216,7 +216,8 @@ namespace assetsUpdater.StorageProvider
 
                     if (!File.Exists(path))
                     {
-                        //throw new FileNotFoundException("FileList配置的文件未找到:"+path, file);
+                        //TODO: Queue worker report error list
+                        throw new FileNotFoundException("File not found:"+path, file);
                     }
                     else
                     {
@@ -228,21 +229,29 @@ namespace assetsUpdater.StorageProvider
                     AssertVerify.OnMessageNotify(this, e.Message, e);
                 }
 
-            foreach (var directory in config.DatabaseSchema.DirList)
+            Parallel.ForEach(config.DatabaseSchema.DirList, directory =>
+            {
                 if (Directory.Exists(Path.Join(config.VersionControlFolder, directory)))
                     try
                     {
-                        var paths = FileUtils.GetAllFilesInADirectory(config.VersionControlFolder, directory ?? "");
+                        var paths = FileUtils.GetAllFilesInADirectory(config.VersionControlFolder, directory);
 
                         files.AddRange(paths);
                     }
                     catch (Exception e)
                     {
-                        AssertVerify.OnMessageNotify(this, "DirList寻找失败", e);
+                        AssertVerify.OnMessageNotify(this, $"Failed processing directory:{directory}", e);
                     }
 
-            var databaseFiles = new List<DatabaseFile>();
-            foreach (var file in files)
+            });
+              
+
+            //Combine database file
+            //var databaseFiles = new List<DatabaseFile>();
+       
+
+            var databaseFiles = new ConcurrentBag<DatabaseFile>();
+            Parallel.ForEach(files, file =>
             {
                 var absolutePath = Path.Join(config.VersionControlFolder, file);
                 AssertVerify.OnMessageNotify(this, "Absolute Path:" + absolutePath, MsgL.Debug);
@@ -254,7 +263,10 @@ namespace assetsUpdater.StorageProvider
                     FileUtils.GetFileSize(absolutePath), null);
                 //var vcf = new BuildInDbFile(file, Path.GetFileName(absolutePath), FileUtils.GetFileSize(absolutePath), FileUtils.Sha1File(absolutePath), null);
                 databaseFiles.Add(vcf);
-            }
+            });
+            var count = databaseFiles.Count;
+
+            
 
             //! Important, given default localRoot to vcs folder
             //! Prevent argument null when manager uploading database

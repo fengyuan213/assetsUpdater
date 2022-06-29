@@ -60,8 +60,8 @@ namespace assetsUpdaterExample
             var bucketId = "pokecity-1251938563";
             var appId = "1251938563";
             var region = "ap-shanghai-fsi";
-            var ak = "AKIDXwCMPLte1CC2i9tbfXFxUpzylPRLDI0W";
-            var sk = "Z2JOG1cO4d0a0FKH4iBTZUEm8KNI4e6O";
+            var ak = "";
+            var sk = "";
             var sigDuration = 600; //unit s
             var config = new TencentCosConfiguration(bucketId, appId, region, ak, sk, sigDuration);
             return config;

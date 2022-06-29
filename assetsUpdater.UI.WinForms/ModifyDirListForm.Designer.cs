@@ -34,13 +34,11 @@
             this.AddDir_Btn = new System.Windows.Forms.Button();
             this.DeleteSelectedBtn = new System.Windows.Forms.Button();
             this.Confirm_Btn = new System.Windows.Forms.Button();
-            this.ApplyChanges_Btn = new System.Windows.Forms.Button();
             this.AddFile_Btn = new System.Windows.Forms.Button();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.VcsLabel = new System.Windows.Forms.Label();
             this.ChangeVCSBtn = new System.Windows.Forms.Button();
-            this.debug_Btn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // dirListView
@@ -95,17 +93,6 @@
             this.Confirm_Btn.UseVisualStyleBackColor = true;
             this.Confirm_Btn.Click += new System.EventHandler(this.Confirm_Btn_Click);
             // 
-            // ApplyChanges_Btn
-            // 
-            this.ApplyChanges_Btn.Enabled = false;
-            this.ApplyChanges_Btn.Location = new System.Drawing.Point(621, 356);
-            this.ApplyChanges_Btn.Name = "ApplyChanges_Btn";
-            this.ApplyChanges_Btn.Size = new System.Drawing.Size(126, 23);
-            this.ApplyChanges_Btn.TabIndex = 4;
-            this.ApplyChanges_Btn.Text = "应用";
-            this.ApplyChanges_Btn.UseVisualStyleBackColor = true;
-            this.ApplyChanges_Btn.Click += new System.EventHandler(this.ApplyChanges_Btn_Click);
-            // 
             // AddFile_Btn
             // 
             this.AddFile_Btn.Location = new System.Drawing.Point(621, 94);
@@ -139,27 +126,14 @@
             this.ChangeVCSBtn.UseVisualStyleBackColor = true;
             this.ChangeVCSBtn.Click += new System.EventHandler(this.ChangeVCSBtn_Click);
             // 
-            // debug_Btn
-            // 
-            this.debug_Btn.Enabled = false;
-            this.debug_Btn.Location = new System.Drawing.Point(621, 310);
-            this.debug_Btn.Name = "debug_Btn";
-            this.debug_Btn.Size = new System.Drawing.Size(126, 23);
-            this.debug_Btn.TabIndex = 8;
-            this.debug_Btn.Text = "debug";
-            this.debug_Btn.UseVisualStyleBackColor = true;
-            this.debug_Btn.Click += new System.EventHandler(this.debug_Btn_Click);
-            // 
             // ModifyDirListForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(785, 460);
-            this.Controls.Add(this.debug_Btn);
             this.Controls.Add(this.ChangeVCSBtn);
             this.Controls.Add(this.VcsLabel);
             this.Controls.Add(this.AddFile_Btn);
-            this.Controls.Add(this.ApplyChanges_Btn);
             this.Controls.Add(this.Confirm_Btn);
             this.Controls.Add(this.DeleteSelectedBtn);
             this.Controls.Add(this.AddDir_Btn);
@@ -180,12 +154,10 @@
         private System.Windows.Forms.ColumnHeader fileType_Col;
         private System.Windows.Forms.Button DeleteSelectedBtn;
         private System.Windows.Forms.Button Confirm_Btn;
-        private System.Windows.Forms.Button ApplyChanges_Btn;
         private System.Windows.Forms.Button AddFile_Btn;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.Label VcsLabel;
         private System.Windows.Forms.Button ChangeVCSBtn;
-        private System.Windows.Forms.Button debug_Btn;
     }
 }

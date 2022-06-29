@@ -19,8 +19,12 @@ namespace assetsUpdater.UI.WinForms
     public partial class ReleaseProcessingForm : Form
     {
         public static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private readonly double _BuildUnitProgress = 0;
 
+
+        public IEnumerable<string> UnitKeys { get; }
+        public TencentUnitBuilder TencentUnitBuilder { get; }
+
+        public UploadQueue UploadQueue { get; set; } = new(10);
         public ReleaseProcessingForm(IEnumerable<string> keys, IAddressBuilder addressBuilder, string vFolderKey)
         {
             UnitKeys = keys;
@@ -28,12 +32,6 @@ namespace assetsUpdater.UI.WinForms
             InitializeComponent();
             InitializeUi();
         }
-
-        public IEnumerable<string> UnitKeys { get; }
-        public TencentUnitBuilder TencentUnitBuilder { get; }
-
-        public UploadQueue UploadQueue { get; set; } = new(10);
-
         private void InitializeUi()
         {
             UpdateStatus_Timer.Stop();
@@ -44,7 +42,7 @@ namespace assetsUpdater.UI.WinForms
             UploadQueue.ErrorUnits.CollectionChanged += ErrorUnits_CollectionChanged;
         }
 
-        private void ErrorUnits_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        private void ErrorUnits_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add || e.NewItems?.Count > 0)
                 foreach (IUploadUnit eNewItem in e.NewItems ?? new List<IUploadUnit>())
@@ -88,7 +86,12 @@ namespace assetsUpdater.UI.WinForms
             //BuildUploadUnits()50 100
             //80
             var uploadProgress = UploadQueue.Progress * 100;
-            var progress = (_BuildUnitProgress / 5 + uploadProgress) / (100 / 5 + 100) * 100;
+            var progress = uploadProgress;
+            //progress fallback
+            if (progress<0)
+            {
+                return 0;
+            }
             return progress
                 ;
         }
@@ -103,9 +106,13 @@ namespace assetsUpdater.UI.WinForms
             ErrorUnitCount_Label.Text = UploadQueue.ErrorUnits.Count.ToString();
             UploadProgress_Label.Text =
                 $@"{FileSizeParser.ParseAuto(UploadQueue.BytesSent)}/{FileSizeParser.ParseAuto(UploadQueue.TotalBytesToUpload)}";
+            if (UploadQueue.CurrentUploadingUnits.Count<1)
+            {
+                return;
+            }
 
             if (UploadQueue.CurrentUploadingUnits.Count > 0)
-                currentProcessBar.Value = (int)UploadQueue.CurrentUploadingUnits[0].Progress;
+                currentProcessBar.Value = (int)(UploadQueue.CurrentUploadingUnits[0].Progress*100);
             else
                 currentProcessBar.Value = totalProccessBar.Value;
             totalProccessBar.Value = (int)GetTotalProgressBarProgress();
@@ -165,6 +172,8 @@ namespace assetsUpdater.UI.WinForms
         {
             await StartUpload().ConfigureAwait(false);
             await WaitUpload().ConfigureAwait(false);
+            
+
         }
 
         private void ReleaseProcessingForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -176,19 +185,9 @@ namespace assetsUpdater.UI.WinForms
         {
             //UpdateStatus_Timer.Interval = 500;
             //UpdateStatus_Timer.Start();
-
-            try
-            {
-                // UpdateStatus_Timer.Stop();
-                //UpdateStatus_Timer.Interval = 3000;
-                //UpdateStatus_Timer.Start();
-
-                UpdateStatus().Wait();
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception);
-            }
+            GC.Collect(1);
+            GC.WaitForPendingFinalizers();
+            UpdateStatus().Wait();
         }
 
         private void ReleaseProcessingForm_Load(object sender, System.EventArgs e)

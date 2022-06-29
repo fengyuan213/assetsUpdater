@@ -20,6 +20,7 @@ namespace assetsUpdater.UI.WinForms
         public static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly BackgroundWorker _initBg = new();
 
+        private  bool _dataInited=false;
         public ReleaseConfirmationForm(DataManager currentDataManager, DataManager originalDataManager)
         {
             OriginalDataManager = originalDataManager;
@@ -35,7 +36,7 @@ namespace assetsUpdater.UI.WinForms
         public RemoteDataManager RemoteDataManager { get; set; }
         public AssertUpgradePackage AssertUpgradePackage { get; set; }
 
-        private async void InitBgDoWork(object? sender, DoWorkEventArgs e)
+        private async void InitBgDoWork(object sender, DoWorkEventArgs e)
         {
             Logger.Info("Thread name:");
 
@@ -43,7 +44,7 @@ namespace assetsUpdater.UI.WinForms
             await InitializeData().ConfigureAwait(false);
         }
 
-        private async void InitBgRunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
+        private async void InitBgRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             _initBg.DoWork -= InitBgDoWork;
             _initBg.ProgressChanged -= InitBgProgressChanged;
@@ -51,7 +52,7 @@ namespace assetsUpdater.UI.WinForms
             await UpdateListView().ConfigureAwait(true);
         }
 
-        private void InitBgProgressChanged(object? sender, ProgressChangedEventArgs e)
+        private void InitBgProgressChanged(object sender, ProgressChangedEventArgs e)
         {
         }
 
@@ -92,6 +93,7 @@ namespace assetsUpdater.UI.WinForms
             {
             });
             db.BuildDatabaseWithUrl();*/
+            _dataInited = true;
         }
 
         private void InitializeUi()
@@ -125,14 +127,23 @@ namespace assetsUpdater.UI.WinForms
             DialogResult = DialogResult.Cancel;
             Close();
         }
+        private async void debug_btn_Click(object sender, System.EventArgs e)
+        {
+            await InitializeData();
+        }
 
         private async void Confirm_Btn_Click(object sender, System.EventArgs e)
         {
+            if (!_dataInited)
+            {
+                MessageBox.Show("请等待数据加载完成");
+                return;
+            }
             try
             {
                 if (await ReleasePreCheck().ConfigureAwait(false))
                 {
-                    var vFolderKey = "testdata";
+                    var vFolderKey = "test";
                     var uploadKeys = new List<string>()
                         ;
                     uploadKeys.AddRange(AssertUpgradePackage?.AddFile.Select(file => file.RelativePath) ??
@@ -182,10 +193,6 @@ namespace assetsUpdater.UI.WinForms
             return true;
         }
 
-        private async void debug_btn_Click(object sender, System.EventArgs e)
-        {
-            await InitializeData();
-        }
 
         private async Task UpdateListView()
         {

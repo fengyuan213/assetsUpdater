@@ -158,11 +158,12 @@ namespace assetsUpdater.UI.WinForms
 
                     await rdm.StorageProvider.Export(path);
                     Logger.Info($"Export to {path} completed...");
-                    var r = MessageBox.Show("你想打开输出文件所在目录吗?", "信息", MessageBoxButtons.YesNo);
-                    if (r == DialogResult.Yes)
-                    {
-                        using var p = Process.Start($"explorer {path}");
-                    }
+                    MessageBox.Show("导出成功!");
+                    /*    var r = MessageBox.Show("你想打开输出文件所在目录吗?", "信息", MessageBoxButtons.YesNo);
+                        if (r == DialogResult.Yes)
+                        {
+                            using var p = Process.Start($"explorer {path}");
+                        }*/
                 }
             }
             catch (Exception exception)
@@ -197,13 +198,14 @@ namespace assetsUpdater.UI.WinForms
             UpdateUi();
         }
 
-        private void debug_LoadDefaultBtn_Click(object sender, System.EventArgs e)
+        private async void debug_LoadDefaultBtn_Click(object sender, System.EventArgs e)
         {
+            await ConstructDatabase().ConfigureAwait(false);
         }
 
         private async void CreateDbTestBtn_Click(object sender, System.EventArgs e)
         {
-            await ConstructDatabase().ConfigureAwait(false);
+           
         }
 
         private void CreateDatabaseForm_Load(object sender, System.EventArgs e)

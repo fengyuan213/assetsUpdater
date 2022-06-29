@@ -25,8 +25,9 @@ namespace assetsUpdater.UI.WinForms
 
         private void InitializeUi()
         {
-            CurrentRootAddress_Label.Text ="当前值:"+ AddressBuilder.RootDownloadAddress;
-
+            
+            RootDownloadAddr_TextBox.Text = AddressBuilder.RootDownloadAddress;
+            
         }
         private void Confirm_Btn_Click(object sender, System.EventArgs e)
         {

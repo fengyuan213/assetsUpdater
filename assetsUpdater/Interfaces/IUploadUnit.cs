@@ -10,6 +10,9 @@ namespace assetsUpdater.Interfaces
 {
     public interface IUploadUnit
     {
+
+
+
         /// <summary>
         ///     Task represent current uploading task of upload unit
         /// </summary>

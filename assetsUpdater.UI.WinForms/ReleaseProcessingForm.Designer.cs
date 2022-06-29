@@ -151,7 +151,7 @@
             this.label7.Size = new System.Drawing.Size(68, 17);
             this.label7.TabIndex = 10;
             this.label7.Text = "错误数量：";
-           // 
+            // 
             // label8
             // 
             this.label8.AutoSize = true;
@@ -163,7 +163,7 @@
             // 
             // Start_Btn
             // 
-            this.Start_Btn.Location = new System.Drawing.Point(105, 465);
+            this.Start_Btn.Location = new System.Drawing.Point(98, 452);
             this.Start_Btn.Name = "Start_Btn";
             this.Start_Btn.Size = new System.Drawing.Size(75, 23);
             this.Start_Btn.TabIndex = 12;
@@ -173,7 +173,7 @@
             // 
             // PrintStatus_Btn
             // 
-            this.PrintStatus_Btn.Location = new System.Drawing.Point(491, 465);
+            this.PrintStatus_Btn.Location = new System.Drawing.Point(491, 452);
             this.PrintStatus_Btn.Name = "PrintStatus_Btn";
             this.PrintStatus_Btn.Size = new System.Drawing.Size(112, 23);
             this.PrintStatus_Btn.TabIndex = 13;

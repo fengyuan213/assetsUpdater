@@ -59,7 +59,7 @@ namespace assetsUpdater.UI.WinForms
             Logger.Fatal("Sample Fatal");
         }
 
-        private static void AssertVerify_LogNotify(object? sender, MessageNotifyEventArgs e)
+        private static void AssertVerify_LogNotify(object sender, MessageNotifyEventArgs e)
         {
             var nLogLevel = LogLevel.Trace;
 
