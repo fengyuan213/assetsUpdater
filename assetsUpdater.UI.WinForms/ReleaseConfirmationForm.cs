@@ -65,12 +65,12 @@ namespace assetsUpdater.UI.WinForms
 
         private async Task InitializeData()
         {
-            var vcs = CurrentDataManager.StorageProvider.GetBuildInDbData().Config.VersionControlFolder;
+            var vcs = CurrentDataManager.StorageProvider.GetData().Config.VersionControlFolder;
 
             try
             {
                 var provider = await DataManager
-                    .BuildDatabase<FileDatabase>(CurrentDataManager.StorageProvider.GetBuildInDbData().Config)
+                    .BuildDatabase<FileDatabase>(CurrentDataManager.StorageProvider.GetData().Config)
                     .ConfigureAwait(false);
                 RemoteDataManager = new RemoteDataManager(provider);
             }
@@ -106,14 +106,14 @@ namespace assetsUpdater.UI.WinForms
             _initBg.RunWorkerAsync();
             dirListView.AutoArrange = false;
             //Initialize Coloring Rule
-            var originalV = GetVersionString(OriginalDataManager.StorageProvider.GetBuildInDbData().Config.MajorVersion,
-                OriginalDataManager.StorageProvider.GetBuildInDbData().Config.MinorVersion);
-            var currentV = GetVersionString(CurrentDataManager.StorageProvider.GetBuildInDbData().Config.MajorVersion,
-                CurrentDataManager.StorageProvider.GetBuildInDbData().Config.MinorVersion);
+            var originalV = GetVersionString(OriginalDataManager.StorageProvider.GetData().Config.MajorVersion,
+                OriginalDataManager.StorageProvider.GetData().Config.MinorVersion);
+            var currentV = GetVersionString(CurrentDataManager.StorageProvider.GetData().Config.MajorVersion,
+                CurrentDataManager.StorageProvider.GetData().Config.MinorVersion);
 
             OriginalVer_Label.Text = originalV;
             CurrentVer_Label.Text = currentV;
-            UpdateUrl_Label.Text = RemoteDataManager?.StorageProvider.GetBuildInDbData().Config.UpdateUrl;
+            UpdateUrl_Label.Text = RemoteDataManager?.StorageProvider.GetData().Config.UpdateUrl;
         }
 
         private string GetVersionString(int major, int mirror)
@@ -153,10 +153,10 @@ namespace assetsUpdater.UI.WinForms
 
                     Logger.Debug("Files to upload:");
                     uploadKeys.ForEach(s => Logger.Debug(s));
-                    var localRoot = RemoteDataManager?.StorageProvider.GetBuildInDbData().Config.DownloadAddressBuilder
+                    var localRoot = RemoteDataManager?.StorageProvider.GetData().Config.DownloadAddressBuilder
                         .LocalRootPath;
                     if (string.IsNullOrWhiteSpace(localRoot))
-                        localRoot = RemoteDataManager?.StorageProvider.GetBuildInDbData().Config.VersionControlFolder;
+                        localRoot = RemoteDataManager?.StorageProvider.GetData().Config.VersionControlFolder;
 
                     if (uploadKeys.Count < 1)
                     {
@@ -165,7 +165,7 @@ namespace assetsUpdater.UI.WinForms
                     }
 
                     var rpf = new ReleaseProcessingForm(uploadKeys,
-                        RemoteDataManager?.StorageProvider.GetBuildInDbData().Config.DownloadAddressBuilder ??
+                        RemoteDataManager?.StorageProvider.GetData().Config.DownloadAddressBuilder ??
                         throw new ArgumentNullException(nameof(RemoteDataManager)), vFolderKey);
                     var result = rpf.ShowDialog(this);
                     Logger.Info($"Release Window Result:{result}");
@@ -197,7 +197,7 @@ namespace assetsUpdater.UI.WinForms
         private async Task UpdateListView()
         {
             if (RemoteDataManager == null) return;
-            var data = RemoteDataManager.StorageProvider.GetBuildInDbData();
+            var data = RemoteDataManager.StorageProvider.GetData();
             AssertUpgradePackage = await AssertVerify
                 .DatabaseCompare(RemoteDataManager.StorageProvider, OriginalDataManager.StorageProvider)
                 .ConfigureAwait(false);

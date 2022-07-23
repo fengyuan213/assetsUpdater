@@ -77,8 +77,8 @@ namespace assetsUpdater
         private static Task<bool> IsUpdateRequired(IStorageProvider local, IStorageProvider remote,
             bool ignoreMirrorChanges = false)
         {
-            var localData = local.GetBuildInDbData();
-            var remoteData = remote.GetBuildInDbData();
+            var localData = local.GetData();
+            var remoteData = remote.GetData();
 
             if (localData.Config.MajorVersion != remoteData.Config.MajorVersion ||
                 localData.Config.MinorVersion != remoteData.Config.MinorVersion)
@@ -96,8 +96,8 @@ namespace assetsUpdater
         public static Task<AssertUpgradePackage> DatabaseCompare(IStorageProvider remoteProvider,
             IStorageProvider localProvider)
         {
-            var remoteData = remoteProvider.GetBuildInDbData().DatabaseFiles;
-            var localData = localProvider.GetBuildInDbData().DatabaseFiles;
+            var remoteData = remoteProvider.GetData().DatabaseFiles;
+            var localData = localProvider.GetData().DatabaseFiles;
             var package = DatabaseCompare(remoteData, localData);
 
             return Task.FromResult(package);

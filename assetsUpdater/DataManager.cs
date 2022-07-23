@@ -41,7 +41,7 @@ namespace assetsUpdater
 
         public virtual Task<bool> IsDataValid()
         {
-            var data = StorageProvider.GetBuildInDbData();
+            var data = StorageProvider.GetData();
 
             if (!data.DatabaseFiles.Any() ||
                 data.DatabaseFiles == null ||
@@ -82,7 +82,7 @@ namespace assetsUpdater
                 {
                     AssertVerify.OnMessageNotify(MethodBase.GetCurrentMethod(), MsgL.Info,
                         "Database are built by unique urls", false, null);
-                    var data = storageProvider.GetBuildInDbData();
+                    var data = storageProvider.GetData();
                     foreach (var dataDatabaseFile in data.DatabaseFiles)
                         dataDatabaseFile.DownloadAddress =
                             config.DownloadAddressBuilder.BuildUri(dataDatabaseFile.RelativePath).ToString();

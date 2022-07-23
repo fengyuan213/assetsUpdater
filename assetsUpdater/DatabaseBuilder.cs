@@ -27,7 +27,7 @@ namespace assetsUpdater
         public async Task BuildDatabaseWithUrl(DbConfig config, string exportPath)
         {
             await storageProvider.Create(config).ConfigureAwait(false);
-            var data = storageProvider.GetBuildInDbData();
+            var data = storageProvider.GetData();
             foreach (var dataDatabaseFile in data.DatabaseFiles)
                 dataDatabaseFile.DownloadAddress =
                     config.DownloadAddressBuilder.BuildUri(dataDatabaseFile.RelativePath).ToString();

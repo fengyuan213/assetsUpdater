@@ -86,7 +86,7 @@ namespace assetsUpdater.UI.WinForms
                 }
 
                 _ldbNameUi = Path.GetFileName(ChosenDataManager.DatabasePath) ?? "";
-                _vcsFolderUi = ChosenDataManager.StorageProvider.GetBuildInDbData().Config.VersionControlFolder;
+                _vcsFolderUi = ChosenDataManager.StorageProvider.GetData().Config.VersionControlFolder;
 
                 OriginalDataManager = new LocalDataManager((IStorageProvider)ChosenDataManager.StorageProvider.Clone());            //ReEnableControl
 
@@ -147,7 +147,7 @@ namespace assetsUpdater.UI.WinForms
             {
                 //Update Properties
 
-                ChosenDataManager.StorageProvider.GetBuildInDbData().Config.VersionControlFolder = vcs_folderBrowserDialog.SelectedPath;
+                ChosenDataManager.StorageProvider.GetData().Config.VersionControlFolder = vcs_folderBrowserDialog.SelectedPath;
 
                 //Update UI
                 _ldbNameUi = vcs_folderBrowserDialog.SelectedPath;

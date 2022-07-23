@@ -27,7 +27,7 @@ namespace assetsUpdater
 
         public override async Task<bool> IsDataValid()
         {
-            var data = StorageProvider?.GetBuildInDbData();
+            var data = StorageProvider?.GetData();
 
             if (data == null) return await base.IsDataValid();
             if (data.Config.DownloadAddressBuilder == null) return false;

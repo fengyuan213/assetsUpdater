@@ -88,7 +88,7 @@ internal static class Program
         foreach (var databaseFile in assertUpgradePackage.DifferFile)
             Console.WriteLine("File to Change:{0}", databaseFile.FileName);
 
-        var localRootPath = localStorageProvider.GetBuildInDbData().Config.VersionControlFolder;
+        var localRootPath = localStorageProvider.GetData().Config.VersionControlFolder;
         IAddressBuilder addressBuilder = new DefaultAddressBuilder("", "");
 
         var pm = new PackageManager(assertUpgradePackage, addressBuilder);

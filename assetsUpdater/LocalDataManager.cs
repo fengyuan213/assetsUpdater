@@ -14,8 +14,9 @@ namespace assetsUpdater
     {
         public LocalDataManager(IStorageProvider storageProvider) : base(storageProvider)
         {
+            MessageQueue
         }
-
+        
         public LocalDataManager(string dbPath, bool isAsync = false) : base(dbPath, isAsync)
         {
             /*DatabasePath = dbPath;
@@ -38,9 +39,16 @@ namespace assetsUpdater
                 if (!File.Exists(DatabasePath)) return false;
                 try
                 {
-                    var database = new FileDatabase(StorageProvider);
-                    if (string.IsNullOrWhiteSpace(database.Data.Config.VersionControlFolder)) return false;
-                    return database.IsValidDb();
+                    if (string.IsNullOrWhiteSpace(StorageProvider.GetBuildInDbData().Config.VersionControlFolder)) return false;
+                    if (StorageProvider is FileDatabase db)
+                    {
+                        return db.IsValidDb();
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                   
                 }
                 catch (Exception e)
                 {

@@ -149,8 +149,8 @@ namespace AssertsUpdaterTests
 
             Assert.IsTrue(await remoteDbManager.remoteDataManager.IsDataValid());
 
-            Assert.IsFalse(remoteDbManager.remoteDataManager.StorageProvider.GetBuildInDbData().Config.MajorVersion ==
-                           provider.GetBuildInDbData().Config.MajorVersion);
+            Assert.IsFalse(remoteDbManager.remoteDataManager.StorageProvider.GetData().Config.MajorVersion ==
+                           provider.GetData().Config.MajorVersion);
         }
     }
 }

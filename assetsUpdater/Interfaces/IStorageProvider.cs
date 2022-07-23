@@ -12,7 +12,7 @@ namespace assetsUpdater.Interfaces
 {
     public interface IStorageProvider : IEquatable<object>, ICloneable
     {
-        DbData GetBuildInDbData();
+        DbData GetData();
 
         Task Create(DbConfig config);
 

@@ -62,7 +62,7 @@ namespace assetsUpdater.StorageProvider
 
         public FileDatabase(IStorageProvider storageProvider)
         {
-            Data = storageProvider.GetBuildInDbData();
+            Data = storageProvider.GetData();
         }
 
         #region Prop
@@ -313,7 +313,7 @@ namespace assetsUpdater.StorageProvider
             return Data?.DatabaseFiles?.ToDictionary(versionControlFile => versionControlFile.RelativePath);
         }
 
-        public DbData GetBuildInDbData()
+        public DbData GetData()
         {
             return Data;
         }

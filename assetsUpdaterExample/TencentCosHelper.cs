@@ -6,7 +6,7 @@ using COSXML.Auth;
 
 namespace assetsUpdaterExample
 {
-    public struct TencentCosConfiguration
+    public struct TencentCosConfiguration 
     {
         public TencentCosConfiguration(string bucketAppid, string appid, string defaultRegion, string secretId, string secretKey, int signatureDuration)
         {

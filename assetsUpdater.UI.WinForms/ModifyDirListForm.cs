@@ -38,8 +38,8 @@ namespace assetsUpdater.UI.WinForms
 
         public ModifyDirListForm(DataManager dataManager)
         {
-            VcsRoot = dataManager.StorageProvider.GetBuildInDbData().Config.VersionControlFolder;
-            DatabaseSchema = dataManager.StorageProvider.GetBuildInDbData().Config.DatabaseSchema ?? new DbSchema();
+            VcsRoot = dataManager.StorageProvider.GetData().Config.VersionControlFolder;
+            DatabaseSchema = dataManager.StorageProvider.GetData().Config.DatabaseSchema ?? new DbSchema();
             Initialize();
         }
 
