@@ -12,18 +12,18 @@ namespace AssertsUpdaterTests
     [TestClass]
     public class LocalDataManagerTests
     {
-        private IStorageProvider mockStorageProvider;
+        private IDbData _mockDbData;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            this.mockStorageProvider = Mock.Create<IStorageProvider>();
+            this._mockDbData = Mock.Create<IDbData>();
         }
 
         private LocalDataManager CreateManager()
         {
             return new LocalDataManager(
-                this.mockStorageProvider);
+                this._mockDbData);
         }
 
         [TestMethod]

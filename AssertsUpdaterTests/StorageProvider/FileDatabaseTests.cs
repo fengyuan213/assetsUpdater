@@ -234,7 +234,7 @@ namespace AssertsUpdaterTests.StorageProvider
             var fileDatabase = CreateFileDatabase();
 
             // Act
-            var result = fileDatabase.GetData();
+            var result = fileDatabase.Data();
 
             // Assert
             Assert.AreEqual(result.Config, FileDatabaseConfig);

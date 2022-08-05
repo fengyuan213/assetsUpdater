@@ -10,29 +10,29 @@ namespace assetsUpdater
 {
     public class DatabaseBuilder
     {
-        private readonly IStorageProvider storageProvider;
+        private readonly IDbData _dbData;
 
-        public DatabaseBuilder(IStorageProvider storageProvider)
+        public DatabaseBuilder(IDbData dbData)
         {
-            this.storageProvider = storageProvider;
+            this._dbData = dbData;
         }
 
         public async Task BuildDatabase(DbConfig config, string exportPath)
         {
-            await storageProvider.Create(config).ConfigureAwait(false);
+            await _dbData.Create(config).ConfigureAwait(false);
 
-            await storageProvider.Export(exportPath);
+            await _dbData.Export(exportPath);
         }
 
         public async Task BuildDatabaseWithUrl(DbConfig config, string exportPath)
         {
-            await storageProvider.Create(config).ConfigureAwait(false);
-            var data = storageProvider.GetData();
+            await _dbData.Create(config).ConfigureAwait(false);
+            var data = _dbData.Data();
             foreach (var dataDatabaseFile in data.DatabaseFiles)
                 dataDatabaseFile.DownloadAddress =
                     config.DownloadAddressBuilder.BuildUri(dataDatabaseFile.RelativePath).ToString();
 
-            await storageProvider.Export(exportPath);
+            await _dbData.Export(exportPath);
         }
     }
 }

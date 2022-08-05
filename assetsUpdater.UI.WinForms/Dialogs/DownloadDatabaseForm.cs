@@ -11,15 +11,15 @@ namespace assetsUpdater.UI.WinForms.Dialogs
     public partial class DownloadDatabaseForm : Form
     {
         public static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-#pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的 属性“StorageProvider”必须包含非 null 值。请考虑将 属性 声明为可以为 null。
+#pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的 属性“DbData”必须包含非 null 值。请考虑将 属性 声明为可以为 null。
 
         public DownloadDatabaseForm()
-#pragma warning restore CS8618 // 在退出构造函数时，不可为 null 的 属性“StorageProvider”必须包含非 null 值。请考虑将 属性 声明为可以为 null。
+#pragma warning restore CS8618 // 在退出构造函数时，不可为 null 的 属性“DbData”必须包含非 null 值。请考虑将 属性 声明为可以为 null。
         {
             InitializeComponent();
         }
 
-        public IStorageProvider StorageProvider { get; set; }
+        public IDbData DbData { get; set; }
 
         private async void Download_Btn_Click(object sender, System.EventArgs e)
         {
@@ -28,10 +28,10 @@ namespace assetsUpdater.UI.WinForms.Dialogs
                 if (IsTencentCdn_CheckBox.Checked)
                 {
                 }
-                StorageProvider = new FileDatabase();
+                DbData = new FileDatabase();
                 var addr = Address_TextBox.Text;
 
-                await StorageProvider.Download(addr).ConfigureAwait(false);
+                await DbData.Download(addr).ConfigureAwait(false);
 
                 DialogResult = DialogResult.OK;
             }

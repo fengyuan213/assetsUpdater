@@ -51,14 +51,14 @@ namespace assetsUpdater
 
             var remoteDb = await RemoteDataManager.GetStorageProvider(url);
 
-            if (await IsUpdateRequired(dm.StorageProvider, remoteDb)) return (new RemoteDataManager(remoteDb), true);
+            if (await IsUpdateRequired(dm.DbData, remoteDb)) return (new RemoteDataManager(remoteDb), true);
             //No updates return default
 
             return (new RemoteDataManager(remoteDb), false);
         }
 
         public static async Task<(RemoteDataManager remoteDataManager, bool isUpdateRequired)> Check_Update(
-            IStorageProvider localProvider, string remoteUrl)
+            IDbData localProvider, string remoteUrl)
         {
             if (string.IsNullOrWhiteSpace(remoteUrl)) throw new ArgumentNullException(remoteUrl);
             var localDataManager = new LocalDataManager(localProvider);
@@ -74,11 +74,11 @@ namespace assetsUpdater
             return await Check_UpdateInternal(localDataManager, remoteUrl);
         }
 
-        private static Task<bool> IsUpdateRequired(IStorageProvider local, IStorageProvider remote,
+        private static Task<bool> IsUpdateRequired(IDbData local, IDbData remote,
             bool ignoreMirrorChanges = false)
         {
-            var localData = local.GetData();
-            var remoteData = remote.GetData();
+            var localData = local.Data();
+            var remoteData = remote.Data();
 
             if (localData.Config.MajorVersion != remoteData.Config.MajorVersion ||
                 localData.Config.MinorVersion != remoteData.Config.MinorVersion)
@@ -93,11 +93,11 @@ namespace assetsUpdater
         {
         }*/
 
-        public static Task<AssertUpgradePackage> DatabaseCompare(IStorageProvider remoteProvider,
-            IStorageProvider localProvider)
+        public static Task<AssertUpgradePackage> DatabaseCompare(IDbData remoteProvider,
+            IDbData localProvider)
         {
-            var remoteData = remoteProvider.GetData().DatabaseFiles;
-            var localData = localProvider.GetData().DatabaseFiles;
+            var remoteData = remoteProvider.Data().DatabaseFiles;
+            var localData = localProvider.Data().DatabaseFiles;
             var package = DatabaseCompare(remoteData, localData);
 
             return Task.FromResult(package);

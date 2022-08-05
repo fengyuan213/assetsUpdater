@@ -28,7 +28,7 @@ namespace assetsUpdater.StorageProvider
     /// <summary>
     ///     FileDatabase give access to the version control system keneral
     /// </summary>
-    public class FileDatabase : IEquatable<FileDatabase>, IStorageProvider, ICloneable
+    public class FileDatabase : IEquatable<FileDatabase>, IDbData, ICloneable
     {
         /// <summary>
         ///     May throw exception
@@ -60,9 +60,9 @@ namespace assetsUpdater.StorageProvider
             Task.Run(async delegate { await Read(stream).ConfigureAwait(false); });
         }
 
-        public FileDatabase(IStorageProvider storageProvider)
+        public FileDatabase(IDbData dbData)
         {
-            Data = storageProvider.GetData();
+            Data = dbData.Data();
         }
 
         #region Prop
@@ -313,7 +313,7 @@ namespace assetsUpdater.StorageProvider
             return Data?.DatabaseFiles?.ToDictionary(versionControlFile => versionControlFile.RelativePath);
         }
 
-        public DbData GetData()
+        public DbData Data()
         {
             return Data;
         }

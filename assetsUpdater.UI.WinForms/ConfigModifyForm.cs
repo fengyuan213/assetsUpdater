@@ -28,7 +28,7 @@ namespace assetsUpdater.UI.WinForms
         private void InitializeUi()
         {
             AddressBuilder_ComboBox.Enabled = false;
-            var data = DataManager.StorageProvider.GetData();
+            var data = DataManager.DbData.Data();
 
             MajV_TextBox.Text = data.Config.MajorVersion.ToString();
             MirrorV_TextBox.Text = data.Config.MinorVersion.ToString();
@@ -41,7 +41,7 @@ namespace assetsUpdater.UI.WinForms
 
         private void UpdateResult()
         {
-            var data = DataManager.StorageProvider.GetData();
+            var data = DataManager.DbData.Data();
             data.Config.MinorVersion = int.TryParse(MirrorV_TextBox.Text, out int result) ? result : data.Config.MinorVersion;
 
             data.Config.MajorVersion = int.TryParse(MajV_TextBox.Text, out int r) ? r : data.Config.MajorVersion;
@@ -52,9 +52,9 @@ namespace assetsUpdater.UI.WinForms
         private void Confirm_Btn_Click(object sender, System.EventArgs e)
         {
             UpdateResult();
-            Logger.Debug("MajorV:{0}", DataManager.StorageProvider.GetData().Config.MajorVersion);
-            Logger.Debug("MirrorV:{0}", DataManager.StorageProvider.GetData().Config.MinorVersion);
-            Logger.Debug("UpdateUrl:{0}", DataManager.StorageProvider.GetData().Config.UpdateUrl);
+            Logger.Debug("MajorV:{0}", DataManager.DbData.Data().Config.MajorVersion);
+            Logger.Debug("MirrorV:{0}", DataManager.DbData.Data().Config.MinorVersion);
+            Logger.Debug("UpdateUrl:{0}", DataManager.DbData.Data().Config.UpdateUrl);
             this.DialogResult=DialogResult.OK;
             this.Close();
         }
@@ -81,7 +81,7 @@ namespace assetsUpdater.UI.WinForms
 
         private void ModifyAddressBuilder_Btn_Click(object sender, System.EventArgs e)
         {
-            var maf = new ModifyAddressBuilderForm(DataManager.StorageProvider.GetData().Config.DownloadAddressBuilder)
+            var maf = new ModifyAddressBuilderForm(DataManager.DbData.Data().Config.DownloadAddressBuilder)
             {
 
             };

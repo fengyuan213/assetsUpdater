@@ -17,7 +17,7 @@ namespace assetsUpdater
         {
         }
 
-        public RemoteDataManager(IStorageProvider storageProvider) : base(storageProvider)
+        public RemoteDataManager(IDbData dbData) : base(dbData)
         {
         }
 
@@ -27,7 +27,7 @@ namespace assetsUpdater
 
         public override async Task<bool> IsDataValid()
         {
-            var data = StorageProvider?.GetData();
+            var data = DbData?.Data();
 
             if (data == null) return await base.IsDataValid();
             if (data.Config.DownloadAddressBuilder == null) return false;
@@ -53,7 +53,7 @@ namespace assetsUpdater
             return await base.IsDataValid();
         }
 
-        public static async Task<IStorageProvider> GetStorageProvider(string dbUrl)
+        public static async Task<IDbData> GetStorageProvider(string dbUrl)
         {
             var fileDatabase = new FileDatabase();
 

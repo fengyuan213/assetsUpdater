@@ -72,14 +72,14 @@ internal static class Program
         var dbPath = "";
         var ldm = new LocalDataManager(dbPath);
 
-        var localStorageProvider = ldm.StorageProvider;
+        var localStorageProvider = ldm.DbData;
         var result = await AssertVerify.Check_Update(localStorageProvider, url);
 
         if (result == (null, false)) Console.WriteLine("Failed to Fetch Update");
 
         if (!result.isUpdateRequired) return;
         var assertUpgradePackage =
-           await AssertVerify.DatabaseCompare(result.remoteDataManager.StorageProvider, localStorageProvider);
+           await AssertVerify.DatabaseCompare(result.remoteDataManager.DbData, localStorageProvider);
 
         foreach (var databaseFile in assertUpgradePackage.AddFile)
             Console.WriteLine("File to Add:{0}", databaseFile.FileName);
@@ -88,7 +88,7 @@ internal static class Program
         foreach (var databaseFile in assertUpgradePackage.DifferFile)
             Console.WriteLine("File to Change:{0}", databaseFile.FileName);
 
-        var localRootPath = localStorageProvider.GetData().Config.VersionControlFolder;
+        var localRootPath = localStorageProvider.Data().Config.VersionControlFolder;
         IAddressBuilder addressBuilder = new DefaultAddressBuilder("", "");
 
         var pm = new PackageManager(assertUpgradePackage, addressBuilder);

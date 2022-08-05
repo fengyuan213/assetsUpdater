@@ -18,9 +18,9 @@ namespace assetsUpdater
     {
         public string DatabasePath;
 
-        protected DataManager(IStorageProvider storageProvider)
+        protected DataManager(IDbData dbData)
         {
-            StorageProvider = storageProvider;
+            DbData = dbData;
         }
 
 
@@ -28,20 +28,20 @@ namespace assetsUpdater
 
         {
             DatabasePath = dbPath;
-            if (!string.IsNullOrWhiteSpace(dbPath)) StorageProvider = new FileDatabase(dbPath, isAsync);
+            if (!string.IsNullOrWhiteSpace(dbPath)) DbData = new FileDatabase(dbPath, isAsync);
         }
 
 
         protected DataManager(Stream dbStream)
         {
-            if (dbStream.CanRead) StorageProvider = new FileDatabase(dbStream);
+            if (dbStream.CanRead) DbData = new FileDatabase(dbStream);
         }
 
-        public IStorageProvider StorageProvider { get; }
+        public IDbData DbData { get; }
 
         public virtual Task<bool> IsDataValid()
         {
-            var data = StorageProvider.GetData();
+            var data = DbData.Data();
 
             if (!data.DatabaseFiles.Any() ||
                 data.DatabaseFiles == null ||
@@ -69,12 +69,12 @@ namespace assetsUpdater
         /// <param name="isBuildUniqueAddress"></param>
         /// <exception cref="InvalidDataException"></exception>
         /// <returns></returns>
-        public static async Task<IStorageProvider> BuildDatabase<TStorageProvider>(DbConfig config,
-            bool isBuildUniqueAddress = false) where TStorageProvider : IStorageProvider
+        public static async Task<IDbData> BuildDatabase<TStorageProvider>(DbConfig config,
+            bool isBuildUniqueAddress = false) where TStorageProvider : IDbData
         {
             var t = typeof(TStorageProvider);
             AssertVerify.OnMessageNotify(null, $"Building Database of type:{t.FullName}");
-            var storageProvider = (IStorageProvider)Activator.CreateInstance(t);
+            var storageProvider = (IDbData)Activator.CreateInstance(t);
             if (storageProvider != null)
             {
                 await storageProvider.Create(config).ConfigureAwait(false);
@@ -82,7 +82,7 @@ namespace assetsUpdater
                 {
                     AssertVerify.OnMessageNotify(MethodBase.GetCurrentMethod(), MsgL.Info,
                         "Database are built by unique urls", false, null);
-                    var data = storageProvider.GetData();
+                    var data = storageProvider.Data();
                     foreach (var dataDatabaseFile in data.DatabaseFiles)
                         dataDatabaseFile.DownloadAddress =
                             config.DownloadAddressBuilder.BuildUri(dataDatabaseFile.RelativePath).ToString();
@@ -93,7 +93,7 @@ namespace assetsUpdater
             return storageProvider;
         }
 
-        /*public virtual Task<IStorageProvider> BuildDatabase(IStorageProvider storageProvider)
+        /*public virtual Task<IDbData> BuildDatabase(IDbData dbData)
         {
         }*/
     }

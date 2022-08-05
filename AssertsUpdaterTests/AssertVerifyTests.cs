@@ -107,7 +107,7 @@ namespace AssertsUpdaterTests
             Console.WriteLine("Test Succeed");
         }
 
-        private IStorageProvider GetStorageProvider_Check_Update()
+        private IDbData GetStorageProvider_Check_Update()
         {
             var dbConfig = new DbConfig(Directory.GetCurrentDirectory())
             {
@@ -149,8 +149,8 @@ namespace AssertsUpdaterTests
 
             Assert.IsTrue(await remoteDbManager.remoteDataManager.IsDataValid());
 
-            Assert.IsFalse(remoteDbManager.remoteDataManager.StorageProvider.GetData().Config.MajorVersion ==
-                           provider.GetData().Config.MajorVersion);
+            Assert.IsFalse(remoteDbManager.remoteDataManager.DbData.Data().Config.MajorVersion ==
+                           provider.Data().Config.MajorVersion);
         }
     }
 }

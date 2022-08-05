@@ -156,7 +156,7 @@ namespace assetsUpdater.UI.WinForms
                     var path = dbSaveFileDialog.FileName;
                     Logger.Info($"Selected export path:{path},exporting...");
 
-                    await rdm.StorageProvider.Export(path);
+                    await rdm.DbData.Export(path);
                     Logger.Info($"Export to {path} completed...");
                     MessageBox.Show("导出成功!");
                     /*    var r = MessageBox.Show("你想打开输出文件所在目录吗?", "信息", MessageBoxButtons.YesNo);

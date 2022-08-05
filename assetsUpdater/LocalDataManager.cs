@@ -12,9 +12,9 @@ namespace assetsUpdater
 {
     public class LocalDataManager : DataManager
     {
-        public LocalDataManager(IStorageProvider storageProvider) : base(storageProvider)
+        public LocalDataManager(IDbData dbData) : base(dbData)
         {
-            MessageQueue
+            
         }
         
         public LocalDataManager(string dbPath, bool isAsync = false) : base(dbPath, isAsync)
@@ -22,12 +22,14 @@ namespace assetsUpdater
             /*DatabasePath = dbPath;
             if (!string.IsNullOrWhiteSpace(dbPath))
             {
-                StorageProvider = new FileDatabase(dbPath);
+                DbData = new FileDatabase(dbPath);
             }*/
         }
 
         public LocalDataManager(Stream stream) : base(stream)
         {
+            
+            //我的世界有你更精彩
         }
 
         public override async Task<bool> IsDataValid()
@@ -39,8 +41,8 @@ namespace assetsUpdater
                 if (!File.Exists(DatabasePath)) return false;
                 try
                 {
-                    if (string.IsNullOrWhiteSpace(StorageProvider.GetBuildInDbData().Config.VersionControlFolder)) return false;
-                    if (StorageProvider is FileDatabase db)
+                    if (string.IsNullOrWhiteSpace(DbData.Data().Config.VersionControlFolder)) return false;
+                    if (DbData is FileDatabase db)
                     {
                         return db.IsValidDb();
                     }

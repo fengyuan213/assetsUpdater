@@ -24,7 +24,7 @@ namespace AssertsUpdaterTests
     [TestClass]
     public class DatabaseBuilderTests
     {
-        private IStorageProvider mockStorageProvider;
+        private IDbData _mockDbData;
         private const string testDir = "testFiles";
         private const string testDirWithRoot = "/rootDirTest";
         private const string testSFDir = "singleFile";
@@ -33,13 +33,13 @@ namespace AssertsUpdaterTests
         [TestInitialize]
         public void TestInitialize()
         {
-            mockStorageProvider = Mock.Create<FileDatabase>();
+            _mockDbData = Mock.Create<FileDatabase>();
         }
 
         private DatabaseBuilder CreateStorageProviderHelper()
         {
             return new DatabaseBuilder(
-                mockStorageProvider);
+                _mockDbData);
         }
 
         [TestMethod]
