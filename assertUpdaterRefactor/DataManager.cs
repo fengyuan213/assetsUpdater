@@ -44,10 +44,10 @@ namespace assertUpdaterRefactor
         protected virtual DbData GetDbData()
         {
 
-            return StorageProvider.Refresh().Result;
+            return StorageProvider.RefreshAsync().Result;
             /* if (Data==DbData.Empty)
              {
-                 return StorageProvider.Refresh().Result;
+                 return StorageProvider.RefreshAsync().Result;
              }
              else
              {
@@ -133,7 +133,7 @@ namespace assertUpdaterRefactor
 
                     Console.WriteLine($"{MethodBase.GetCurrentMethod()},  \"Database are built by unique urls\"");
 
-                    DbData data = storageProvider.Refresh().Result; //todo::add cache
+                    DbData data = storageProvider.RefreshAsync().Result; //todo::add cache
                     foreach (DbFile dataDatabaseFile in data.DatabaseFiles)
                     {
                         dataDatabaseFile.DownloadAddress =
@@ -142,7 +142,7 @@ namespace assertUpdaterRefactor
                 }
                 Console.WriteLine($"Database Build finished type:{t.FullName}");
                 Console.WriteLine("Refreshing Database...");
-                await storageProvider.Flush().ConfigureAwait(false);
+                await storageProvider.FlushAsync().ConfigureAwait(false);
 
                 Console.WriteLine("Finished Refreshing Database..");
                 return storageProvider;
@@ -219,7 +219,7 @@ namespace assertUpdaterRefactor
                 DbFile vcf = new(file, FileUtils.Sha1File(absolutePath),
                     FileUtils.GetFileSize(absolutePath), "");
                 //var vcf = new BuildInDbFile(file, Path.GetFileName(absolutePath), FileUtils.GetFileSize(absolutePath), FileUtils.Sha1File(absolutePath), null);
-                await storageProvider.Insert(vcf).ConfigureAwait(false);
+                await storageProvider.InsertAsync(vcf).ConfigureAwait(false);
             }
 
 

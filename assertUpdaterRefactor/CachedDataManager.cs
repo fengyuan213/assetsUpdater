@@ -26,9 +26,13 @@ namespace assertUpdaterRefactor
             get => GetDbData();
             set => SetDbData(value);
         }
+<<<<<<< HEAD
         //Regularly flush change to disk
         private DbData _cachedData=DbData.Empty ;
 
+=======
+        private DbData _cachedData;
+>>>>>>> 36095c5312f4bb80dd49ff8a7e22db8c42f24285
         protected override void SetDbData(DbData data)
         {
             _cachedData = data;

@@ -69,7 +69,7 @@ namespace assertUpdaterRefactor.StorageProvider
             {
                 async void Init()
                 {
-                    await Flush().ConfigureAwait(false);
+                    await FlushAsync().ConfigureAwait(false);
                 }
 
                 Init();
@@ -105,17 +105,21 @@ namespace assertUpdaterRefactor.StorageProvider
             /* ThreadPool.QueueUserWorkItem( (o) =>
             {
 
-                _ = Refresh().Result;
+                _ = RefreshAsync().Result;
               
             });*/
-            _ = Refresh().Result;
+            _ = RefreshAsync().Result;
             _dbData ??= DbData.Empty;
         }
 
 
+<<<<<<< HEAD
 
 
         public async Task<DbData> Refresh()
+=======
+        public async Task<DbData> RefreshAsync()
+>>>>>>> 36095c5312f4bb80dd49ff8a7e22db8c42f24285
         {
 
             try
@@ -184,12 +188,12 @@ namespace assertUpdaterRefactor.StorageProvider
 
         public async Task<DbData> RetrieveAll()
         {
-            _ = await Refresh().ConfigureAwait(false);
+            _ = await RefreshAsync().ConfigureAwait(false);
             return _dbData;
         }
 
 
-        public Task<DbFile> Retrieve(string filePath)
+        public Task<DbFile> RetrieveAsync(string filePath)
         {
             IEnumerable<DbFile> dbFile = _dbData.DatabaseFiles.Where((file, i) =>
                 FileUtils.MakeStandardRelativePath(file.RelativePath) ==
@@ -201,6 +205,7 @@ namespace assertUpdaterRefactor.StorageProvider
         }
 
 
+<<<<<<< HEAD
         public Task Flush(DbData data)
         {
             _dbData = data;
@@ -209,14 +214,22 @@ namespace assertUpdaterRefactor.StorageProvider
         }
 
         public Task Insert(DbFile dbFile)
+=======
+        public Task InsertAsync(DbFile dbFile)
+>>>>>>> 36095c5312f4bb80dd49ff8a7e22db8c42f24285
         {
 
             _dbData.DatabaseFiles = _dbData.DatabaseFiles.Append(dbFile);
 
             return Task.CompletedTask;
         }
+<<<<<<< HEAD
         
         public Task Flush()
+=======
+
+        public Task FlushAsync(string path = "")
+>>>>>>> 36095c5312f4bb80dd49ff8a7e22db8c42f24285
         {
            
              var   path = DbPath;
