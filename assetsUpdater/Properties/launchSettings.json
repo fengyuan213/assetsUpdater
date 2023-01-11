@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "assetsUpdater": {
-      "commandName": "Project",
-      "remoteDebugEnabled": false,
-      "nativeDebugging": true
-    }
-  }
-}
