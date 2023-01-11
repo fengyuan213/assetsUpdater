@@ -111,15 +111,8 @@ namespace assertUpdaterRefactor.StorageProvider
             _ = RefreshAsync().Result;
             _dbData ??= DbData.Empty;
         }
-
-
-<<<<<<< HEAD
-
-
-        public async Task<DbData> Refresh()
-=======
+        
         public async Task<DbData> RefreshAsync()
->>>>>>> 36095c5312f4bb80dd49ff8a7e22db8c42f24285
         {
 
             try
@@ -204,32 +197,21 @@ namespace assertUpdaterRefactor.StorageProvider
             return Task.FromResult(dbFile.First());
         }
 
-
-<<<<<<< HEAD
-        public Task Flush(DbData data)
+        
+        public Task FlushAsync(DbData data)
         {
             _dbData = data;
-            return Flush();
+            return FlushAsync();
        
         }
-
-        public Task Insert(DbFile dbFile)
-=======
         public Task InsertAsync(DbFile dbFile)
->>>>>>> 36095c5312f4bb80dd49ff8a7e22db8c42f24285
         {
 
             _dbData.DatabaseFiles = _dbData.DatabaseFiles.Append(dbFile);
 
             return Task.CompletedTask;
         }
-<<<<<<< HEAD
-        
-        public Task Flush()
-=======
-
-        public Task FlushAsync(string path = "")
->>>>>>> 36095c5312f4bb80dd49ff8a7e22db8c42f24285
+        public Task FlushAsync()
         {
            
              var   path = DbPath;

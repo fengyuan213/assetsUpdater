@@ -9,7 +9,7 @@ namespace assertUpdaterRefactor
         
         public CachedDataManager(IStorageProvider storageProvider) : base(storageProvider)
         {
-            _cachedData = StorageProvider.Refresh().Result;
+            _cachedData = StorageProvider.RefreshAsync().Result;
             // _cachedData = new Lazy<DbData>(()=>StorageProvider.Refresh().Result);
            
         }
@@ -26,13 +26,8 @@ namespace assertUpdaterRefactor
             get => GetDbData();
             set => SetDbData(value);
         }
-<<<<<<< HEAD
         //Regularly flush change to disk
-        private DbData _cachedData=DbData.Empty ;
-
-=======
         private DbData _cachedData;
->>>>>>> 36095c5312f4bb80dd49ff8a7e22db8c42f24285
         protected override void SetDbData(DbData data)
         {
             _cachedData = data;
@@ -49,7 +44,7 @@ namespace assertUpdaterRefactor
             {
                 lock (StorageProvider)
                 {
-                    StorageProvider.Flush(data).ContinueWith((task => isFlushing = false)).Wait();
+                    StorageProvider.FlushAsync(data).ContinueWith((task => isFlushing = false)).Wait();
 
                 }
 
