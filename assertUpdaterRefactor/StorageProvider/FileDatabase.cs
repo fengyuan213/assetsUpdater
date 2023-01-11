@@ -61,7 +61,7 @@ namespace assertUpdaterRefactor.StorageProvider
             {
                 async void Init()
                 {
-                    await Flush().ConfigureAwait(false);
+                    await FlushAsync().ConfigureAwait(false);
                 }
 
                 Init();
@@ -97,15 +97,15 @@ namespace assertUpdaterRefactor.StorageProvider
             /* ThreadPool.QueueUserWorkItem( (o) =>
             {
 
-                _ = Refresh().Result;
+                _ = RefreshAsync().Result;
               
             });*/
-            _ = Refresh().Result;
+            _ = RefreshAsync().Result;
             _dbData ??= DbData.Empty;
         }
 
 
-        public async Task<DbData> Refresh()
+        public async Task<DbData> RefreshAsync()
         {
 
             try
@@ -174,12 +174,12 @@ namespace assertUpdaterRefactor.StorageProvider
 
         public async Task<DbData> RetrieveAll()
         {
-            _ = await Refresh().ConfigureAwait(false);
+            _ = await RefreshAsync().ConfigureAwait(false);
             return _dbData;
         }
 
 
-        public Task<DbFile> Retrieve(string filePath)
+        public Task<DbFile> RetrieveAsync(string filePath)
         {
             IEnumerable<DbFile> dbFile = _dbData.DatabaseFiles.Where((file, i) =>
                 FileUtils.MakeStandardRelativePath(file.RelativePath) ==
@@ -191,7 +191,7 @@ namespace assertUpdaterRefactor.StorageProvider
         }
 
 
-        public Task Insert(DbFile dbFile)
+        public Task InsertAsync(DbFile dbFile)
         {
 
             _dbData.DatabaseFiles = _dbData.DatabaseFiles.Append(dbFile);
@@ -199,7 +199,7 @@ namespace assertUpdaterRefactor.StorageProvider
             return Task.CompletedTask;
         }
 
-        public Task Flush(string path = "")
+        public Task FlushAsync(string path = "")
         {
             if (string.IsNullOrWhiteSpace(path))
             {

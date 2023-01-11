@@ -24,7 +24,7 @@ namespace assertUpdaterRefactor
             get => GetDbData();
             set => SetDbData(value);
         }
-        private DbData _cachedData = DbData.Empty;
+        private DbData _cachedData;
         protected override void SetDbData(DbData data)
         {
             _cachedData = data;
