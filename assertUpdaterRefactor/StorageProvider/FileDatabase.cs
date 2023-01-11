@@ -15,6 +15,14 @@ namespace assertUpdaterRefactor.StorageProvider
         private string _tmpPath = "";
         private DbData _dbData;
 
+   /*     public DbData DbData
+        {
+            set
+            {
+                _dbData = value;
+            }
+        }*/
+
         public string DbPath
         {
             get => _tmpPath;
@@ -105,6 +113,8 @@ namespace assertUpdaterRefactor.StorageProvider
         }
 
 
+
+
         public async Task<DbData> Refresh()
         {
 
@@ -191,6 +201,13 @@ namespace assertUpdaterRefactor.StorageProvider
         }
 
 
+        public Task Flush(DbData data)
+        {
+            _dbData = data;
+            return Flush();
+       
+        }
+
         public Task Insert(DbFile dbFile)
         {
 
@@ -198,13 +215,12 @@ namespace assertUpdaterRefactor.StorageProvider
 
             return Task.CompletedTask;
         }
-
-        public Task Flush(string path = "")
+        
+        public Task Flush()
         {
-            if (string.IsNullOrWhiteSpace(path))
-            {
-                path = DbPath;
-            }
+           
+             var   path = DbPath;
+            
             string json = JsonConvert.SerializeObject(_dbData);
             using (FileStream stream = new(path, FileMode.Create))
             {

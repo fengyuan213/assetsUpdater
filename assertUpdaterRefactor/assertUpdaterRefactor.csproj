@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <Folder Include="IO\" />
+    <Folder Include="Network\" />
   </ItemGroup>
 
 </Project>
