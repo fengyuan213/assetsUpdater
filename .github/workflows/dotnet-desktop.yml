@@ -93,7 +93,7 @@ jobs:
       id: listPackage
       uses: Rishabh510/Path-lister-action@1.0
       with:
-          path: "${{ Build_Path }}"
+          path: "${{ env.Build_Path }}"
           type: ".nupkg"
 
     - name: Publish NuGet Package
