@@ -1,4 +1,4 @@
-namespace assertUpdaterTests
+namespace assertUpdater.Tests
 {
     [TestClass]
     public class RunTimeTests

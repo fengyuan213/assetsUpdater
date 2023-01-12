@@ -1,9 +1,8 @@
-﻿using assertUpdaterRefactor;
-using assertUpdaterRefactor.StorageProvider;
+﻿using assertUpdater;
+using assertUpdater.StorageProvider;
+using assertUpdater.Tests.Mocked;
 
-using assertUpdaterTests.Mocked;
-
-namespace assertUpdaterTests
+namespace assertUpdater.Tests
 {
     [TestClass]
     public class DataManagerTests
