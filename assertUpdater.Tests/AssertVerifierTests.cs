@@ -1,9 +1,8 @@
-﻿using assertUpdaterRefactor;
-using assertUpdaterRefactor.DbModel;
+﻿using assertUpdater;
+using assertUpdater.DbModel;
+using assertUpdater.Tests.Mocked;
 
-using assertUpdaterTests.Mocked;
-
-namespace assertUpdaterTests
+namespace assertUpdater.Tests
 {
     [TestClass]
     public class AssertVerifierTests

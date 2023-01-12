@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+	  <PackageId>AssertUpdater</PackageId>
+	  <Version>0.0.1-alpha</Version>
+	  <Authors>Fengyuan</Authors>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	  <Title>AssertUpdater</Title>
+	  <Description>AssertUpdater</Description>
+	  <IncludeSymbols>True</IncludeSymbols>
+	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	  <AnalysisLevel>latest-recommended</AnalysisLevel>
+  </PropertyGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="IO\" />
+    <Folder Include="Network\" />
+  </ItemGroup>
+
+</Project>

@@ -1,11 +1,10 @@
-﻿using assertUpdaterRefactor;
-using assertUpdaterRefactor.AddressBuilder;
-using assertUpdaterRefactor.DbModel;
-using assertUpdaterRefactor.StorageProvider;
+﻿using assertUpdater;
+using assertUpdater.AddressBuilder;
+using assertUpdater.DbModel;
+using assertUpdater.StorageProvider;
+using assertUpdater.Tests.Mocked;
 
-using assertUpdaterTests.Mocked;
-
-namespace assertUpdaterTests
+namespace assertUpdater.Tests
 {
     public class DataGenerators
     {

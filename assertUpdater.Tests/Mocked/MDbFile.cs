@@ -1,9 +1,8 @@
-﻿using assertUpdaterRefactor.DbModel;
-using assertUpdaterRefactor.Utils;
-
+﻿using assertUpdater.DbModel;
+using assertUpdater.Utils;
 using System.Diagnostics;
 
-namespace assertUpdaterTests.Mocked
+namespace assertUpdater.Tests.Mocked
 {
     public class MDbFile : DbFile
     {
