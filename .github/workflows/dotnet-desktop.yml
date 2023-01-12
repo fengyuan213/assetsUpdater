@@ -36,15 +36,15 @@
 # For a complete CI/CD sample to get started with GitHub Action workflows for Desktop Applications,
 # refer to https://github.com/microsoft/github-actions-for-desktop-apps
 
-name: .NET Core Desktop
+name: Pubish NuGet
 
 on:
   push:
-    branches: ["dev", "master" ]
-    tags:
-    - "v[0-9]+.[0-9]+.[0-9]+"
-  pull_request:
     branches: [ "master" ]
+    #tags:
+    #- "v[0-9]+.[0-9]+.[0-9]+"
+  pull_request:
+    #branches: [ "master" ]
 
 jobs:
 
@@ -93,10 +93,19 @@ jobs:
     - name: Set VERSION variable from tag
       run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
     - name: Dotnet Pack
-      run: dotnet pack -o ${{ env.Build_Path }} --configuration Release /p:Version=${VERSION}
+      #run: dotnet pack -o ${{ env.Build_Path }} --configuration Release /p:Version=${VERSION}
+      run: dotnet pack -o ${{ env.Build_Path }}
 
     - name: Push
-      run: dotnet nuget push AssertUpdater.${VERSION}.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${{ env.nuget_apikey }}
+      run: |
+            foreach($file in (Get-ChildItem "${{ env.Build_Path }}" -Recurse -Include *.nupkg)) {
+            echo $file
+           
+            #dotnet nuget push $file --api-key ${{ secrets.NUGET_APIKEY }} --source https://api.nuget.org/v3/index.json
+            dotnet nuget push $file --api-key "oy2mnyl5hmglqe5fvfuall2av3rx5oyeregt32ch3tmnmm" --source https://api.nuget.org/v3/index.json --skip-duplicate
+           
+            }
+      #dotnet nuget push AssertUpdater.${VERSION}.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${{ env.nuget_apikey }}
      # env:
         #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #    - name: Publish NuGet Package
