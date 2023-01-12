@@ -56,6 +56,7 @@ jobs:
                              # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
 
     env:
+      nuget_apikey: ${{ secrets.NUGET_APIKEY }}
       Solution_Name: assertUpdaterRefactor                         # Replace with your solution name, i.e. MyWpfApp.sln.
       Project_Path: assertUpdater/assertUpdater.csproj
       Test_Project_Path: assertUpdater.Tests/assertUpdater.Tests.csproj          # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
@@ -95,7 +96,7 @@ jobs:
         # Filepath of the project to be packaged, relative to root of repository
         PROJECT_FILE_PATH: ${{ env.Project_Path }}
 
-        BUILD_CONFIGURATION: Release
+        #BUILD_CONFIGURATION: Release
                 # NuGet package id, used for version detection & defaults to project name
         #PACKAGE_NAME:  # optional
         # Filepath with version info, relative to root of repository & defaults to PROJECT_FILE_PATH
@@ -109,9 +110,9 @@ jobs:
         # Format of the git tag, [*] gets replaced with actual version
         #TAG_FORMAT: # optional, default is v*
         # API key to authenticate with NuGet server
-        NUGET_KEY: ${{ vars.default.NUGET_APIKEY }}# optional
+        NUGET_KEY: ${{ nuget_apikey }} # optional
         # NuGet server uri hosting the packages, defaults to https://api.nuget.org
-        #NUGET_SOURCE: # optional, default is https://api.nuget.org
+        NUGET_SOURCE: https://api.nuget.org/v3/index.json # optional, default is https://api.nuget.org
         # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
         INCLUDE_SYMBOLS: true # optional
 
