@@ -100,12 +100,9 @@ jobs:
       run: |
             foreach($file in (Get-ChildItem "${{ env.Build_Path }}" -Recurse -Include *.nupkg)) {
             echo $file
-            }
-            foreach($file in (Get-ChildItem "${{ env.Build_Path }}" -Recurse -Include *.nupkg)) {
-            echo $file
            
-            #dotnet nuget push $file --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json
-            dotnet nuget push $file --api-key "oy2mnyl5hmglqe5fvfuall2av3rx5oyeregt32ch3tmnmm" --source https://api.nuget.org/v3/index.json
+            #dotnet nuget push $file --api-key ${{ secrets.NUGET_APIKEY }} --source https://api.nuget.org/v3/index.json
+            dotnet nuget push $file --api-key "oy2mnyl5hmglqe5fvfuall2av3rx5oyeregt32ch3tmnmm" --source https://api.nuget.org/v3/index.json --skip-duplicate
            
             }
       #dotnet nuget push AssertUpdater.${VERSION}.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${{ env.nuget_apikey }}
