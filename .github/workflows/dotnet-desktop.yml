@@ -41,6 +41,8 @@ name: .NET Core Desktop
 on:
   push:
     branches: ["dev", "master" ]
+    tags:
+    - "v[0-9]+.[0-9]+.[0-9]+"
   pull_request:
     branches: [ "master" ]
 
@@ -87,25 +89,26 @@ jobs:
       run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
       env:
         Configuration: ${{ matrix.configuration }}
+        
+    - name: Set VERSION variable from tag
+      run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
     - name: Dotnet Pack
-      run: dotnet pack -o ${{ env.Build_Path }}
-    - name: Path lister action
-      id: listPackage
-      uses: Rishabh510/Path-lister-action@1.0
-      with:
-          path: "${{ env.Build_Path }}"
-          type: ".nupkg"
+      run: dotnet pack -o ${{ env.Build_Path }} --configuration Release /p:Version=${VERSION}
 
-    - name: Publish NuGet Package
+    - name: Push
+      run: dotnet nuget push AssertUpdater.${VERSION}.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${{ env.nuget_apikey }}
+     # env:
+        #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#    - name: Publish NuGet Package
       #run: dotnet nuget push ${{ env.Build_Path }}/*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ env.nuget_apikey }} --skip-duplicate
  
-      run: |
-        echo "Found ${{ steps.listPackage.outputs.path_count }} file(s) with this extension:"
-        for i in ${{ steps.listPackage.outputs.paths }}; do
-        echo "Found $i"
-        #${{ env.Build_Path }}/*.nupkg
-        dotnet nuget push $i -s https://api.nuget.org/v3/index.json -k ${{ env.nuget_apikey }} --skip-duplicate
-        done
+#      run: |
+#        echo "Found ${{ steps.listPackage.outputs.path_count }} file(s) with this extension:"
+#        for i in ${{ steps.listPackage.outputs.paths }}; do
+#        echo "Found $i"
+#        #${{ env.Build_Path }}/*.nupkg
+#        dotnet nuget push $i -s https://api.nuget.org/v3/index.json -k ${{ env.nuget_apikey }} --skip-duplicate
+#        done
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     #- name: Upload build artifacts
      # uses: actions/upload-artifact@v3
