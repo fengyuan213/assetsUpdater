@@ -100,7 +100,7 @@ jobs:
       run: |
             foreach($file in (Get-ChildItem "${{ env.Build_Path }}" -Recurse -Include *.nupkg)) {
             echo $file
-            dotnet nuget push $file --api-key "${{ env.nuget_apikey }}" --source https://api.nuget.org/v3/index.json
+            dotnet nuget push $file --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json
             }
       #dotnet nuget push AssertUpdater.${VERSION}.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${{ env.nuget_apikey }}
      # env:
