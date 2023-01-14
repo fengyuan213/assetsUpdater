@@ -19,7 +19,7 @@ namespace assertUpdater.Tests
             DataGenerators dg = new();
             DbConfig config = dg.GenRandomConfig();
             string dbPath = GeneratorConfig.DbPath;
-            IStorageProvider provider = DataManager.BuildDatabase<FileDatabase>(config, false, dbPath).Result;
+            IStorageProvider provider = DataManager.BuildDatabase<FileDatabase>(config, dbPath).Result;
 
 
             return provider;
@@ -27,7 +27,8 @@ namespace assertUpdater.Tests
         public DataManager BuildDataManagerDefault()
         {
             IStorageProvider provider = BuildStorageProviderDefault();
-            DataManager dataManager = new CachedDataManager((IStorageProvider)provider.Clone());
+            var clonedProvider = (IStorageProvider)provider.Clone();
+            DataManager dataManager = new CachedDataManager(clonedProvider);
             return dataManager;
         }
 

@@ -4,7 +4,7 @@ using assertUpdater.Utils.Comparer;
 
 namespace assertUpdater
 {
-    public class AssertVerifier
+    public static class AssertVerifier
     {
 
         private static bool IsUpdateRequired(DataManager local, DataManager remote,
@@ -84,12 +84,15 @@ namespace assertUpdater
 
                 foreach (DbFile dbFile in assertUpgradePackage.AddFile)
                 {
-                    AddFileAssertOperation operation = new(vcs, dbFile);
+                    var remoteFile = new RemoteDbFile(remote.Data.Config.DownloadAddressBuilder, dbFile);
+                    AddFileAssertOperation operation = new( remoteFile);
+
                     operations.Add(operation);
                 }
                 foreach (DbFile dbFile in assertUpgradePackage.DifferFile)
                 {
-                    DifferFileAssertOperation operation = new(vcs, dbFile);
+                    var remoteFile = new RemoteDbFile(remote.Data.Config.DownloadAddressBuilder, dbFile);
+                    DifferFileAssertOperation operation = new(vcs, remoteFile);
                     operations.Add(operation);
                 }
                 foreach (DbFile dbFile in assertUpgradePackage.DeleteFile)

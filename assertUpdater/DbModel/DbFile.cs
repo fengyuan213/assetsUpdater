@@ -12,29 +12,34 @@
         {
 
         }
-        protected void Init(string relativePath, string hash, long fileSize, string downloadAddress = "")
+        protected void Init(string relativePath, string hash, long fileSize)
         {
             RelativePath = relativePath;
             Hash = hash;
             FileSize = fileSize;
-            DownloadAddress = downloadAddress;
+
         }
-        public DbFile(string relativePath, string hash, long fileSize, string downloadAddress = "")
+        public DbFile(string relativePath, string hash, long fileSize)
         {
             RelativePath = relativePath;
             Hash = hash;
             FileSize = fileSize;
-            DownloadAddress = downloadAddress;
+
         }
 
-
-        public string RelativePath { get; private set; }
+        public DbFile(DbFile file)
+        {
+            RelativePath = file.RelativePath;
+            Hash = file.Hash;
+            FileSize = file.FileSize;
+        }
+        // don't set this to private, as it blocks json deserializer
+        public string RelativePath { get; set; }
         public string Hash { get; set; }
         public long FileSize { get; set; }
 
         public string FileName => Path.GetFileName(RelativePath);
 
-        public string DownloadAddress { get; set; }
 
         public bool Equals(DbFile? other)
         {

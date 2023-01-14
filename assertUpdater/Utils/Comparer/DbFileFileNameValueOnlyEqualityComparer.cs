@@ -6,7 +6,7 @@ namespace assertUpdater.Utils.Comparer
     public class DbFileFileNameValueOnlyEqualityComparer : IEqualityComparer<DbFile>
     {
         /// <summary>
-        /// 
+        ///  Used only when comparing with database with Added/Differed/Deleted files
         /// </summary>
         /// <param name="allowLessRigorous"> If the file has empty hash but  same size, path ,name are considered equal</param>
         public DbFileFileNameValueOnlyEqualityComparer(bool allowLessRigorous = true)
@@ -34,7 +34,7 @@ namespace assertUpdater.Utils.Comparer
 
         public int GetHashCode(DbFile obj)
         {
-            return HashCode.Combine(obj.RelativePath, obj.Hash, obj.FileSize, obj.DownloadAddress);
+            return HashCode.Combine(obj.RelativePath, obj.Hash, obj.FileSize);
         }
     }
 }

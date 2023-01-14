@@ -63,9 +63,9 @@ namespace assertUpdater.Tests
 
 
             //Simulate Added File
-            DbFile addFileA = new("newFileA", "newFileHashA", 0, "");
-            DbFile addFileB = new("newFileB", "newFileHashB", 0, "");
-            DbFile addFileC = new("newFileC", "newFileHashC", 0, "");
+            DbFile addFileA = new("newFileA", "newFileHashA", 123 );
+            DbFile addFileB = new("newFileB", "newFileHashB", 123);
+            DbFile addFileC = new("newFileC", "newFileHashC", 123);
             remoteData.Add(addFileA);
             remoteData.Add(addFileB);
             remoteData.Add(addFileC);

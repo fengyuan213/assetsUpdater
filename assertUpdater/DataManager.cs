@@ -57,7 +57,7 @@ namespace assertUpdater
              */
 
         }
-        public DataManager(IStorageProvider storageProvider)
+        protected DataManager(IStorageProvider storageProvider)
         {
             StorageProvider = storageProvider;
 
@@ -99,18 +99,19 @@ namespace assertUpdater
 
             return true;
         }
+
         /// <summary>
         ///     IsBuildUniqueADdress: Allow to build a unique download address for each file (can't use for links are temporary)
         /// </summary>
         /// <typeparam name="TStorageProvider"></typeparam>
         /// <param name="config"></param>
         /// <param name="isBuildUniqueAddress"></param>
+        /// <param name="buildParam"></param>
         /// <exception cref="InvalidDataException"></exception>
         /// <returns></returns>
-        ///
+        /// 
         [return: NotNull]
-        public static async Task<IStorageProvider> BuildDatabase<TStorageProvider>(DbConfig config,
-            bool isBuildUniqueAddress = false, params object[] buildParam) where TStorageProvider : IStorageProvider
+        public static async Task<IStorageProvider> BuildDatabase<TStorageProvider>(DbConfig config, params object[] buildParam) where TStorageProvider : IStorageProvider
         {
 
             Type t = typeof(TStorageProvider);
@@ -127,20 +128,7 @@ namespace assertUpdater
 
                 await DbCreateInternal(config, storageProvider).ConfigureAwait(false);
 
-                if (isBuildUniqueAddress)
-                {
-
-
-                    Console.WriteLine($"{MethodBase.GetCurrentMethod()},  \"Database are built by unique urls\"");
-
-                    DbData data = storageProvider.RefreshAsync().Result; //todo::add cache
-                    foreach (DbFile dataDatabaseFile in data.DatabaseFiles)
-                    {
-                        dataDatabaseFile.DownloadAddress =
-                            config.DownloadAddressBuilder.BuildUri(dataDatabaseFile.RelativePath).ToString();
-                    }
-                }
-                Console.WriteLine($"Database Build finished type:{t.FullName}");
+              
                 Console.WriteLine("Refreshing Database...");
                 await storageProvider.FlushAsync().ConfigureAwait(false);
 
@@ -217,7 +205,7 @@ namespace assertUpdater
                 //eg file after: /.minecraft/data.json
                 //var path = file.Substring(1);
                 DbFile vcf = new(file, FileUtils.Sha1File(absolutePath),
-                    FileUtils.GetFileSize(absolutePath), "");
+                    FileUtils.GetFileSize(absolutePath));
                 //var vcf = new BuildInDbFile(file, Path.GetFileName(absolutePath), FileUtils.GetFileSize(absolutePath), FileUtils.Sha1File(absolutePath), null);
                 await storageProvider.InsertAsync(vcf).ConfigureAwait(false);
             }

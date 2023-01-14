@@ -54,7 +54,7 @@ namespace assertUpdater.Tests.Mocked
             {
                 downloadAddress = "https://www.example.com/" + relativePath;
             }
-            base.Init(relativePath, fileSha1, fileSize, downloadAddress);
+            base.Init(relativePath, fileSha1, fileSize);
         }
     }
 }
