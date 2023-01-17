@@ -9,6 +9,12 @@ namespace assertUpdater.Network
 {
     public class DownloadConfig
     {
+        public static DownloadConfig DefaultConfig()
+        {
+            var downloadConfig = new DownloadConfig();
+            downloadConfig.Credentials = CredentialCache.DefaultNetworkCredentials;
+            return downloadConfig;
+        }
         public DownloadConfig()
         {
             //Init Defaults

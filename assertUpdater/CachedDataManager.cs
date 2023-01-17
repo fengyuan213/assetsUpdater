@@ -1,19 +1,23 @@
 ﻿using assertUpdater.DbModel;
 using assertUpdater.StorageProvider;
+using assertUpdater.Utils;
 
 namespace assertUpdater
 {
     public class CachedDataManager : DataManager, ICloneable
     {
-        
-        
+
+
         public CachedDataManager(IStorageProvider storageProvider) : base(storageProvider)
         {
-            _cachedData = StorageProvider.RefreshAsync().Result;
+       
+    
+            _cachedData = AsyncHelpers.RunSync<DbData>(() => StorageProvider.RefreshAsync()); ;
             // _cachedData = new Lazy<DbData>(()=>StorageProvider.Refresh().Result);
-           
+ 
         }
 
+     
       
         public override DbConfig Config
         {

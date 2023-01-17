@@ -1,12 +1,11 @@
 ﻿using System.IO.Pipes;
-
+using System.Runtime.CompilerServices;
 using assertUpdater.DbModel;
 
 namespace assertUpdater.Operations
 {
     public class DeleteFileAssertOperation : IOperation
     {
-
         private string _vcsFolder;
         private DbFile _file;
         public DeleteFileAssertOperation(string vcsFolder, DbFile file)
@@ -15,6 +14,10 @@ namespace assertUpdater.Operations
             _vcsFolder = vcsFolder;
         }
 
+        public DeleteFileAssertOperation(string path)
+        {
+            
+        }
         public double Progress { get; set; }
 
         public Task Execute()

@@ -1,10 +1,13 @@
 ﻿
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Net;
+using System.Threading;
 
 using assertUpdater.DbModel;
 using assertUpdater.Exceptions;
+using assertUpdater.Extensions;
 using assertUpdater.Operations;
 
 
@@ -33,25 +36,66 @@ namespace assertUpdater.Network
             if (DownloadConfig == null)
             {
                 //Default Config
-                DownloadConfig = new DownloadConfig()
-                {
-                    Credentials = CredentialCache.DefaultNetworkCredentials
-                };
+                DownloadConfig = DownloadConfig.DefaultConfig();
             }
 
 
-            _webClient = new WebClient();
-            _webClient.Headers.Add("User-Agent: Other");
-            _webClient.Credentials = DownloadConfig.Credentials;
-            _webClient.DownloadProgressChanged += OnDlPgChanged;
-            _webClient.DownloadFileCompleted += OnDlCompleted;
+            _httpClient = new HttpClient(new HttpClientHandler()
+            {
+                Credentials = DownloadConfig.Credentials
+                
+            });
+            _httpClient.DefaultRequestHeaders.Add("User-Agent", "Other");
+            _httpClient.Timeout = TimeSpan.FromMinutes(5);
 
+            _pgReporter = new Progress<float>();
+            _pgReporter.ProgressChanged += _pgReporter_ProgressChanged;
+
+            
+            
+
+        }
+
+        private void _pgReporter_ProgressChanged(object sender, float e)
+        {
+            Progress = e*100;
         }
 
         public async Task Execute()
         {
-            var task = _webClient.DownloadFileTaskAsync(Url, LocalPath);
-            await task.ConfigureAwait(false);
+
+            // This really can be any type of writeable stream.
+            using (var file = new FileStream(LocalPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+
+                // Use the custom extension method below to download the data.
+                // The passed progress-instance will receive the download status updates.
+            
+                var token = new CancellationToken();
+
+
+                var pgReporter = (IProgress<float>)_pgReporter;
+                // Get the http headers first to examine the content length
+                using (var response = await _httpClient.GetAsync(Url, HttpCompletionOption.ResponseHeadersRead))
+                {
+                    var contentLength = response.Content.Headers.ContentLength;
+                    TotalBytesToReceive =  contentLength ?? 0;
+                    using (var download = await response.Content.ReadAsStreamAsync())
+                    {
+
+
+                        // Convert absolute progress (bytes downloaded) into relative progress (0% - 100%)
+                        var relativeProgress = new Progress<long>(totalBytes => pgReporter.Report((float)totalBytes / contentLength.Value));
+                        // Use extension method to report progress while downloading
+
+                        await download.CopyToAsync(file, 81920, relativeProgress, token);
+                        //pgReporter.Report(1);
+                    }
+                }
+               // await _httpClient.DownloadAsync(Url, file, _pgReporter, token);
+            }
+            //var task = _httpClient.DownloadFileTaskAsync(Url, LocalPath);
+            //await task.ConfigureAwait(false);
         }
 
         private void OnDlCompleted(object? sender, AsyncCompletedEventArgs e)
@@ -83,18 +127,18 @@ namespace assertUpdater.Network
 
         }
 
-        private WebClient _webClient;
+        private HttpClient _httpClient;
 
         public string Url { get; set; }
         public string LocalPath { get; set; }
-        public double TotalBytesToReceive { get; private set; }
-        public double BytesReceived { get; private set; }
+        public long TotalBytesToReceive { get; private set; }
+        public long BytesReceived { get; private set; }
         public double Progress { get; set; }
 
-
+        private  Progress<float> _pgReporter;
         ~DownloadOperation()
         {
-            _webClient.Dispose();
+            _httpClient.Dispose();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace assertUpdater.Tests.Mocked
+﻿namespace assertUpdater.Tests.TestData
 {
     public static class GeneratorConfig
     {

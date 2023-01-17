@@ -46,9 +46,9 @@ namespace assertUpdater.DbModel
 
 
 
-        public DownloadOperation BuildDownloadOperation()
+        public DownloadOperation BuildDownloadOperation(DownloadConfig config=null)
         {
-            var config = new DownloadConfig();
+       
 
             var localPath = AddressBuilder.BuildDownloadLocalPath(RelativePath);
             var op = new DownloadOperation(Url.ToString(),localPath , config);

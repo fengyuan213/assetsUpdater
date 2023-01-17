@@ -1,6 +1,6 @@
 ﻿using assertUpdater;
 using assertUpdater.StorageProvider;
-using assertUpdater.Tests.Mocked;
+using assertUpdater.Tests.TestData;
 
 namespace assertUpdater.Tests
 {
@@ -32,11 +32,11 @@ namespace assertUpdater.Tests
             dataGenerators.CleanUp();
         }
         [TestMethod]
-        public Task IsDataValid_StateUnderTest_ExpectedBehavior()
+        public async Task IsDataValid_StateUnderTest_ExpectedBehavior()
         {
             // Arrange
             DataGenerators dg = new();
-            DataManager manager = dg.BuildDataManagerDefault();
+            DataManager manager = await dg.BuildDataManagerDefault();
             bool allowEmptyValidDb = true;
 
 
@@ -48,11 +48,11 @@ namespace assertUpdater.Tests
 
             // Assert
             Assert.IsTrue(result);
-            return Task.CompletedTask;
+          
         }
 
         [TestMethod]
-        public Task BuildDatabase_StateUnderTest_ExpectedBehavior()
+        public async Task BuildDatabase_StateUnderTest_ExpectedBehavior()
         {
             // Arrange
             DataGenerators dg = new();
@@ -62,11 +62,11 @@ namespace assertUpdater.Tests
 
             // Act
 
-            IStorageProvider result = dg.BuildStorageProviderDefault();
+            IStorageProvider result = await dg.BuildStorageProviderDefault();
 
             // Assert
             Assert.IsNotNull(result);
-            return Task.CompletedTask;
+     
         }
     }
 }

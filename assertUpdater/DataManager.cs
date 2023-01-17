@@ -44,7 +44,10 @@ namespace assertUpdater
         protected virtual DbData GetDbData()
         {
 
-            return StorageProvider.RefreshAsync().Result;
+            //Task.Run(async () => await StorageProvider.RefreshAsync().ConfigureAwait(false));
+
+
+            return AsyncHelpers.RunSync<DbData>(() => StorageProvider.RefreshAsync()); ;
             /* if (Data==DbData.Empty)
              {
                  return StorageProvider.RefreshAsync().Result;

@@ -108,7 +108,8 @@ namespace assertUpdater.StorageProvider
                 _ = RefreshAsync().Result;
               
             });*/
-            _ = RefreshAsync().Result;
+            AsyncHelpers.RunSync(RefreshAsync);
+            //_ = RefreshAsync().Result;
             _dbData ??= DbData.Empty;
         }
 

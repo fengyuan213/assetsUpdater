@@ -1,6 +1,6 @@
 ﻿using assertUpdater;
 using assertUpdater.DbModel;
-using assertUpdater.Tests.Mocked;
+using assertUpdater.Tests.TestData;
 
 namespace assertUpdater.Tests
 {
@@ -23,7 +23,7 @@ namespace assertUpdater.Tests
         }
 
         [TestMethod]
-        public void DatabaseCompare_FileDatabase_ExpectedBehavior()
+        public async  Task  DatabaseCompare_FileDatabase_ExpectedBehavior()
         {
             // Arrange
             DataGenerators dg = new();
@@ -36,7 +36,7 @@ namespace assertUpdater.Tests
             DataManager local = new CachedDataManager((IStorageProvider)provider.Clone());
             DataManager remote = new CachedDataManager((IStorageProvider)provider.Clone());
             */
-            DataManager local = dg.BuildDataManagerDefault();
+            DataManager local = await dg.BuildDataManagerDefault();
             DataManager remote = (DataManager)local.Clone();
             // pull data out for simplicity
             List<DbFile> localData = local.Data.DatabaseFiles.ToList();
