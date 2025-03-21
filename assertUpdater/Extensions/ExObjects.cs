@@ -14,17 +14,19 @@ namespace assertUpdater.Extensions
 
             return obj1Serialized == obj2Serialized;
         }
+
         /// <summary>
         ///     Reference Article http://www.codeproject.com/KB/tips/SerializedObjectCloner.aspx
         ///     Provides a method for performing a deep copy of an object.
         ///     Binary Serialization is used to perform the copy.
         /// </summary>
         /// <summary>
-        ///     Perform a deep Copy of the object, using Json as a serialization method. NOTE: Private members are not cloned using
+        ///     Execute a deep Copy of the object, using Json as a serialization method. NOTE: Private members are not cloned using
         ///     this method.
         /// </summary>
         /// <typeparam name="T">The type of object being copied.</typeparam>
         /// <param name="source">The object instance to copy.</param>
+        /// <param name="settings"></param>
         /// <returns>The copied object.</returns>
         public static T CloneJson<T>(this T source, JsonSerializerSettings? settings = null)
         {
@@ -47,7 +49,7 @@ namespace assertUpdater.Extensions
         }
 
         /// <summary>
-        ///     Perform a deep copy of the object via serialization.
+        ///     Execute a deep copy of the object via serialization.
         /// </summary>
         /// <typeparam name="T">The type of object being copied.</typeparam>
         /// <param name="source">The object instance to copy.</param>

@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 
 namespace assertUpdater.Utils
 {
-    public class FileUtils
+    public static class FileUtils
     {
         public static string Sha1File([NotNull] string path)
         {

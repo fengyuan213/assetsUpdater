@@ -15,13 +15,13 @@ namespace assertUpdater.StorageProvider
         private string _tmpPath = "";
         private DbData _dbData;
 
-   /*     public DbData DbData
-        {
-            set
-            {
-                _dbData = value;
-            }
-        }*/
+        /*     public DbData DbData
+             {
+                 set
+                 {
+                     _dbData = value;
+                 }
+             }*/
 
         public string DbPath
         {
@@ -108,10 +108,11 @@ namespace assertUpdater.StorageProvider
                 _ = RefreshAsync().Result;
               
             });*/
-            _ = RefreshAsync().Result;
+            AsyncHelpers.RunSync(RefreshAsync);
+            //_ = RefreshAsync().Result;
             _dbData ??= DbData.Empty;
         }
-        
+
         public async Task<DbData> RefreshAsync()
         {
 
@@ -123,11 +124,11 @@ namespace assertUpdater.StorageProvider
                 using StreamReader streamReader = new(stream);
                 string content = await streamReader.ReadToEndAsync();
                 JsonSerializerSettings settings = GetJsonSerializerSettings();
+                
 
-
-                _dbData = JsonConvert.DeserializeObject<DbData>(content, settings) ??
+                var tmp = JsonConvert.DeserializeObject<DbData>(content, settings) ??
                           throw new ArgumentNullException(nameof(DbData));
-
+                _dbData = tmp;
 
                 return _dbData;
 
@@ -154,6 +155,8 @@ namespace assertUpdater.StorageProvider
 
                     JsonSerializerSettings settings = new()
                     {
+                        NullValueHandling = NullValueHandling.Include,
+                        ObjectCreationHandling = ObjectCreationHandling.Replace,
                         TypeNameHandling = TypeNameHandling.Auto
                     };
                     settings.Converters.Add(new ConcreteTypeConverter<DefaultAddressBuilder, IAddressBuilder>());
@@ -197,12 +200,12 @@ namespace assertUpdater.StorageProvider
             return Task.FromResult(dbFile.First());
         }
 
-        
+
         public Task FlushAsync(DbData data)
         {
             _dbData = data;
             return FlushAsync();
-       
+
         }
         public Task InsertAsync(DbFile dbFile)
         {
@@ -213,9 +216,9 @@ namespace assertUpdater.StorageProvider
         }
         public Task FlushAsync()
         {
-           
-             var   path = DbPath;
-            
+
+            var path = DbPath;
+
             string json = JsonConvert.SerializeObject(_dbData);
             using (FileStream stream = new(path, FileMode.Create))
             {

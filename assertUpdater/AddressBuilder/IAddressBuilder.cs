@@ -8,7 +8,7 @@ namespace assertUpdater.AddressBuilder
     {
         /// <summary>
         ///     The main download Address to download VersionControlFiles.
-        ///     Usage format: RealDownloadUrl= &"{RootDownloadUrl}/version control filename"
+        ///     Usage format: RealDownloadUrl= "{RootDownloadUrl}/version control filename"
         /// </summary>
         [NotNull]
 

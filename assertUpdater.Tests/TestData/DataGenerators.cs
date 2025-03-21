@@ -1,10 +1,9 @@
-﻿using assertUpdater;
-using assertUpdater.AddressBuilder;
+﻿using assertUpdater.AddressBuilder;
 using assertUpdater.DbModel;
 using assertUpdater.StorageProvider;
 using assertUpdater.Tests.Mocked;
 
-namespace assertUpdater.Tests
+namespace assertUpdater.Tests.TestData
 {
     public class DataGenerators
     {
@@ -14,20 +13,21 @@ namespace assertUpdater.Tests
             Init();
         }
 
-        public IStorageProvider BuildStorageProviderDefault()
+        public async Task<IStorageProvider> BuildStorageProviderDefault()
         {
             DataGenerators dg = new();
             DbConfig config = dg.GenRandomConfig();
             string dbPath = GeneratorConfig.DbPath;
-            IStorageProvider provider = DataManager.BuildDatabase<FileDatabase>(config, false, dbPath).Result;
+            IStorageProvider provider  =await DataManager.BuildDatabase<FileDatabase>(config, dbPath).ConfigureAwait(false);
 
 
             return provider;
         }
-        public DataManager BuildDataManagerDefault()
+        public async Task<DataManager> BuildDataManagerDefault()
         {
-            IStorageProvider provider = BuildStorageProviderDefault();
-            DataManager dataManager = new CachedDataManager((IStorageProvider)provider.Clone());
+            IStorageProvider provider = await BuildStorageProviderDefault().ConfigureAwait(false);
+            var clonedProvider = (IStorageProvider)provider.Clone();
+            DataManager dataManager = new CachedDataManager(clonedProvider);
             return dataManager;
         }
 
@@ -76,44 +76,7 @@ namespace assertUpdater.Tests
 
             return result;
         }
-        /*
-        public List<string> GenRandomFiles(string vcs="", int count = 10, int maxDepth = 3)
-        {
-            var list = new List<string>();
 
-            var rnd = new Random();
-            for (int i = 0; i < count; i++)
-            {
-                var depth=rnd.Next(1,maxDepth);
-                if (string.IsNullOrWhiteSpace(vcs))
-                {
-                    vcs = TestDataPath;
-                }
-                
-                var relativePath = "";
-                for (int j = 0; j < depth; j++)
-                {
-                    relativePath = Path.Join(relativePath, Path.GetRandomFileName());
-                    if (j+1==depth)//if the last path, create actual file
-                    {
-                        using var sw= File.CreateText(Path.Join(vcs,relativePath));
-                        sw.WriteLine(Path.GetRandomFileName()); //Just random string
-                        sw.Close();
-                    }
-                    else
-                    {
-                        Directory.CreateDirectory(Path.Join(vcs, relativePath));
-                    }
-                    
-                   
-                    
-                }
-
-                list.Add(relativePath);
-                
-            }
-            return list;
-        }*/
         public DbSchema GenDbSchema()
         {
             DbSchema schema = new()

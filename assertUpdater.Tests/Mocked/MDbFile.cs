@@ -1,4 +1,5 @@
 ﻿using assertUpdater.DbModel;
+using assertUpdater.Tests.TestData;
 using assertUpdater.Utils;
 using System.Diagnostics;
 
@@ -54,7 +55,7 @@ namespace assertUpdater.Tests.Mocked
             {
                 downloadAddress = "https://www.example.com/" + relativePath;
             }
-            base.Init(relativePath, fileSha1, fileSize, downloadAddress);
+            base.Init(relativePath, fileSha1, fileSize);
         }
     }
 }
